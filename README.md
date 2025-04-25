@@ -1,6 +1,6 @@
 # seoldam
 
-An Electron application with React and TypeScript
+설담의 레포지토리 입니다.
 
 ## Recommended IDE Setup
 
