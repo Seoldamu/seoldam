@@ -68,6 +68,7 @@ const NavigationItem = styled.div<{ $active: boolean }>`
   ${flex({ flexDirection: 'row', alignItems: 'center' })}
   gap: 10px;
   border-radius: 12px;
+  cursor: pointer;
 
   ${({ $active }) =>
     $active &&
