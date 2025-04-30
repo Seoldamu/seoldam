@@ -1,4 +1,5 @@
 import type { SVGProps } from 'react'
+import { useId } from 'react'
 import { color } from '@renderer/design/styles'
 
 type Props = SVGProps<SVGSVGElement> & {
@@ -6,10 +7,12 @@ type Props = SVGProps<SVGSVGElement> & {
 }
 
 const IconCharacter = ({ active = false, ...props }: Props) => {
+  const maskId = useId()
+
   return (
     <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <mask
-        id="characterIconMask"
+        id={maskId}
         style={{ maskType: 'alpha' }}
         maskUnits="userSpaceOnUse"
         x="0"
@@ -19,7 +22,7 @@ const IconCharacter = ({ active = false, ...props }: Props) => {
       >
         <rect width="30" height="30" fill="#D9D9D9" />
       </mask>
-      <g mask="url(#characterIconMask)">
+      <g mask={`url(#${maskId})`}>
         <path
           d={
             active
