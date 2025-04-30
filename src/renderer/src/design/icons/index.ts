@@ -1,1 +1,6 @@
 export { default as IconHome } from './IconHome'
+export { default as IconEditor } from './IconEditor'
+export { default as IconPlot } from './IconPlot'
+export { default as IconLab } from './IconLab'
+export { default as IconMemo } from './IconMemo'
+export { default as IconCharacter } from './IconCharacter'
