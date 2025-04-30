@@ -2,16 +2,23 @@ import { color } from '@renderer/design/styles'
 import { css, styled } from 'styled-components'
 import { Column, Text } from '@renderer/components/common'
 import { flex } from '@renderer/utils'
-import IconHome from '@renderer/design/icons/IconHome'
+import {
+  IconHome,
+  IconEditor,
+  IconPlot,
+  IconLab,
+  IconMemo,
+  IconCharacter
+} from '@renderer/design/icons'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 export const NAVIGATION_DATA = [
-  { route: '/', name: '홈' },
-  { route: '/editor', name: '편집' },
-  { route: '/plot', name: '줄거리' },
-  { route: '/lab', name: '실험실' },
-  { route: '/memo', name: '메모' },
-  { route: '/character', name: '캐릭터' }
+  { route: '/', name: '홈', icon: IconHome },
+  { route: '/editor', name: '편집', icon: IconEditor },
+  { route: '/plot', name: '줄거리', icon: IconPlot },
+  { route: '/lab', name: '실험실', icon: IconLab },
+  { route: '/memo', name: '메모', icon: IconMemo },
+  { route: '/character', name: '캐릭터', icon: IconCharacter }
 ]
 
 const Sidebar = () => {
@@ -22,7 +29,7 @@ const Sidebar = () => {
   return (
     <StyledSidebar>
       <Column gap={2}>
-        {NAVIGATION_DATA.map(({ route, name }) => (
+        {NAVIGATION_DATA.map(({ route, name, icon: Icon }) => (
           <NavigationItem
             key={`navigation ${name}`}
             $active={pathname === route}
@@ -30,7 +37,7 @@ const Sidebar = () => {
               navigate(route)
             }}
           >
-            <IconHome width={30} height={30} selected={pathname === route} />
+            <Icon width={30} height={30} active={pathname === route} />
             <Text fontType="L1" color={color.primary}>
               {name}
             </Text>
