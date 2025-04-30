@@ -1,1 +1,2 @@
 export { default as Row } from './Flex/Row'
+export { default as Column } from './Flex/Column'
