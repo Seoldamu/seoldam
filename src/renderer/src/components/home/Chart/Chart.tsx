@@ -15,9 +15,6 @@ const Chart = () => {
   ]
 
   const option = {
-    animation: true,
-    animationDuration: 1000,
-    animationEasing: 'quadraticOut',
     title: {
       text: `오늘 쓴 글자\n{num|${writtenCount}자}`,
       left: 0,
@@ -66,6 +63,8 @@ const Chart = () => {
         data: data1, // 후에 동적인 값
         smooth: 0.3,
         showSymbol: false,
+        symbol: 'circle',
+        symbolSize: 14,
         emphasis: {
           focus: 'series',
           showSymbol: true,
@@ -112,6 +111,8 @@ const Chart = () => {
         data: data2, // 후에 동적인 값
         smooth: 0.3,
         showSymbol: false,
+        symbol: 'circle',
+        symbolSize: 14,
         emphasis: {
           focus: 'series',
           showSymbol: true,
