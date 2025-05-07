@@ -3,8 +3,21 @@ import ReactECharts from 'echarts-for-react'
 
 const Chart = () => {
   const writtenCount = 1000
+  const labels = Array.from({ length: 30 }, (_, i) => i + 1)
+  const data1 = [
+    3123, 3984, 2501, 3765, 3410, 2999, 3840, 2674, 3902, 3005, 3280, 3100, 2874, 3690, 3560, 3300,
+    3900, 3444, 3666, 3777, 2210, 3450, 3333, 3800, 2990, 3188, 3675, 3060, 2950, 3533
+  ]
+
+  const data2 = [
+    1820, 2450, 1630, 1200, 2755, 1944, 2210, 2080, 1870, 1777, 2633, 1001, 1130, 1980, 2430, 1330,
+    1220, 2010, 1770, 1988, 1540, 1422, 2311, 1005, 1910, 1340, 2730, 1560, 2130, 1599
+  ]
 
   const option = {
+    animation: true,
+    animationDuration: 1000,
+    animationEasing: 'quadraticOut',
     title: {
       text: `오늘 쓴 글자\n{num|${writtenCount}자}`,
       left: 0,
@@ -50,8 +63,8 @@ const Chart = () => {
       {
         name: '이번 달 쓴 글자 수',
         type: 'line',
-        data: [3200, 3000, 3200, 3000, 3200, 3000, 3200, 3000], // 후에 동적인 값
-        smooth: true,
+        data: data1, // 후에 동적인 값
+        smooth: 0.3,
         showSymbol: false,
         emphasis: {
           focus: 'series',
@@ -96,8 +109,8 @@ const Chart = () => {
       {
         name: '저번 달 쓴 글자 수',
         type: 'line',
-        data: [2100, 2500, 2400, 2100, 2500, 2400, 2100, 2500, 2400], // 후에 동적인 값
-        smooth: true,
+        data: data2, // 후에 동적인 값
+        smooth: 0.3,
         showSymbol: false,
         emphasis: {
           focus: 'series',
@@ -149,7 +162,7 @@ const Chart = () => {
     },
     xAxis: {
       type: 'category',
-      data: ['10', '11', '12', '13', '14', '15', '1', '123', '123123'], // 날짜
+      data: labels, // 날짜
       axisLabel: {
         fontFamily: 'Paperlogy',
         fontWeight: 700,
@@ -158,10 +171,43 @@ const Chart = () => {
         lineHeight: 13,
         letterSpacing: 0.13,
         interval: 0
-      }
+      },
+      axisLine: { show: false },
+      axisTick: { show: false },
+      splitLine: { show: false }
     },
     yAxis: {
-      type: 'value'
+      type: 'value',
+      axisLabel: { show: false },
+      axisLine: { show: false },
+      axisTick: { show: false },
+      splitLine: { show: false }
+    },
+    tooltip: {
+      show: true,
+      trigger: 'axis',
+      axisPointer: {
+        type: 'line',
+        lineStyle: {
+          color: '#C7C7C7',
+          width: 0.5
+        }
+      },
+      backgroundColor: `${color.G0}`,
+      borderColor: `${color.G20}`,
+      borderWidth: 1,
+      textStyle: {
+        color: '#222',
+        fontSize: 13
+      },
+      formatter: function (params) {
+        let result = `${params[0].axisValue}일<br/>`
+        params.forEach((p) => {
+          result += `<span style="display:inline-block;margin-right:5px;border-radius:50%;width:10px;height:10px;background:${p.color}"></span>`
+          result += `${p.seriesName}: <b>${p.value}</b><br/>`
+        })
+        return result
+      }
     }
   }
 
