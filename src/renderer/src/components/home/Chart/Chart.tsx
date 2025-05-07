@@ -17,7 +17,7 @@ const Chart = () => {
   const option = {
     title: {
       text: `오늘 쓴 글자\n{num|${writtenCount}자}`,
-      left: 0,
+      left: 10,
       top: 0,
       textStyle: {
         fontFamily: 'Paperlogy',
@@ -41,7 +41,7 @@ const Chart = () => {
     legend: {
       data: ['이번 달 쓴 글자 수', '저번 달 쓴 글자 수'],
       top: 0,
-      right: 0,
+      right: 10,
       orient: 'vertical',
       itemGap: 4,
       icon: 'circle',
@@ -155,8 +155,8 @@ const Chart = () => {
       }
     ],
     grid: {
-      left: 0,
-      right: 0,
+      left: 10,
+      right: 10,
       top: `76px`,
       bottom: 0,
       containLabel: true
@@ -164,6 +164,7 @@ const Chart = () => {
     xAxis: {
       type: 'category',
       data: labels, // 날짜
+      boundaryGap: false,
       axisLabel: {
         fontFamily: 'Paperlogy',
         fontWeight: 700,
@@ -209,11 +210,19 @@ const Chart = () => {
         })
         return result
       }
-    }
+    },
+    dataZoom: [
+      {
+        type: 'inside',
+        start: labels.length,
+        end: labels.length > 7 ? (7 / labels.length) * 100 : 100,
+        minSpan: (7 / labels.length) * 100
+      }
+    ]
   }
 
   return (
-    <div style={{ width: '100%', height: '400px' }}>
+    <div style={{ width: '100%', height: '300px' }}>
       <ReactECharts option={option} style={{ height: '100%', width: '100%' }} />
     </div>
   )
