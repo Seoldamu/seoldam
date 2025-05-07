@@ -1,16 +1,19 @@
-const Home = () => {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
+import Chart from '@renderer/components/home/Chart/Chart'
+import { flex } from '@renderer/utils'
+import { styled } from 'styled-components'
 
+const Home = () => {
   return (
-    <div>
-      홈 페이지 입니다. 다들 방가방가 ping 한번 넣어봄.
-      <div className="action">
-        <a target="_blank" rel="noreferrer" onClick={ipcHandle}>
-          Send IPC
-        </a>
-      </div>
-    </div>
+    <StyledHome>
+      <Chart />;
+    </StyledHome>
   )
 }
 
 export default Home
+
+const StyledHome = styled.div`
+  ${flex({ flexDirection: 'column', alignItems: 'center' })}
+  padding: 50px 144px 50px 88px;
+  gap: 80px;
+`
