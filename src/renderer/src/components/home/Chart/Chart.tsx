@@ -27,6 +27,24 @@ const Chart = () => {
           }
         }
       }
+    },
+    legend: {
+      data: ['이번 달 쓴 글자 수', '저번 달 쓴 글자 수'],
+      top: 0,
+      right: 30,
+      orient: 'vertical',
+      itemGap: 4,
+      icon: 'circle',
+      itemWidth: 10,
+      itemHeight: 10,
+      textStyle: {
+        fontFamily: 'Paperlogy',
+        fontWeight: 500,
+        fontSize: 12,
+        lineHeight: 16.8,
+        letterSpacing: 0.12,
+        color: `${color.G900}`
+      }
     }
   }
 
