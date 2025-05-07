@@ -5,7 +5,7 @@ import { styled } from 'styled-components'
 const Home = () => {
   return (
     <StyledHome>
-      <Chart />;
+      <Chart />
     </StyledHome>
   )
 }
