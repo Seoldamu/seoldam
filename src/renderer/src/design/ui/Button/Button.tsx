@@ -31,6 +31,7 @@ export default Button
 
 const StyledButton = styled.button<{ property: ButtonProperty }>`
   ${flex({ alignItems: 'center', justifyContent: 'center' })}
+  width: fit-content;
   padding: 6px 14px;
   word-break: keep-all;
   box-sizing: border-box;

@@ -31,6 +31,7 @@ export default IconButton
 
 const StyledButton = styled.button`
   ${flex({ alignItems: 'center', justifyContent: 'center' })}
+  width: fit-content;
   padding: 8px 16px;
   word-break: keep-all;
   box-sizing: border-box;
