@@ -1,5 +1,11 @@
+import { EditorRoot } from '@renderer/components/editor'
+
 const Editor = () => {
-  return <div>편집 페이지 입니다.</div>
+  return (
+    <div>
+      <EditorRoot />
+    </div>
+  )
 }
 
 export default Editor

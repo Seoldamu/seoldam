@@ -8,17 +8,15 @@ import { CSSProperties, styled } from 'styled-components'
 
 interface Data {
   image: string
-  label: string
   value: string
 }
 
 interface Props {
   icon?: ReactNode
   name: string
-  label: string
   value: string
   data: Data[]
-  onChange: (value: Data, name: string) => void
+  onChange: (value: string, name: string) => void
   placeholder?: string
   width?: CSSProperties['width']
   disabled?: boolean
@@ -34,9 +32,9 @@ const SeriesDropdown = ({
   const { value: isOpen, setFalse: closeDropdown, toggle: handleToggleButtonClick } = useBoolean()
   const dropdownRef = useOutsideClick<HTMLDivElement>(closeDropdown)
 
-  const handleDropdownItemClick = (data: Data) => {
+  const handleDropdownItemClick = (value: string) => {
     if (!disabled) {
-      onChange(data, name)
+      onChange(value, name)
       closeDropdown()
     }
   }
@@ -58,11 +56,11 @@ const SeriesDropdown = ({
             return (
               <SeriesDropdownItem
                 key={`dropdown ${index}`}
-                onClick={() => handleDropdownItemClick(item)}
+                onClick={() => handleDropdownItemClick(item.value)}
               >
                 <SeriesDropdownItemImage src={item.image} />
                 <Text fontType="L2" color={color.G900} ellipsis={true}>
-                  {item.label}
+                  {item.value}
                 </Text>
               </SeriesDropdownItem>
             )
