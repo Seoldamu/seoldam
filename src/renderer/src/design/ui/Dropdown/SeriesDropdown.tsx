@@ -27,11 +27,8 @@ interface Props {
 const SeriesDropdown = ({
   icon = <IconDropdownArrow width={28} height={28} />,
   name,
-  label,
-  value,
   data,
   onChange,
-  width = '324px',
   disabled = false
 }: Props) => {
   const { value: isOpen, setFalse: closeDropdown, toggle: handleToggleButtonClick } = useBoolean()
@@ -51,11 +48,8 @@ const SeriesDropdown = ({
   }
 
   return (
-    <div ref={dropdownRef} style={{ width }}>
+    <div ref={dropdownRef}>
       <StyledSeriesDropdown onClick={handleDropdownClick} $isOpen={isOpen}>
-        <Text fontType="T2" color={color.G900}>
-          {label || value}
-        </Text>
         {icon}
       </StyledSeriesDropdown>
       <SeriesDropdownListBox $isOpen={isOpen && !disabled}>
@@ -93,6 +87,7 @@ const StyledSeriesDropdown = styled.div<{
 
 const SeriesDropdownListBox = styled.div<{ $isOpen: boolean }>`
   position: relative;
+  width: 324px;
   display: ${(props) => (props.$isOpen ? 'block' : 'none')};
 `
 
