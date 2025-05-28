@@ -61,7 +61,7 @@ const SeriesDropdown = ({
                 onClick={() => handleDropdownItemClick(item)}
               >
                 <SeriesDropdownItemImage src={item.image} />
-                <Text fontType="L2" color={color.G900}>
+                <Text fontType="L2" color={color.G900} ellipsis={true}>
                   {item.label}
                 </Text>
               </SeriesDropdownItem>
