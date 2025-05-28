@@ -41,6 +41,8 @@ const StyledSeriesItem = styled.div`
   min-width: 0;
   gap: 12px;
   object-fit: cover;
+
+  cursor: pointer;
 `
 
 const SeriesItemImg = styled.img`
