@@ -5,12 +5,13 @@ import { useBoolean, useOutsideClick } from '@renderer/hooks'
 
 type Font = keyof typeof font
 
-interface EditableTextProps {
+interface Props {
   value: string
   onChange: (value: string) => void
   color?: string
   fontType?: Font
   width?: CSSProperties['width']
+  maxWidth?: CSSProperties['maxWidth']
   textAlign?: CSSProperties['textAlign']
   ellipsis?: boolean | number
   whiteSpace?: CSSProperties['whiteSpace']
@@ -23,22 +24,39 @@ const EditableText = ({
   color,
   fontType = 'H1',
   width = 'auto',
+  maxWidth = '300px',
   textAlign = 'left',
   ellipsis = false,
   whiteSpace = 'nowrap',
   tag = 'span',
   ...rest
-}: EditableTextProps) => {
+}: Props) => {
   const { value: editing, setTrue: startEdit, setFalse: endEdit } = useBoolean(false)
   const [editValue, setEditValue] = useState(value)
   const inputRef = useRef<HTMLInputElement>(null)
+  const spanRef = useRef<HTMLSpanElement>(null)
   const wrapperRef = useOutsideClick<HTMLDivElement>(() => {
     if (editing) endEdit()
   })
 
+  const [inputWidth, setInputWidth] = useState<number>(0)
+
   useEffect(() => {
     setEditValue(value)
   }, [value])
+
+  useEffect(() => {
+    if (editing && spanRef.current) {
+      const spanWidth = spanRef.current.offsetWidth
+      const max =
+        typeof maxWidth === 'number'
+          ? maxWidth
+          : typeof maxWidth === 'string' && maxWidth.endsWith('px')
+            ? parseInt(maxWidth)
+            : 300
+      setInputWidth(Math.min(spanWidth + 2, max))
+    }
+  }, [editValue, editing, fontType, maxWidth])
 
   useEffect(() => {
     if (editing && inputRef.current) {
@@ -64,20 +82,47 @@ const EditableText = ({
   }
 
   return (
-    <div ref={wrapperRef} style={{ display: 'inline-block', width }}>
+    <div
+      ref={wrapperRef}
+      style={{
+        display: 'inline-block',
+        width: 'auto',
+        maxWidth,
+        verticalAlign: 'middle'
+      }}
+    >
       {editing ? (
-        <InputLike
-          ref={inputRef}
-          value={editValue}
-          onChange={(e) => setEditValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          fontType={fontType}
-          style={{ color, textAlign, width: '100%', whiteSpace }}
-          {...rest}
-        />
+        <>
+          <EditableTextInput
+            ref={inputRef}
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            fontType={fontType}
+            style={{
+              color,
+              textAlign,
+              width: inputWidth ? `${inputWidth}px` : 'auto',
+              maxWidth,
+              whiteSpace: 'nowrap',
+              overflowX: 'auto'
+            }}
+            {...rest}
+          />
+          <HiddenSpan ref={spanRef} fontType={fontType}>
+            {editValue || ' '}
+          </HiddenSpan>
+        </>
       ) : (
-        <StyledText
-          style={{ color, textAlign, width, whiteSpace, cursor: 'pointer' }}
+        <StyledEditableText
+          style={{
+            color,
+            textAlign,
+            width: 'auto',
+            maxWidth,
+            whiteSpace,
+            cursor: 'pointer'
+          }}
           fontType={fontType}
           as={tag}
           ellipsis={ellipsis}
@@ -89,7 +134,7 @@ const EditableText = ({
           {...rest}
         >
           {value}
-        </StyledText>
+        </StyledEditableText>
       )}
     </div>
   )
@@ -97,7 +142,7 @@ const EditableText = ({
 
 export default EditableText
 
-const StyledText = styled.span<{ fontType: Font; ellipsis?: boolean | number }>`
+const StyledEditableText = styled.span<{ fontType: Font; ellipsis?: boolean | number }>`
   ${({ fontType }) => font[fontType]};
   ${({ ellipsis }) =>
     ellipsis === true &&
@@ -120,16 +165,26 @@ const StyledText = styled.span<{ fontType: Font; ellipsis?: boolean | number }>`
     `}
 `
 
-const InputLike = styled.input<{ fontType: Font }>`
+const EditableTextInput = styled.input<{ fontType: Font }>`
   ${({ fontType }) => font[fontType]};
   border: none;
   outline: none;
   background: ${color.G20};
-  width: auto;
   box-sizing: border-box;
   padding: 0;
   margin: 0;
   color: inherit;
-
   border-radius: 4px;
+  white-space: nowrap;
+  overflow-x: auto;
+`
+
+const HiddenSpan = styled.span<{ fontType: Font }>`
+  ${({ fontType }) => font[fontType]};
+  position: absolute;
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+  white-space: pre;
+  pointer-events: none;
 `
