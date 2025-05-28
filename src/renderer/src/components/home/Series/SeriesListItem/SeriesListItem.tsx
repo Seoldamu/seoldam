@@ -2,6 +2,7 @@ import { Column, Text } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
+import { useNavigate } from 'react-router-dom'
 
 interface Props {
   id: string
@@ -11,8 +12,14 @@ interface Props {
 }
 
 const SeriesItem = ({ id, image, title, lastUpdated }: Props) => {
+  const navigate = useNavigate()
+
+  const handleSeriesItemClick = () => {
+    navigate(`/editor/${id}`)
+  }
+
   return (
-    <StyledSeriesItem>
+    <StyledSeriesItem onClick={handleSeriesItemClick}>
       <SeriesItemImg src={image} />
       <Column>
         <SereisItemTitle fontType="H1" color={color.G900} ellipsis={true}>
