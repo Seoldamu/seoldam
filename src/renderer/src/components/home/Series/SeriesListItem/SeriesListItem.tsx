@@ -1,6 +1,6 @@
 import { Column, Text } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
-import { flex } from '@renderer/utils'
+import { flex, getRelativeDateString } from '@renderer/utils'
 import { styled } from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 
@@ -21,10 +21,13 @@ const SeriesItem = ({ id, image, title, lastUpdated }: Props) => {
   return (
     <StyledSeriesItem onClick={handleSeriesItemClick}>
       <SeriesItemImg src={image} />
-      <Column>
-        <SereisItemTitle fontType="H1" color={color.G900} ellipsis={true}>
+      <Column gap={4}>
+        <Text fontType="H1" color={color.G900} ellipsis={2} whiteSpace="normal">
           {title}
-        </SereisItemTitle>
+        </Text>
+        <Text fontType="L4" color={color.G100} ellipsis={true}>
+          {`최근 수정일 ${getRelativeDateString(lastUpdated)}전`}
+        </Text>
       </Column>
     </StyledSeriesItem>
   )
@@ -44,11 +47,4 @@ const SeriesItemImg = styled.img`
   ${flex({ flexDirection: 'column', alignItems: 'center' })}
   width: 100%;
   border-radius: 12px;
-`
-
-const SereisItemTitle = styled(Text)`
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
 `
