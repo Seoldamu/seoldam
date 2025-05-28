@@ -52,7 +52,7 @@ const MiniDropdown = ({
   return (
     <div ref={dropdownRef} style={{ width }}>
       <StyledMiniDropdown onClick={handleDropdownClick} $isOpen={isOpen}>
-        {icon}
+        <IconWrapper>{icon}</IconWrapper>
         <Text fontType="L2" color={color.G700} ellipsis={true}>
           {label || placeholder}
         </Text>
@@ -65,7 +65,9 @@ const MiniDropdown = ({
                 key={`dropdown ${index}`}
                 onClick={() => handleDropdownItemClick(item)}
               >
-                {item.label}
+                <Text fontType="L2" color={color.G900} ellipsis={true}>
+                  {item.label}
+                </Text>
               </MiniDropdownItem>
             )
           })}
@@ -85,6 +87,14 @@ const StyledMiniDropdown = styled.div<{
   gap: 4px;
   cursor: pointer;
   background: ${color.G0};
+`
+const IconWrapper = styled.div`
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 const MiniDropdownListBox = styled.div<{ $isOpen: boolean }>`
