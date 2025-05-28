@@ -24,6 +24,6 @@ const StyledAppLayout = styled.div`
 
 const Section = styled.section`
   flex: 1;
-  min-width: fit-content;
+  min-width: 0;
   overflow: auto;
 `
