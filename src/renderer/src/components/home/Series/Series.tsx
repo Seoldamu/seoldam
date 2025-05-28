@@ -1,5 +1,4 @@
-import { Row } from '@renderer/components/common'
-import { IconButton } from '@renderer/design/ui'
+import { Row, IconButton } from '@renderer/components/common'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 import SeriesItem from './SeriesListItem/SeriesListItem'
