@@ -11,10 +11,10 @@ interface Props {
 const ContentPreview = ({ title, content }: Props) => {
   return (
     <StyledContentPreview>
-      <Text fontType="H2" color={color.G900} ellipsis={2}>
+      <Text fontType="H2" color={color.G900} ellipsis={2} whiteSpace="normal">
         {title}
       </Text>
-      <Text fontType="B3" color={color.G100} ellipsis={6}>
+      <Text fontType="B3" color={color.G100} ellipsis={6} whiteSpace="normal">
         {content}
       </Text>
     </StyledContentPreview>
@@ -25,7 +25,7 @@ export default ContentPreview
 
 const StyledContentPreview = styled.div`
   ${flex({ alignItems: 'flex-start', flexDirection: 'column' })}
-  width: calc(25% - 20px);
+  width: calc(20% - 20px);
   padding: 16px 10px;
   gap: 6px;
 
