@@ -1,8 +1,28 @@
-import { EditableText, IconButton, Row, SeriesDropdown } from '@renderer/components/common'
+import {
+  ContentPreview,
+  EditableText,
+  IconButton,
+  Row,
+  SeriesDropdown
+} from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
 import { flex } from '@renderer/utils'
 import { useState } from 'react'
 import { styled } from 'styled-components'
+
+const dummyFileData = [
+  { title: '잘 노는법', content: 'adfasdfsadfsdfasdffdbrbtr' },
+  { title: '몸을 흐름에 맡기는법', content: 'adfasdfsadfsdfasdffdbrbtr' },
+  {
+    title: '볼려고 하면 보인다 보려고 하지 않을 뿐',
+    content:
+      'adfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtr'
+  },
+  { title: '몸을 흐름에 맡기는법1', content: 'adfasdfsadfsdfasdffdbrbtr' },
+  { title: '몸을 흐름에 맡기는법2', content: 'adfasdfsadfsdfasdffdbrbtr' },
+  { title: '몸을 흐름에 맡기는법3', content: 'adfasdfsadfsdfasdffdbrbtr' },
+  { title: '몸을 흐름에 맡기는법4', content: 'adfasdfsadfsdfasdffdbrbtr' }
+]
 
 const EditorRoot = () => {
   const [title, setTitle] = useState('이 세계에서 로맨스는 현실적으로 불가능하다.')
@@ -26,7 +46,7 @@ const EditorRoot = () => {
           <SeriesDropdown
             name="series-title"
             value={title}
-            data={[{ image: 'dummyImage1', value: '별종' }]}
+            data={[{ image: 'dummyImage1.png', value: '별종' }]}
             onChange={handleChange}
           />
         </Row>
@@ -38,6 +58,11 @@ const EditorRoot = () => {
           새 글
         </IconButton>
       </Row>
+      <FileList>
+        {dummyFileData.map((item) => (
+          <ContentPreview key={item.title} title={item.title} content={item.content} />
+        ))}
+      </FileList>
     </StyledEditorRoot>
   )
 }
@@ -50,4 +75,14 @@ const StyledEditorRoot = styled.div`
   padding: 68px 205px 0px 72px;
   gap: 38px;
   background: ${color.G0};
+`
+
+const FileList = styled.div`
+  ${flex({ alignItems: 'flex-start' })}
+  width: 100%;
+  align-content: flex-start;
+  gap: 20px;
+  flex-shrink: 0;
+  align-self: stretch;
+  flex-wrap: wrap;
 `
