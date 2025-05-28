@@ -8,26 +8,26 @@ const dummySeriesData = [
   {
     id: '1',
     image: 'dummyImage1.png',
-    title: '난동꾼',
+    title: '별종',
     lastUpdated: new Date('2025-05-17 10:20:30')
   },
-  { id: '2', image: 'dummyImage2.png', title: '엑시오스', lastUpdated: new Date() },
+  { id: '2', image: 'dummyImage2.png', title: '붉은색 배롱나무처럼', lastUpdated: new Date() },
   {
     id: '3',
     image: 'dummyImage3.png',
-    title: '흐름',
+    title: '괴담에 떨어져도 출근을 해야 하는구나',
     lastUpdated: new Date('2025-05-26 10:20:30')
   },
   {
     id: '4',
     image: 'dummyImage4.png',
-    title: '유수',
+    title: '회귀한 천재 닥터의 미국 정복기',
     lastUpdated: new Date('2024-05-17 10:20:30')
   },
   {
     id: '5',
-    image: 'dummyImage1.png',
-    title: '시리즈 5',
+    image: 'dummyImage5.png',
+    title: '빙의자에게 미래를 빼았겼다',
     lastUpdated: new Date('2025-05-18 09:10:00')
   },
   {
