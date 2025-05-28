@@ -10,7 +10,7 @@ interface TextProps extends HTMLAttributes<HTMLSpanElement> {
   fontType?: Font
   width?: CSSProperties['width']
   textAlign?: CSSProperties['textAlign']
-  ellipsis?: boolean
+  ellipsis?: boolean | number
   whiteSpace?: CSSProperties['whiteSpace']
   tag?: 'span' | 'p'
 }
@@ -39,13 +39,25 @@ const Text = ({
 
 export default Text
 
-const StyledText = styled.span<{ fontType: Font; ellipsis: boolean }>`
+const StyledText = styled.span<{ fontType: Font; ellipsis?: boolean | number }>`
   ${({ fontType }) => font[fontType]};
-  ${(props) =>
-    props.ellipsis &&
+  ${({ ellipsis }) =>
+    ellipsis === true &&
     css`
       display: inline-block;
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
+    `}
+  ${({ ellipsis }) =>
+    typeof ellipsis === 'number' &&
+    css`
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: ${ellipsis};
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-word;
+      white-space: normal;
     `}
 `
