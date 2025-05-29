@@ -16,6 +16,15 @@ const SeriesCreateModal = ({ isOpen, onClose }: Props) => {
 
   const modalRef = useOutsideClick<HTMLDivElement>(onClose)
 
+  const handleCreate = async () => {
+    const result = await window.api.createSeries(seriesTitle)
+    if (result.success) {
+      alert(`성공적으로 생성됨: ${result.path}`)
+    } else {
+      alert(`실패: ${result.message}`)
+    }
+  }
+
   return (
     <OverlayWrapper>
       <StyledSeriesCreateModal ref={modalRef}>
@@ -32,8 +41,12 @@ const SeriesCreateModal = ({ isOpen, onClose }: Props) => {
             rows={3}
           />
           <Row gap={6} alignItems="center" justifyContent="flex-end">
-            <Button property="DISABLED">취소</Button>
-            <Button property="DEFAULT">생성</Button>
+            <Button property="DISABLED" onClick={onClose}>
+              취소
+            </Button>
+            <Button property="DEFAULT" onClick={handleCreate}>
+              생성
+            </Button>
           </Row>
         </Column>
       </StyledSeriesCreateModal>

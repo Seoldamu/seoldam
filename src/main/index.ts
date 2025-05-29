@@ -1,5 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
+import { mkdirSync, existsSync } from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
@@ -72,3 +73,19 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+ipcMain.handle('create-series', (_, seriesName: string) => {
+  const userDataPath = app.getPath('userData')
+  const seriesPath = join(userDataPath, 'series', seriesName)
+
+  if (existsSync(seriesPath)) {
+    return { success: false, message: '이미 존재하는 작품입니다.' }
+  }
+
+  try {
+    mkdirSync(seriesPath, { recursive: true })
+    return { success: true, path: seriesPath }
+  } catch (err) {
+    return { success: false, message: '폴더 생성 중 오류 발생' }
+  }
+})
