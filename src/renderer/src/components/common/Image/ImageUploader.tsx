@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import styled, { CSSProperties } from 'styled-components'
 import Text from '../Text/Text'
 import { color } from '@renderer/design/styles'
@@ -7,7 +7,7 @@ interface Props {
   width?: CSSProperties['width']
   height?: CSSProperties['height']
   borderRadius?: CSSProperties['borderRadius']
-  value: string
+  value?: File | null
   onChange?: (file: File) => void
 }
 
@@ -23,19 +23,30 @@ const ImageUploader = ({
   const inputRef = useRef<HTMLInputElement>(null)
 
   const defaultImage = '/DefaultSeriesCover.png'
-  const imageSrc = preview || value || defaultImage
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-    const url = URL.createObjectURL(file)
+  useEffect(() => {
+    if (!value) {
+      setPreview(null)
+      return
+    }
+    const url = URL.createObjectURL(value)
     setPreview(url)
+    return () => {
+      URL.revokeObjectURL(url)
+    }
+  }, [value])
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
     onChange && onChange(file)
   }
 
   const handleClick = () => {
     inputRef.current?.click()
   }
+
+  const imageSrc = preview || defaultImage
 
   return (
     <StyledImageUploader
