@@ -1,8 +1,9 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
-import { mkdirSync, existsSync, writeFileSync } from 'fs'
+import path, { join } from 'path'
+import { mkdirSync, existsSync, writeFileSync, copyFileSync } from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { createMetaJson, generateUniqueFilename } from './utils'
 
 function createWindow(): void {
   // Create the browser window.
@@ -74,11 +75,17 @@ app.on('window-all-closed', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-ipcMain.handle('create-series', (_, seriesName: string) => {
+ipcMain.handle('create-series', (_, seriesTitle: string, seriesImagePath: string) => {
   const userDataPath = app.getPath('userData')
-  const seriesPath = join(userDataPath, 'series', seriesName)
+  const seriesPath = join(userDataPath, 'series', seriesTitle)
   const metaPath = join(seriesPath, 'meta.json')
   const rootPath = join(seriesPath, 'root')
+  const imageDir = join(seriesPath, 'image')
+
+  const ext = path.extname(seriesImagePath)
+
+  const destImageName = generateUniqueFilename(ext)
+  const destImagePath = join(imageDir, destImageName)
 
   if (existsSync(seriesPath)) {
     return { success: false, message: '이미 존재하는 작품입니다.' }
@@ -86,15 +93,13 @@ ipcMain.handle('create-series', (_, seriesName: string) => {
 
   try {
     mkdirSync(seriesPath, { recursive: true })
-
-    const meta = {
-      name: seriesName,
-      createdAt: new Date().toISOString(),
-      updateAt: new Date().toISOString()
-    }
-    writeFileSync(metaPath, JSON.stringify(meta, null, 2), 'utf-8')
-
     mkdirSync(rootPath, { recursive: true })
+    mkdirSync(imageDir, { recursive: true })
+
+    copyFileSync(seriesImagePath, destImagePath)
+
+    const meta = createMetaJson(seriesTitle, `image/${destImageName}`)
+    writeFileSync(metaPath, JSON.stringify(meta, null, 2), 'utf-8')
 
     return { success: true, path: seriesPath }
   } catch (err) {
