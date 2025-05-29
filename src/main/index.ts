@@ -1,6 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
-import { mkdirSync, existsSync } from 'fs'
+import { mkdirSync, existsSync, writeFileSync } from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
@@ -77,6 +77,8 @@ app.on('window-all-closed', () => {
 ipcMain.handle('create-series', (_, seriesName: string) => {
   const userDataPath = app.getPath('userData')
   const seriesPath = join(userDataPath, 'series', seriesName)
+  const metaPath = join(seriesPath, 'meta.json')
+  const rootPath = join(seriesPath, 'root')
 
   if (existsSync(seriesPath)) {
     return { success: false, message: '이미 존재하는 작품입니다.' }
@@ -84,8 +86,18 @@ ipcMain.handle('create-series', (_, seriesName: string) => {
 
   try {
     mkdirSync(seriesPath, { recursive: true })
+
+    const meta = {
+      name: seriesName,
+      createdAt: new Date().toISOString(),
+      updateAt: new Date().toISOString()
+    }
+    writeFileSync(metaPath, JSON.stringify(meta, null, 2), 'utf-8')
+
+    mkdirSync(rootPath, { recursive: true })
+
     return { success: true, path: seriesPath }
   } catch (err) {
-    return { success: false, message: '폴더 생성 중 오류 발생' }
+    return { success: false, message: '폴더 및 파일 생성 중 오류 발생' }
   }
 })
