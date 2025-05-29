@@ -1,4 +1,5 @@
 import { Button, Column, OverlayWrapper, Row, TextArea } from '@renderer/components/common'
+import ImageUploader from '@renderer/components/common/Image/ImageUploader'
 import { color } from '@renderer/design/styles'
 import { useOutsideClick } from '@renderer/hooks'
 import { flex } from '@renderer/utils'
@@ -12,12 +13,14 @@ interface Props {
 
 const SeriesCreateModal = ({ isOpen, onClose }: Props) => {
   const [seriesTitle, setSeriesTitle] = useState('')
-  if (!isOpen) return null
-
+  const [seriesImage, setSeriesImage] = useState<File | null>(null)
   const modalRef = useOutsideClick<HTMLDivElement>(onClose)
 
+  if (!isOpen) return null
+
   const handleCreate = async () => {
-    const result = await window.api.createSeries(seriesTitle)
+    const seriesImagePath = seriesImage ? window.api.getPathForFile(seriesImage) : ''
+    const result = await window.api.createSeries(seriesTitle, seriesImagePath)
     if (result.success) {
       alert(`성공적으로 생성됨: ${result.path}`)
     } else {
@@ -28,7 +31,13 @@ const SeriesCreateModal = ({ isOpen, onClose }: Props) => {
   return (
     <OverlayWrapper>
       <StyledSeriesCreateModal ref={modalRef}>
-        <SeriesCover src="DefaultSeriesCover.png" />
+        <ImageUploader
+          width={96}
+          height={120}
+          borderRadius={8}
+          value={seriesImage}
+          onChange={setSeriesImage}
+        />
         <Column width={341} justifyContent="space-between">
           <TextArea
             value={seriesTitle}
@@ -65,12 +74,4 @@ const StyledSeriesCreateModal = styled.div`
 
   border-radius: 14px;
   background: ${color.G0};
-`
-
-const SeriesCover = styled.img`
-  width: 96px;
-  height: 120px;
-  aspect-ratio: 4/5;
-
-  border-radius: 8px;
 `
