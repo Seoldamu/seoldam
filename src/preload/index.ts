@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
 interface CreateSeriesResult {
@@ -11,7 +11,7 @@ const api = {
   createSeries: (name: string): Promise<CreateSeriesResult> =>
     ipcRenderer.invoke('create-series', name),
 
-  getSeriesList: (): Promise<string[]> => ipcRenderer.invoke('get-series-list')
+  getPathForFile: (file) => webUtils.getPathForFile(file)
 }
 
 if (process.contextIsolated) {
