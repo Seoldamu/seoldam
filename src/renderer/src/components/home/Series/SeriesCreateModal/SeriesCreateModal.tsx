@@ -19,13 +19,18 @@ const SeriesCreateModal = ({ isOpen, onClose }: Props) => {
   if (!isOpen) return null
 
   const handleCreate = async () => {
-    const seriesImagePath = seriesImage ? window.api.getPathForFile(seriesImage) : ''
+    if (!seriesImage) {
+      alert('이미지를 추가해주세요.')
+      return
+    }
+    const seriesImagePath = window.api.getPathForFile(seriesImage)
     const result = await window.api.createSeries(seriesTitle, seriesImagePath)
     if (result.success) {
       alert(`성공적으로 생성됨: ${result.path}`)
     } else {
       alert(`실패: ${result.message}`)
     }
+    onClose()
   }
 
   return (

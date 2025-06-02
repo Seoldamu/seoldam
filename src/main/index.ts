@@ -82,21 +82,24 @@ ipcMain.handle('create-series', (_, seriesTitle: string, seriesImagePath: string
   const rootPath = join(seriesPath, 'root')
   const imageDir = join(seriesPath, 'image')
 
-  const ext = path.extname(seriesImagePath)
-
-  const destImageName = generateUniqueFilename(ext)
-  const destImagePath = join(imageDir, destImageName)
-
-  if (existsSync(seriesPath)) {
-    return { success: false, message: '이미 존재하는 작품입니다.' }
-  }
-
   try {
+    if (existsSync(seriesPath)) {
+      return { success: false, message: '이미 존재하는 작품입니다.' }
+    }
+
     mkdirSync(seriesPath, { recursive: true })
     mkdirSync(rootPath, { recursive: true })
     mkdirSync(imageDir, { recursive: true })
 
-    copyFileSync(seriesImagePath, destImagePath)
+    const ext = path.extname(seriesImagePath) || '.png'
+    const destImageName = generateUniqueFilename(ext)
+    const destImagePath = join(imageDir, destImageName)
+
+    if (existsSync(seriesImagePath)) {
+      copyFileSync(seriesImagePath, destImagePath)
+    } else {
+      return { success: false, message: '이미지 경로가 존재하지 않습니다.' }
+    }
 
     const meta = createMetaJson(seriesTitle, `image/${destImageName}`)
     writeFileSync(metaPath, JSON.stringify(meta, null, 2), 'utf-8')
