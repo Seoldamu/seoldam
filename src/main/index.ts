@@ -1,7 +1,9 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
+import path, { join } from 'path'
+import { mkdirSync, existsSync, writeFileSync, copyFileSync } from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { createMetaJson, generateUniqueFilename } from './utils'
 
 function createWindow(): void {
   // Create the browser window.
@@ -72,3 +74,38 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+ipcMain.handle('create-series', (_, seriesTitle: string, seriesImagePath: string) => {
+  const userDataPath = app.getPath('userData')
+  const seriesPath = join(userDataPath, 'series', seriesTitle)
+  const metaPath = join(seriesPath, 'meta.json')
+  const rootPath = join(seriesPath, 'root')
+  const imageDir = join(seriesPath, 'image')
+
+  try {
+    if (existsSync(seriesPath)) {
+      return { success: false, message: '이미 존재하는 작품입니다.' }
+    }
+
+    mkdirSync(seriesPath, { recursive: true })
+    mkdirSync(rootPath, { recursive: true })
+    mkdirSync(imageDir, { recursive: true })
+
+    const ext = path.extname(seriesImagePath) || '.png'
+    const destImageName = generateUniqueFilename(ext)
+    const destImagePath = join(imageDir, destImageName)
+
+    if (existsSync(seriesImagePath)) {
+      copyFileSync(seriesImagePath, destImagePath)
+    } else {
+      return { success: false, message: '이미지 경로가 존재하지 않습니다.' }
+    }
+
+    const meta = createMetaJson(seriesTitle, `image/${destImageName}`)
+    writeFileSync(metaPath, JSON.stringify(meta, null, 2), 'utf-8')
+
+    return { success: true, path: seriesPath }
+  } catch (err) {
+    return { success: false, message: '폴더 및 파일 생성 중 오류 발생' }
+  }
+})

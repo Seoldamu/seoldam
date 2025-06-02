@@ -2,6 +2,8 @@ import { Row, IconButton } from '@renderer/components/common'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 import SeriesItem from './SeriesListItem/SeriesListItem'
+import useOverlay from '@renderer/hooks/useOverlay'
+import SeriesCreateModal from './SeriesCreateModal/SeriesCreateModal'
 
 const dummySeriesData = [
   {
@@ -68,14 +70,14 @@ const dummySeriesData = [
 ]
 
 const Series = () => {
-  const handleAddSeriesButtonClick = () => {
-    console.log('새 시리즈 생성 버튼이 클릭 되었어요!')
-  }
+  const { handleOpen, Overlay } = useOverlay(({ isOpen, onClose }) => (
+    <SeriesCreateModal isOpen={isOpen} onClose={onClose} />
+  ))
 
   return (
     <StyledSeries>
       <Row justifyContent="flex-end">
-        <IconButton onClick={handleAddSeriesButtonClick}>새 시리즈</IconButton>
+        <IconButton onClick={handleOpen}>새 시리즈</IconButton>
       </Row>
       <SeriesList>
         {dummySeriesData.map((item) => (
@@ -88,6 +90,7 @@ const Series = () => {
           />
         ))}
       </SeriesList>
+      {Overlay}
     </StyledSeries>
   )
 }
