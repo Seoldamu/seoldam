@@ -11,7 +11,7 @@ const api = {
   createSeries: (seriesName: string, seriesImagePath: string): Promise<CreateSeriesResult> =>
     ipcRenderer.invoke('create-series', seriesName, seriesImagePath),
 
-  getSeriesList: (): Promise<string[]> => ipcRenderer.invoke('get-series-list'),
+  getSeriesList: (): Promise<any[]> => ipcRenderer.invoke('get-series-list'),
 
   getPathForFile: (file) => webUtils.getPathForFile(file)
 }

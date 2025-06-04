@@ -1,6 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import path, { join } from 'path'
-import { mkdirSync, existsSync, writeFileSync, copyFileSync } from 'fs'
+import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, readFileSync } from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { createMetaJson, generateUniqueFilename } from './utils'
@@ -108,4 +108,30 @@ ipcMain.handle('create-series', (_, seriesTitle: string, seriesImagePath: string
   } catch (err) {
     return { success: false, message: '폴더 및 파일 생성 중 오류 발생' }
   }
+})
+
+ipcMain.handle('get-series-list', () => {
+  const userDataPath = app.getPath('userData')
+  const seriesRoot = join(userDataPath, 'series')
+  const seriesList: any[] = []
+
+  if (!existsSync(seriesRoot)) {
+    return []
+  }
+
+  const seriesDirs = readdirSync(seriesRoot, { withFileTypes: true })
+    .filter((dirent) => dirent.isDirectory())
+    .map((dirent) => dirent.name)
+
+  for (const dir of seriesDirs) {
+    const metaPath = join(seriesRoot, dir, 'meta.json')
+    if (existsSync(metaPath)) {
+      try {
+        const meta = JSON.parse(readFileSync(metaPath, 'utf-8'))
+        seriesList.push(meta)
+      } catch {}
+    }
+  }
+
+  return seriesList
 })
