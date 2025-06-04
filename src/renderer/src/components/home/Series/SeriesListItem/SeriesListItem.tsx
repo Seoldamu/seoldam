@@ -6,27 +6,31 @@ import { useNavigate } from 'react-router-dom'
 
 interface Props {
   id: string
-  image: string
   title: string
-  lastUpdated: Date
+  coverImagePath: string
+  updateAt: string
 }
 
-const SeriesItem = ({ id, image, title, lastUpdated }: Props) => {
+const SeriesItem = ({ id, title, coverImagePath, updateAt }: Props) => {
   const navigate = useNavigate()
 
   const handleSeriesItemClick = () => {
     navigate(`/editor/${id}`)
   }
 
+  const imgSrc = `seoldam://series/${encodeURIComponent(title)}/${coverImagePath}`
+
   return (
     <StyledSeriesItem onClick={handleSeriesItemClick}>
-      <SeriesItemImg src={image} />
+      <SeriesItemImgWrapper>
+        <SeriesItemImg src={imgSrc} />
+      </SeriesItemImgWrapper>
       <Column gap={4}>
         <Text fontType="H1" color={color.G900} ellipsis={2} whiteSpace="normal">
           {title}
         </Text>
         <Text fontType="L4" color={color.G100} ellipsis={true}>
-          {`최근 수정일 ${getRelativeDateString(lastUpdated)}전`}
+          {`최근 수정일 ${getRelativeDateString(updateAt)}전`}
         </Text>
       </Column>
     </StyledSeriesItem>
@@ -40,13 +44,22 @@ const StyledSeriesItem = styled.div`
   width: calc(16.748436% - 5px);
   min-width: 0;
   gap: 12px;
-  object-fit: cover;
-
   cursor: pointer;
 `
 
-const SeriesItemImg = styled.img`
-  ${flex({ flexDirection: 'column', alignItems: 'center' })}
+const SeriesItemImgWrapper = styled.div`
+  position: relative;
   width: 100%;
+  aspect-ratio: 2 / 3;
   border-radius: 12px;
+  overflow: hidden;
+`
+
+const SeriesItemImg = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `
