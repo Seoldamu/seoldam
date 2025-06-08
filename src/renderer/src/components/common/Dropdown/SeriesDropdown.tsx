@@ -1,5 +1,5 @@
 import { Text } from '@renderer/components/common'
-import { IconDropdownArrow } from '@renderer/design/icons'
+import { IconArrowDirection } from '@renderer/design/icons'
 import { color } from '@renderer/design/styles'
 import { useBoolean, useOutsideClick } from '@renderer/hooks'
 import { flex } from '@renderer/utils'
@@ -23,7 +23,7 @@ interface Props {
 }
 
 const SeriesDropdown = ({
-  icon = <IconDropdownArrow width={28} height={28} />,
+  icon = <IconArrowDirection width={28} height={28} direction="bottom" />,
   name,
   data,
   onChange,
