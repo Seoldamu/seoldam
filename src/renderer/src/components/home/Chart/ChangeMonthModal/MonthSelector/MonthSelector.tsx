@@ -1,10 +1,9 @@
 import { Column, Text } from '@renderer/components/common'
 import { IconArrowDirection } from '@renderer/design/icons'
 import { color } from '@renderer/design/styles'
+import { Month } from '@renderer/types/home/type'
 import { flex } from '@renderer/utils'
 import styled, { CSSProperties } from 'styled-components'
-
-type Month = { year: number; month: number }
 
 interface Props {
   label?: string
