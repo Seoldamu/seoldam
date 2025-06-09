@@ -8,11 +8,13 @@ import { flex } from '@renderer/utils'
 import { IconCompareArrow } from '@renderer/design/icons'
 import useMonthStore from '@renderer/stores/monthStore'
 import { useEffect, useState } from 'react'
+import useTodayCharCountStore from '@renderer/stores/todayCharCountStore'
 
 const Chart = () => {
   const [compareMonthCharCountsList, setCompareMonthCharCountsList] = useState<number[]>([])
   const [comparedMonthCharCountsList, setComparedMonthCharCountsList] = useState<number[]>([])
   const { compareMonth, comparedMonth } = useMonthStore()
+  const { todayCharCount } = useTodayCharCountStore()
 
   useEffect(() => {
     window.api.getSeriesCharCountsList(compareMonth).then((data: number[]) => {
@@ -24,12 +26,11 @@ const Chart = () => {
     })
   }, [compareMonth, comparedMonth])
 
-  const writtenCount = 1000
   const labels = Array.from({ length: 31 }, (_, i) => i + 1)
 
   const option = {
     title: {
-      text: `오늘 쓴 글자\n{num|${writtenCount}자}`,
+      text: `오늘 쓴 글자\n{num|${todayCharCount}자}`,
       left: 10,
       top: 0,
       textStyle: {
