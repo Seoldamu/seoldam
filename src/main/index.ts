@@ -1,12 +1,24 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import path, { join } from 'path'
-import { mkdirSync, existsSync, writeFileSync, copyFileSync } from 'fs'
+import { app, shell, BrowserWindow, ipcMain, protocol, net } from 'electron'
+import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, readFileSync } from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { createMetaJson, generateUniqueFilename } from './utils'
+import path, { join } from 'node:path'
+import fs from 'node:fs'
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'seoldam',
+    privileges: {
+      standard: true,
+      secure: true,
+      bypassCSP: true,
+      supportFetchAPI: true
+    }
+  }
+])
 
 function createWindow(): void {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1296,
     height: 1024,
@@ -19,6 +31,10 @@ function createWindow(): void {
     }
   })
 
+  //dev 모드의 개발자 창
+  mainWindow.loadURL('http://localhost:5173')
+  mainWindow.webContents.openDevTools()
+
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
@@ -28,8 +44,6 @@ function createWindow(): void {
     return { action: 'deny' }
   })
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
@@ -37,43 +51,52 @@ function createWindow(): void {
   }
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
-  // Set app user model id for windows
+app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.electron')
 
-  // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
   createWindow()
 
   app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+
+  protocol.handle('seoldam', async (request) => {
+    const url = new URL(request.url)
+    const fullPath = `/${url.host}${url.pathname}`
+    const decodedPath = decodeURIComponent(fullPath)
+
+    const relativePath = decodedPath.replace(/^\/+/, '')
+    const userDataPath = app.getPath('userData')
+    const filePath = path.join(userDataPath, relativePath)
+
+    if (fs.existsSync(filePath)) {
+      return net.fetch(`file://${filePath}`)
+    }
+    return new Response('Not Found', { status: 404 })
+  })
+
+  const mainWindow = new BrowserWindow({
+    webPreferences: {
+      preload: path.join(__dirname, '../preload/index.js'),
+      sandbox: false
+    }
+  })
+
+  mainWindow.loadURL('http://localhost:5173')
+  mainWindow.webContents.openDevTools()
 })
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
 
 ipcMain.handle('create-series', (_, seriesTitle: string, seriesImagePath: string) => {
   const userDataPath = app.getPath('userData')
@@ -108,4 +131,59 @@ ipcMain.handle('create-series', (_, seriesTitle: string, seriesImagePath: string
   } catch (err) {
     return { success: false, message: '폴더 및 파일 생성 중 오류 발생' }
   }
+})
+
+ipcMain.handle('get-series-list', () => {
+  const userDataPath = app.getPath('userData')
+  const seriesRoot = join(userDataPath, 'series')
+  const seriesList: any[] = []
+
+  if (!existsSync(seriesRoot)) {
+    return []
+  }
+
+  const seriesDirs = readdirSync(seriesRoot, { withFileTypes: true })
+    .filter((dirent) => dirent.isDirectory())
+    .map((dirent) => dirent.name)
+
+  for (const dir of seriesDirs) {
+    const metaPath = join(seriesRoot, dir, 'meta.json')
+    if (existsSync(metaPath)) {
+      try {
+        const meta = JSON.parse(readFileSync(metaPath, 'utf-8'))
+        seriesList.push(meta)
+      } catch {}
+    }
+  }
+
+  return seriesList
+})
+
+ipcMain.handle('get-series-charCount-list', (_, date: { year: number; month: number }) => {
+  const userDataPath = app.getPath('userData')
+  const seriesRoot = join(userDataPath, 'series')
+  const charCountsPath = join(seriesRoot, 'charCounts.json')
+
+  if (!existsSync(seriesRoot)) {
+    mkdirSync(seriesRoot, { recursive: true })
+  }
+
+  let charCounts: Record<number, Record<number, any[]>> = {}
+  if (existsSync(charCountsPath)) {
+    try {
+      charCounts = JSON.parse(readFileSync(charCountsPath, 'utf-8'))
+    } catch (err) {
+      charCounts = {}
+      writeFileSync(charCountsPath, JSON.stringify(charCounts, null, 2), 'utf-8')
+    }
+  } else {
+    writeFileSync(charCountsPath, JSON.stringify(charCounts, null, 2), 'utf-8')
+  }
+
+  const year = date.year
+  const month = date.month
+  if (!charCounts[year]) charCounts[year] = {}
+  if (!charCounts[year][month]) charCounts[year][month] = []
+
+  return charCounts[year][month]
 })

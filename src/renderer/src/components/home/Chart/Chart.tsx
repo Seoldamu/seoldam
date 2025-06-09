@@ -1,22 +1,36 @@
 import { color } from '@renderer/design/styles'
 import ReactECharts from 'echarts-for-react'
+import ChangeMonthModal from './ChangeMonthModal/ChangeMonthModal'
+import { useOverlay } from '@renderer/hooks'
+import { Text } from '@renderer/components/common'
+import { styled } from 'styled-components'
+import { flex } from '@renderer/utils'
+import { IconCompareArrow } from '@renderer/design/icons'
+import useMonthStore from '@renderer/stores/monthStore'
+import { useEffect, useState } from 'react'
+import useTodayCharCountStore from '@renderer/stores/todayCharCountStore'
 
 const Chart = () => {
-  const writtenCount = 1000
-  const labels = Array.from({ length: 30 }, (_, i) => i + 1)
-  const data1 = [
-    3123, 3984, 2501, 3765, 3410, 2999, 3840, 2674, 3902, 3005, 3280, 3100, 2874, 3690, 3560, 3300,
-    3900, 3444, 3666, 3777, 2210, 3450, 3333, 3800, 2990, 3188, 3675, 3060, 2950, 3533
-  ]
+  const [compareMonthCharCountsList, setCompareMonthCharCountsList] = useState<number[]>([])
+  const [comparedMonthCharCountsList, setComparedMonthCharCountsList] = useState<number[]>([])
+  const { compareMonth, comparedMonth } = useMonthStore()
+  const { todayCharCount } = useTodayCharCountStore()
 
-  const data2 = [
-    1820, 2450, 1630, 1200, 2755, 1944, 2210, 2080, 1870, 1777, 2633, 1001, 1130, 1980, 2430, 1330,
-    1220, 2010, 1770, 1988, 1540, 1422, 2311, 1005, 1910, 1340, 2730, 1560, 2130, 1599
-  ]
+  useEffect(() => {
+    window.api.getSeriesCharCountsList(compareMonth).then((data: number[]) => {
+      setCompareMonthCharCountsList(data)
+    })
+
+    window.api.getSeriesCharCountsList(comparedMonth).then((data: number[]) => {
+      setComparedMonthCharCountsList(data)
+    })
+  }, [compareMonth, comparedMonth])
+
+  const labels = Array.from({ length: 31 }, (_, i) => i + 1)
 
   const option = {
     title: {
-      text: `오늘 쓴 글자\n{num|${writtenCount}자}`,
+      text: `오늘 쓴 글자\n{num|${todayCharCount}자}`,
       left: 10,
       top: 0,
       textStyle: {
@@ -39,8 +53,11 @@ const Chart = () => {
       }
     },
     legend: {
-      data: ['이번 달 쓴 글자 수', '저번 달 쓴 글자 수'],
-      top: 0,
+      data: [
+        `${compareMonth.year}.${compareMonth.month}월 쓴 글자 수`,
+        `${comparedMonth.year}.${comparedMonth.month}월 쓴 글자 수`
+      ],
+      top: 20,
       right: 10,
       orient: 'vertical',
       itemGap: 4,
@@ -58,9 +75,9 @@ const Chart = () => {
     },
     series: [
       {
-        name: '이번 달 쓴 글자 수',
+        name: `${compareMonth.year}.${compareMonth.month}월 쓴 글자 수`,
         type: 'line',
-        data: data1, // 후에 동적인 값
+        data: compareMonthCharCountsList,
         smooth: 0.3,
         showSymbol: false,
         symbol: 'circle',
@@ -106,9 +123,9 @@ const Chart = () => {
         }
       },
       {
-        name: '저번 달 쓴 글자 수',
+        name: `${comparedMonth.year}.${comparedMonth.month}월 쓴 글자 수`,
         type: 'line',
-        data: data2, // 후에 동적인 값
+        data: comparedMonthCharCountsList,
         smooth: 0.3,
         showSymbol: false,
         symbol: 'circle',
@@ -221,11 +238,38 @@ const Chart = () => {
     ]
   }
 
+  const { handleOpen, Overlay } = useOverlay(({ isOpen, onClose }) => (
+    <ChangeMonthModal isOpen={isOpen} onClose={onClose} />
+  ))
+
   return (
-    <div style={{ width: '100%', height: '300px' }}>
+    <div style={{ width: '100%', height: '300px', position: 'relative' }}>
+      <div
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: 6,
+          zIndex: 10
+        }}
+      >
+        <ChangeMonthButton onClick={handleOpen}>
+          <IconCompareArrow />
+          <Text fontType="L4" color={color.G100}>
+            비교 달 변경
+          </Text>
+        </ChangeMonthButton>
+      </div>
       <ReactECharts option={option} style={{ height: '100%', width: '100%' }} />
+      {Overlay}
     </div>
   )
 }
 
 export default Chart
+
+const ChangeMonthButton = styled.div`
+  ${flex({ alignItems: 'center' })}
+  gap: 4px;
+
+  cursor: pointer;
+`
