@@ -6,24 +6,16 @@ import MonthSelector from './MonthSelector/MonthSelector'
 import { useEffect, useState } from 'react'
 import { Month } from '@renderer/types/home/type'
 import { useOutsideClick } from '@renderer/hooks'
+import useMonthStore from '@renderer/stores/monthStore'
 
 interface Props {
   isOpen: boolean
   onClose: () => void
-  compareMonth: Month
-  comparedMonth: Month
-  onChangeCompareMonth: (value: Month) => void
-  onChangeComparedMonth: (value: Month) => void
 }
 
-const ChangeMonthModal = ({
-  isOpen,
-  onClose,
-  compareMonth,
-  comparedMonth,
-  onChangeCompareMonth,
-  onChangeComparedMonth
-}: Props) => {
+const ChangeMonthModal = ({ isOpen, onClose }: Props) => {
+  const { compareMonth, comparedMonth, setCompareMonth, setComparedMonth } = useMonthStore()
+
   const [tempCompare, setTempCompare] = useState<Month>(compareMonth)
   const [tempCompared, setTempCompared] = useState<Month>(comparedMonth)
 
@@ -34,8 +26,8 @@ const ChangeMonthModal = ({
   }
 
   const handleConfirm = () => {
-    onChangeCompareMonth(tempCompare)
-    onChangeComparedMonth(tempCompared)
+    setCompareMonth(tempCompare)
+    setComparedMonth(tempCompared)
     onClose()
   }
 
