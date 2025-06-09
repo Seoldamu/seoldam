@@ -51,7 +51,7 @@ function createWindow(): void {
   }
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.electron')
 
   app.on('browser-window-created', (_, window) => {
@@ -65,9 +65,7 @@ app.whenReady().then(() => {
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
-})
 
-app.whenReady().then(async () => {
   protocol.handle('seoldam', async (request) => {
     const url = new URL(request.url)
     const fullPath = `/${url.host}${url.pathname}`
