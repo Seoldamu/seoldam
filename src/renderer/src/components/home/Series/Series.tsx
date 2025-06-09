@@ -41,7 +41,7 @@ const Series = () => {
             id={item.id}
             title={item.title}
             coverImagePath={item.coverImagePath}
-            updateAt={item.updatedAt}
+            updatedAt={item.updatedAt}
           />
         ))}
       </SeriesList>

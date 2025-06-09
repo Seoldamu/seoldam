@@ -8,10 +8,10 @@ interface Props {
   id: string
   title: string
   coverImagePath: string
-  updateAt: string
+  updatedAt: string
 }
 
-const SeriesItem = ({ id, title, coverImagePath, updateAt }: Props) => {
+const SeriesItem = ({ id, title, coverImagePath, updatedAt }: Props) => {
   const navigate = useNavigate()
 
   const handleSeriesItemClick = () => {
@@ -30,7 +30,7 @@ const SeriesItem = ({ id, title, coverImagePath, updateAt }: Props) => {
           {title}
         </Text>
         <Text fontType="L4" color={color.G100} ellipsis={true}>
-          {`최근 수정일 ${getRelativeDateString(updateAt)}전`}
+          {`최근 수정일 ${getRelativeDateString(updatedAt)}전`}
         </Text>
       </Column>
     </StyledSeriesItem>
