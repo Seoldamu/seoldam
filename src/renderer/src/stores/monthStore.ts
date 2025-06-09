@@ -1,7 +1,6 @@
+import { Month } from '@renderer/types/home/type'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-
-export type Month = { year: number; month: number }
 
 type MonthStore = {
   compareMonth: Month
