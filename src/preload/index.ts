@@ -13,6 +13,9 @@ const api = {
 
   getSeriesList: (): Promise<any[]> => ipcRenderer.invoke('get-series-list'),
 
+  getSeriesCharCountsList: (date: { year: number; month: number }): Promise<any[]> =>
+    ipcRenderer.invoke('get-series-charCount-list', date),
+
   getPathForFile: (file) => webUtils.getPathForFile(file)
 }
 

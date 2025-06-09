@@ -160,3 +160,32 @@ ipcMain.handle('get-series-list', () => {
 
   return seriesList
 })
+
+ipcMain.handle('get-series-charCount-list', (_, date: { year: number; month: number }) => {
+  const userDataPath = app.getPath('userData')
+  const seriesRoot = join(userDataPath, 'series')
+  const charCountsPath = join(seriesRoot, 'charCounts.json')
+
+  if (!existsSync(seriesRoot)) {
+    mkdirSync(seriesRoot, { recursive: true })
+  }
+
+  let charCounts: Record<number, Record<number, any[]>> = {}
+  if (existsSync(charCountsPath)) {
+    try {
+      charCounts = JSON.parse(readFileSync(charCountsPath, 'utf-8'))
+    } catch (err) {
+      charCounts = {}
+      writeFileSync(charCountsPath, JSON.stringify(charCounts, null, 2), 'utf-8')
+    }
+  } else {
+    writeFileSync(charCountsPath, JSON.stringify(charCounts, null, 2), 'utf-8')
+  }
+
+  const year = date.year
+  const month = date.month
+  if (!charCounts[year]) charCounts[year] = {}
+  if (!charCounts[year][month]) charCounts[year][month] = []
+
+  return charCounts[year][month]
+})
