@@ -16,7 +16,10 @@ const api = {
   getSeriesCharCountsList: (date: { year: number; month: number }): Promise<any[]> =>
     ipcRenderer.invoke('get-series-charCount-list', date),
 
-  getPathForFile: (file) => webUtils.getPathForFile(file)
+  getPathForFile: (file) => webUtils.getPathForFile(file),
+
+  getSeriesStructure: (seriesPath: string) =>
+    ipcRenderer.invoke('read-series-structure', seriesPath)
 }
 
 if (process.contextIsolated) {

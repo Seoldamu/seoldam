@@ -200,3 +200,28 @@ ipcMain.handle('get-series-charCount-list', (_, date: { year: number; month: num
 
   return charCounts[year][month]
 })
+
+function readDirectoryRecursive(dirPath: string): any[] {
+  const items = readdirSync(dirPath)
+  return items.map((name) => {
+    const fullPath = join(dirPath, name)
+    const stats = statSync(fullPath)
+    const isDirectory = stats.isDirectory()
+
+    return {
+      name,
+      type: isDirectory ? 'folder' : 'file',
+      children: isDirectory ? readDirectoryRecursive(fullPath) : undefined
+    }
+  })
+}
+
+ipcMain.handle('read-series-structure', (_, seriesPath: string) => {
+  const rootPath = join(seriesPath, 'root')
+  try {
+    const structure = readDirectoryRecursive(rootPath)
+    return { success: true, structure }
+  } catch (err) {
+    return { success: false, message: '디렉토리 읽기 실패' }
+  }
+})
