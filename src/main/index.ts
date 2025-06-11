@@ -1,5 +1,13 @@
 import { app, shell, BrowserWindow, ipcMain, protocol, net } from 'electron'
-import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, readFileSync } from 'fs'
+import {
+  mkdirSync,
+  existsSync,
+  writeFileSync,
+  copyFileSync,
+  readdirSync,
+  readFileSync,
+  statSync
+} from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { createMetaJson, generateUniqueFilename } from './utils'
@@ -151,7 +159,12 @@ ipcMain.handle('get-series-list', () => {
     if (existsSync(metaPath)) {
       try {
         const meta = JSON.parse(readFileSync(metaPath, 'utf-8'))
-        seriesList.push(meta)
+        const fullPath = join(seriesRoot, dir)
+
+        seriesList.push({
+          ...meta,
+          path: fullPath
+        })
       } catch {}
     }
   }
