@@ -1,21 +1,22 @@
 import { Column, Text } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
+import { useSeriesStore } from '@renderer/stores/seriesStore'
 import { flex, getRelativeDateString } from '@renderer/utils'
 import { styled } from 'styled-components'
-import { useNavigate } from 'react-router-dom'
 
 interface Props {
   id: string
   title: string
   coverImagePath: string
   updatedAt: string
+  path: string
 }
 
-const SeriesItem = ({ id, title, coverImagePath, updatedAt }: Props) => {
-  const navigate = useNavigate()
+const SeriesItem = ({ title, coverImagePath, updatedAt, path }: Props) => {
+  const setSeriesPath = useSeriesStore((state) => state.setSeriesPath)
 
   const handleSeriesItemClick = () => {
-    navigate(`/editor/${id}`)
+    setSeriesPath(path)
   }
 
   const imgSrc = `seoldam://series/${encodeURIComponent(title)}/${coverImagePath}`

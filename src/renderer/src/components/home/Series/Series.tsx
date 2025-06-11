@@ -8,11 +8,12 @@ import { useEffect, useState } from 'react'
 import { SeriesListItem, SeriesMeta } from '@renderer/types/series/type'
 
 const extractSeriesList = (list: SeriesMeta[]): SeriesListItem[] => {
-  return list.map(({ id, title, coverImagePath, updatedAt }) => ({
+  return list.map(({ id, title, coverImagePath, updatedAt, path }) => ({
     id,
     title,
     coverImagePath,
-    updatedAt
+    updatedAt,
+    path
   }))
 }
 
@@ -42,6 +43,7 @@ const Series = () => {
             title={item.title}
             coverImagePath={item.coverImagePath}
             updatedAt={item.updatedAt}
+            path={item.path}
           />
         ))}
       </SeriesList>
