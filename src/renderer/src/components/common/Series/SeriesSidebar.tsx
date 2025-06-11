@@ -49,6 +49,9 @@ export default SeriesSidebar
 
 const StyledSeriesSidebar = styled.div`
   ${flex({ flexDirection: 'column', alignItems: 'flex-start' })}
+  width: 100%;
+  margin-top: 50px;
+  padding: 0px 20px;
   gap: 11px;
 `
 
