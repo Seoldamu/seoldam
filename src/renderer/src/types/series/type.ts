@@ -17,3 +17,9 @@ export type SeriesListItem = Pick<
   SeriesMeta,
   'id' | 'title' | 'coverImagePath' | 'updatedAt' | 'path'
 >
+
+export type TreeNode = {
+  name: string
+  type: 'file' | 'folder'
+  children?: TreeNode[]
+}
