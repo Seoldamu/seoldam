@@ -26,7 +26,7 @@ const SeriesSidebar = () => {
 
   if (!currentSeriesPath) return null
 
-  const seriesName = currentSeriesPath.split('\\').pop() || ''
+  const seriesName = currentSeriesPath.split(/[/\\]/).pop() || ''
 
   return (
     <StyledSeriesSidebar>
