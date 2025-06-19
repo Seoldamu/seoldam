@@ -7,7 +7,11 @@ import SeriesFile from '../SeriesFile/SeriesFile'
 import { useState } from 'react'
 import { TreeNode } from '@renderer/types/series/type'
 
-const SeriesFolder = ({ node }: { node: TreeNode }) => {
+interface Props {
+  node: TreeNode
+}
+
+const SeriesFolder = ({ node }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (

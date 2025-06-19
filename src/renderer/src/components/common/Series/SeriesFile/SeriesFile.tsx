@@ -5,7 +5,11 @@ import { Text } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
 import { TreeNode } from '@renderer/types/series/type'
 
-const SeriesFile = ({ node }: { node: TreeNode }) => {
+interface Props {
+  node: TreeNode
+}
+
+const SeriesFile = ({ node }: Props) => {
   return (
     <StyledSeriesFile>
       <IconArticle width={24} height={24} />
