@@ -27,6 +27,11 @@ const StyledSeriesFile = styled.div`
   width: 100%;
   padding: 4px;
   gap: 8px;
+  cursor: pointer;
 
   border-radius: 4px;
+
+  &:hover {
+    background: ${color.G20};
+  }
 `
