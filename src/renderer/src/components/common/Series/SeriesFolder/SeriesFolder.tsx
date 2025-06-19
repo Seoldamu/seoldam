@@ -6,6 +6,8 @@ import { color } from '@renderer/design/styles'
 import SeriesFile from '../SeriesFile/SeriesFile'
 import { useState } from 'react'
 import { TreeNode } from '@renderer/types/series/type'
+import { useContextMenu, useOutsideClick } from '@renderer/hooks'
+import ContextMenu from '../../ContextMenu/ContextMenu'
 
 interface Props {
   node: TreeNode
@@ -13,10 +15,37 @@ interface Props {
 
 const SeriesFolder = ({ node }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
+  const { contextMenuVisible, contextMenuPosition, openContextMenu, closeContextMenu } =
+    useContextMenu()
+
+  const contextMenuRef = useOutsideClick<HTMLDivElement>(() => {
+    if (contextMenuVisible) {
+      closeContextMenu()
+    }
+  })
+
+  const contextMenuData = [
+    {
+      label: '폴더 이름 변경',
+      value: 'rename',
+      onClick: () => {
+        closeContextMenu()
+        console.log(`Rename ${node.name}`)
+      }
+    },
+    {
+      label: '폴더 삭제',
+      value: 'delete',
+      onClick: () => {
+        closeContextMenu()
+        console.log(`Delete ${node.name}`)
+      }
+    }
+  ]
 
   return (
     <>
-      <StyledSeriesFolder onClick={() => setIsOpen(!isOpen)}>
+      <StyledSeriesFolder onContextMenu={openContextMenu} onClick={() => setIsOpen(!isOpen)}>
         <IconFolder width={24} height={24} active={isOpen} />
         <Text fontType="B2" color={color.G800} ellipsis={true}>
           {node.name}
@@ -32,6 +61,19 @@ const SeriesFolder = ({ node }: Props) => {
             )
           )}
       </FolderContent>
+      {contextMenuVisible && (
+        <div
+          ref={contextMenuRef}
+          style={{
+            position: 'fixed',
+            top: contextMenuPosition.y,
+            left: contextMenuPosition.x,
+            zIndex: 9999
+          }}
+        >
+          <ContextMenu data={contextMenuData} />
+        </div>
+      )}
     </>
   )
 }
