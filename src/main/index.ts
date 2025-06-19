@@ -1,5 +1,13 @@
 import { app, shell, BrowserWindow, ipcMain, protocol, net } from 'electron'
-import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, readFileSync } from 'fs'
+import {
+  mkdirSync,
+  existsSync,
+  writeFileSync,
+  copyFileSync,
+  readdirSync,
+  readFileSync,
+  statSync
+} from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { createMetaJson, generateUniqueFilename } from './utils'
@@ -151,7 +159,12 @@ ipcMain.handle('get-series-list', () => {
     if (existsSync(metaPath)) {
       try {
         const meta = JSON.parse(readFileSync(metaPath, 'utf-8'))
-        seriesList.push(meta)
+        const fullPath = join(seriesRoot, dir)
+
+        seriesList.push({
+          ...meta,
+          path: fullPath
+        })
       } catch {}
     }
   }
@@ -186,4 +199,29 @@ ipcMain.handle('get-series-charCount-list', (_, date: { year: number; month: num
   if (!charCounts[year][month]) charCounts[year][month] = []
 
   return charCounts[year][month]
+})
+
+function readDirectoryRecursive(dirPath: string): any[] {
+  const items = readdirSync(dirPath)
+  return items.map((name) => {
+    const fullPath = join(dirPath, name)
+    const stats = statSync(fullPath)
+    const isDirectory = stats.isDirectory()
+
+    return {
+      name,
+      type: isDirectory ? 'folder' : 'file',
+      children: isDirectory ? readDirectoryRecursive(fullPath) : undefined
+    }
+  })
+}
+
+ipcMain.handle('read-series-structure', (_, seriesPath: string) => {
+  const rootPath = join(seriesPath, 'root')
+  try {
+    const structure = readDirectoryRecursive(rootPath)
+    return { success: true, structure }
+  } catch (err) {
+    return { success: false, message: '디렉토리 읽기 실패' }
+  }
 })

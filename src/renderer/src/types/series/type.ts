@@ -10,6 +10,16 @@ export type SeriesMeta = {
   tags: string[]
   status: string
   charCounts: []
+  path: string
 }
 
-export type SeriesListItem = Pick<SeriesMeta, 'id' | 'title' | 'coverImagePath' | 'updatedAt'>
+export type SeriesListItem = Pick<
+  SeriesMeta,
+  'id' | 'title' | 'coverImagePath' | 'updatedAt' | 'path'
+>
+
+export type TreeNode = {
+  name: string
+  type: 'file' | 'folder'
+  children?: TreeNode[]
+}
