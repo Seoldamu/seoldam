@@ -34,9 +34,9 @@ const SeriesSidebar = () => {
       <SeriesWorkspace>
         {treeData.map((node, i) =>
           node.type === 'folder' ? (
-            <SeriesFolder key={i} node={node} />
+            <SeriesFolder key={`${node.name}-${i}`} node={node} />
           ) : (
-            <SeriesFile key={i} node={node} />
+            <SeriesFile key={`${node.name}-${i}`} node={node} />
           )
         )}
       </SeriesWorkspace>

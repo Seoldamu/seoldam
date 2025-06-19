@@ -24,9 +24,9 @@ const SeriesFolder = ({ node }: Props) => {
         {isOpen &&
           node.children?.map((child, i) =>
             child.type === 'folder' ? (
-              <SeriesFolder key={i} node={child} />
+              <SeriesFolder key={`${node.name}-${i}`} node={child} />
             ) : (
-              <SeriesFile key={i} node={child} />
+              <SeriesFile key={`${node.name}-${i}`} node={child} />
             )
           )}
       </Column>
