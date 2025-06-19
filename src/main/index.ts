@@ -211,6 +211,7 @@ function readDirectoryRecursive(dirPath: string): any[] {
     return {
       name,
       type: isDirectory ? 'folder' : 'file',
+      path: fullPath,
       children: isDirectory ? readDirectoryRecursive(fullPath) : undefined
     }
   })
