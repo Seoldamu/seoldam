@@ -32,13 +32,15 @@ const SeriesSidebar = () => {
     <StyledSeriesSidebar>
       <SeriesRoot seriesName={seriesName} />
       <SeriesWorkspace>
-        {treeData.map((node, i) =>
-          node.type === 'folder' ? (
-            <SeriesFolder key={`${node.name}-${i}`} node={node} />
-          ) : (
-            <SeriesFile key={`${node.name}-${i}`} node={node} />
-          )
-        )}
+        <ScrollableContent>
+          {treeData.map((node, i) =>
+            node.type === 'folder' ? (
+              <SeriesFolder key={`${node.name}-${i}`} node={node} />
+            ) : (
+              <SeriesFile key={`${node.name}-${i}`} node={node} />
+            )
+          )}
+        </ScrollableContent>
       </SeriesWorkspace>
     </StyledSeriesSidebar>
   )
@@ -47,14 +49,31 @@ const SeriesSidebar = () => {
 export default SeriesSidebar
 
 const StyledSeriesSidebar = styled.div`
-  ${flex({ flexDirection: 'column', alignItems: 'flex-start' })}
+  ${flex({ flexDirection: 'column' })}
   width: 100%;
+  height: 100%;
   margin-top: 50px;
-  padding: 0px 20px;
-  gap: 11px;
+  padding: 0 20px;
+  gap: 6px;
+  overflow: hidden;
 `
 
 const SeriesWorkspace = styled.div`
-  ${flex({ flexDirection: 'column', alignItems: 'center' })}
+  width: 100%;
+  flex: 1;
+  overflow: auto;
+  min-width: 0;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`
+
+const ScrollableContent = styled.div`
+  width: 100%;
+  display: inline-block;
+  min-width: max-content;
   padding: 0 0 23px 30px;
 `
