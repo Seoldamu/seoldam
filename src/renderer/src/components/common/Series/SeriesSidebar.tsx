@@ -17,10 +17,7 @@ const SeriesSidebar = () => {
     if (!currentSeriesPath) return
 
     const fetchTree = async () => {
-      const result = await window.electron.ipcRenderer.invoke(
-        'read-series-structure',
-        currentSeriesPath
-      )
+      const result = await window.api.getSeriesStructure(currentSeriesPath)
       if (result.success) setTreeData(result.structure)
     }
 

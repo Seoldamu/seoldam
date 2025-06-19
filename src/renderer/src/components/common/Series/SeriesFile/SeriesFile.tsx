@@ -20,6 +20,7 @@ export default SeriesFile
 
 const StyledSeriesFile = styled.div`
   ${flex({ alignItems: 'center' })}
+  width: 100%;
   padding: 4px;
   gap: 8px;
 

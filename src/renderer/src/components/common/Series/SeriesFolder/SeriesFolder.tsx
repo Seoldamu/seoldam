@@ -34,6 +34,7 @@ export default SeriesFolder
 
 const StyledSeriesFolder = styled.div`
   ${flex({ alignItems: 'flex-start' })}
+  width: 100%;
   padding: 4px;
   gap: 8px;
 `
