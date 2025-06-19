@@ -4,7 +4,11 @@ import { Text } from '@renderer/components/common'
 import { IconAdd, IconDocument } from '@renderer/design/icons'
 import { color } from '@renderer/design/styles'
 
-const SeriesRoot = () => {
+interface Props {
+  seriesName: string
+}
+
+const SeriesRoot = ({ seriesName }: Props) => {
   return (
     <StyledSeriesRoot>
       <IconDocument
@@ -15,7 +19,7 @@ const SeriesRoot = () => {
         }}
       />
       <Text fontType="B1" color={color.G800} width="calc(100% - 58px)" ellipsis={true}>
-        {/*시리즈의 제목 */}
+        {seriesName}
       </Text>
       <IconAdd
         width={20}

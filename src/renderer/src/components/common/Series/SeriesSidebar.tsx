@@ -26,9 +26,11 @@ const SeriesSidebar = () => {
 
   if (!currentSeriesPath) return null
 
+  const seriesName = currentSeriesPath.split('\\').pop() || ''
+
   return (
     <StyledSeriesSidebar>
-      <SeriesRoot />
+      <SeriesRoot seriesName={seriesName} />
       <SeriesWorkspace>
         {treeData.map((node, i) =>
           node.type === 'folder' ? (

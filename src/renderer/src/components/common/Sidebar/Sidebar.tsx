@@ -1,6 +1,6 @@
 import { color } from '@renderer/design/styles'
 import { css, styled } from 'styled-components'
-import { Column, Text } from '@renderer/components/common'
+import { Column, SeriesSidebar, Text } from '@renderer/components/common'
 import { flex } from '@renderer/utils'
 import {
   IconHome,
@@ -44,6 +44,7 @@ const Sidebar = () => {
           </NavigationItem>
         ))}
       </Column>
+      <SeriesSidebar />
     </StyledSidebar>
   )
 }
