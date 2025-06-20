@@ -40,9 +40,12 @@ function createWindow(): void {
     }
   })
 
-  //dev 모드의 개발자 창
-  mainWindow.loadURL('http://localhost:5173')
-  mainWindow.webContents.openDevTools()
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    mainWindow.webContents.openDevTools()
+  } else {
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+  }
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -52,12 +55,6 @@ function createWindow(): void {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
-
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-  }
 }
 
 app.whenReady().then(async () => {
@@ -89,18 +86,7 @@ app.whenReady().then(async () => {
     }
     return new Response('Not Found', { status: 404 })
   })
-
-  const mainWindow = new BrowserWindow({
-    webPreferences: {
-      preload: path.join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
-  })
-
-  mainWindow.loadURL('http://localhost:5173')
-  mainWindow.webContents.openDevTools()
 })
-
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
