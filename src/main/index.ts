@@ -243,3 +243,37 @@ ipcMain.handle('delete-path', (_, targetPath: string) => {
     return { success: false, message: '삭제 실패', error: err }
   }
 })
+
+ipcMain.handle('create-folder', (_, parentPath: string, name: string) => {
+  try {
+    let baseName = name || '새 폴더'
+    let count = 1
+    let newPath = join(parentPath, baseName)
+
+    while (fs.existsSync(newPath)) {
+      newPath = join(parentPath, `${baseName} (${count++})`)
+    }
+
+    mkdirSync(newPath)
+    return { success: true, path: newPath }
+  } catch (err) {
+    return { success: false, message: '폴더 생성 실패', error: err }
+  }
+})
+
+ipcMain.handle('create-file', (_, parentPath: string, name: string) => {
+  try {
+    let baseName = name || '새 파일'
+    let count = 1
+    let newPath = join(parentPath, baseName)
+
+    while (fs.existsSync(newPath)) {
+      newPath = join(parentPath, `${baseName} (${count++})`)
+    }
+
+    writeFileSync(newPath, '새 파일')
+    return { success: true, path: newPath }
+  } catch (err) {
+    return { success: false, message: '파일 생성 실패', error: err }
+  }
+})

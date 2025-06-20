@@ -21,7 +21,13 @@ const api = {
   getSeriesStructure: (seriesPath: string) =>
     ipcRenderer.invoke('read-series-structure', seriesPath),
 
-  deleteSeriesTargetPath: (targetPath: string) => ipcRenderer.invoke('delete-path', targetPath)
+  deleteSeriesTargetPath: (targetPath: string) => ipcRenderer.invoke('delete-path', targetPath),
+
+  createFolder: (targetPath: string, name: string) =>
+    ipcRenderer.invoke('create-folder', targetPath, name),
+
+  createFile: (targetPath: string, name: string) =>
+    ipcRenderer.invoke('create-file', targetPath, name)
 }
 
 if (process.contextIsolated) {
