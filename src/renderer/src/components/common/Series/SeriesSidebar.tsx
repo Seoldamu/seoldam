@@ -1,27 +1,18 @@
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 import SeriesRoot from './SeriesRoot/SeriesRoot'
-import { useEffect, useState } from 'react'
-import { TreeNode } from '@renderer/types/series/type'
+import { useEffect } from 'react'
 import SeriesFolder from './SeriesFolder/SeriesFolder'
 import SeriesFile from './SeriesFile/SeriesFile'
-import { useSeriesStore } from '@renderer/stores/seriesStore'
+import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
 
 const SeriesSidebar = () => {
   const currentSeriesPath = useSeriesStore((state) => state.currentSeriesPath)
-  const [treeData, setTreeData] = useState<TreeNode[]>([])
-
-  console.log(currentSeriesPath)
+  const treeData = useSeriesTreeStore((state) => state.treeData)
+  const fetchTreeData = useSeriesTreeStore((state) => state.fetchTreeData)
 
   useEffect(() => {
-    if (!currentSeriesPath) return
-
-    const fetchTree = async () => {
-      const result = await window.api.getSeriesStructure(currentSeriesPath)
-      if (result.success) setTreeData(result.structure)
-    }
-
-    fetchTree()
+    if (currentSeriesPath) fetchTreeData()
   }, [currentSeriesPath])
 
   if (!currentSeriesPath) return null
