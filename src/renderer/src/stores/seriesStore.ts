@@ -6,7 +6,7 @@ interface SeriesStore {
   setSeriesPath: (path: string) => void
 }
 
-export const useSeriesStore = create<SeriesStore>()(
+const useSeriesStore = create<SeriesStore>()(
   persist<SeriesStore>(
     (set) => ({
       currentSeriesPath: null,
@@ -17,3 +17,5 @@ export const useSeriesStore = create<SeriesStore>()(
     }
   )
 )
+
+export default useSeriesStore

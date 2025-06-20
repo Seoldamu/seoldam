@@ -1,6 +1,6 @@
 import { Column, Text } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
-import { useSeriesStore } from '@renderer/stores/seriesStore'
+import { useSeriesStore } from '@renderer/stores'
 import { flex, getRelativeDateString } from '@renderer/utils'
 import { styled } from 'styled-components'
 
