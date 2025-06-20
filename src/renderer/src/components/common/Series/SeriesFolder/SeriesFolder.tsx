@@ -25,6 +25,11 @@ const SeriesFolder = ({ node }: Props) => {
     }
   })
 
+  const handleOpenContextMenu = (e: React.MouseEvent<Element, MouseEvent>) => {
+    setIsOpen(true)
+    openContextMenu(e)
+  }
+
   const contextMenuData = [
     {
       label: '폴더 생성',
@@ -63,7 +68,7 @@ const SeriesFolder = ({ node }: Props) => {
 
   return (
     <>
-      <StyledSeriesFolder onContextMenu={openContextMenu} onClick={() => setIsOpen(!isOpen)}>
+      <StyledSeriesFolder onContextMenu={handleOpenContextMenu} onClick={() => setIsOpen(!isOpen)}>
         <IconFolder width={24} height={24} active={isOpen} />
         <Text fontType="B2" color={color.G800} ellipsis={true}>
           {node.name}
