@@ -7,7 +7,7 @@ import SeriesFile from '../SeriesFile/SeriesFile'
 import { useState } from 'react'
 import { TreeNode } from '@renderer/types/series/type'
 import { useContextMenu, useOutsideClick } from '@renderer/hooks'
-import ContextMenu from '../../ContextMenu/ContextMenu'
+import { ContextMenu } from '@renderer/components/common'
 import { useSeriesTreeStore } from '@renderer/stores'
 
 interface Props {
@@ -27,11 +27,25 @@ const SeriesFolder = ({ node }: Props) => {
 
   const contextMenuData = [
     {
-      label: '폴더 이름 변경',
-      value: 'rename',
-      onClick: () => {
+      label: '폴더 생성',
+      value: 'create-folder',
+      onClick: async () => {
         closeContextMenu()
-        console.log(`Rename ${node.name}`)
+        const result = await window.api.createFolder(node.path)
+        if (result.success) {
+          useSeriesTreeStore.getState().fetchTreeData()
+        }
+      }
+    },
+    {
+      label: '파일 생성',
+      value: 'create-file',
+      onClick: async () => {
+        closeContextMenu()
+        const result = await window.api.createFile(node.path)
+        if (result.success) {
+          useSeriesTreeStore.getState().fetchTreeData()
+        }
       }
     },
     {
