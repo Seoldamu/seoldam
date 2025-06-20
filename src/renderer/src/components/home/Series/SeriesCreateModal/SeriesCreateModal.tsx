@@ -9,9 +9,10 @@ import { styled } from 'styled-components'
 interface Props {
   isOpen: boolean
   onClose: () => void
+  refreshSeriesList: () => void
 }
 
-const SeriesCreateModal = ({ isOpen, onClose }: Props) => {
+const SeriesCreateModal = ({ isOpen, onClose, refreshSeriesList }: Props) => {
   const [seriesTitle, setSeriesTitle] = useState('')
   const [seriesImage, setSeriesImage] = useState<File | null>(null)
   const modalRef = useOutsideClick<HTMLDivElement>(onClose)
@@ -27,6 +28,7 @@ const SeriesCreateModal = ({ isOpen, onClose }: Props) => {
     const result = await window.api.createSeries(seriesTitle, seriesImagePath)
     if (result.success) {
       alert(`성공적으로 생성됨: ${result.path}`)
+      refreshSeriesList()
     } else {
       alert(`실패: ${result.message}`)
     }
