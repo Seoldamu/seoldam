@@ -17,11 +17,9 @@ const SeriesSidebar = () => {
 
   if (!currentSeriesPath) return null
 
-  const seriesName = currentSeriesPath.split(/[/\\]/).pop() || ''
-
   return (
     <StyledSeriesSidebar>
-      <SeriesRoot seriesName={seriesName} />
+      <SeriesRoot seriesPath={currentSeriesPath} />
       <SeriesWorkspace>
         <ScrollableContent>
           {treeData.map((node, i) =>
