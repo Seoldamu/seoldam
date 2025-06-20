@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { TreeNode } from '@renderer/types/series/type'
 import { useContextMenu, useOutsideClick } from '@renderer/hooks'
 import ContextMenu from '../../ContextMenu/ContextMenu'
+import { useSeriesTreeStore } from '@renderer/stores'
 
 interface Props {
   node: TreeNode
@@ -36,9 +37,12 @@ const SeriesFolder = ({ node }: Props) => {
     {
       label: '폴더 삭제',
       value: 'delete',
-      onClick: () => {
+      onClick: async () => {
         closeContextMenu()
-        console.log(`Delete ${node.name}`)
+        const result = await window.api.deleteSeriesTargetPath(node.path)
+        if (result.success) {
+          useSeriesTreeStore.getState().fetchTreeData()
+        }
       }
     }
   ]
