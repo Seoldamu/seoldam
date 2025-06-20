@@ -1,7 +1,7 @@
 {
   "name": "seoldam",
   "version": "1.0.0",
-  "description": "An Electron application with React and TypeScript",
+  "description": "AI가 창작을 보조하는 오프라인 소설 저작 데스크탑 애플리케이션",
   "main": "./out/main/index.js",
   "author": "example.com",
   "homepage": "https://electron-vite.org",
