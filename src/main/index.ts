@@ -6,7 +6,8 @@ import {
   copyFileSync,
   readdirSync,
   readFileSync,
-  statSync
+  statSync,
+  unlinkSync
 } from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -224,5 +225,21 @@ ipcMain.handle('read-series-structure', (_, seriesPath: string) => {
     return { success: true, structure }
   } catch (err) {
     return { success: false, message: '디렉토리 읽기 실패' }
+  }
+})
+
+ipcMain.handle('delete-path', (_, targetPath: string) => {
+  try {
+    const stats = statSync(targetPath)
+
+    if (stats.isDirectory()) {
+      fs.rmSync(targetPath, { recursive: true, force: true })
+    } else {
+      unlinkSync(targetPath)
+    }
+
+    return { success: true }
+  } catch (err) {
+    return { success: false, message: '삭제 실패', error: err }
   }
 })

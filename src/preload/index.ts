@@ -19,7 +19,9 @@ const api = {
   getPathForFile: (file) => webUtils.getPathForFile(file),
 
   getSeriesStructure: (seriesPath: string) =>
-    ipcRenderer.invoke('read-series-structure', seriesPath)
+    ipcRenderer.invoke('read-series-structure', seriesPath),
+
+  deleteSeriesTargetPath: (targetPath: string) => ipcRenderer.invoke('delete-path', targetPath)
 }
 
 if (process.contextIsolated) {
