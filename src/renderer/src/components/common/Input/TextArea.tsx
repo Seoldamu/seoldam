@@ -1,5 +1,5 @@
 import { color, font } from '@renderer/design/styles'
-import { HTMLAttributes } from 'react'
+import { forwardRef, HTMLAttributes } from 'react'
 import { CSSProperties } from 'styled-components'
 import styled from 'styled-components'
 
@@ -17,31 +17,37 @@ interface Props extends HTMLAttributes<HTMLTextAreaElement> {
   wrap?: 'soft' | 'hard' | 'off'
 }
 
-const TextArea = ({
-  value,
-  onChange,
-  color,
-  fontType = 'H1',
-  width = 'auto',
-  textAlign = 'left',
-  placeholder = '텍스트를 입력해주세요',
-  rows = 4,
-  wrap = 'soft',
-  ...rest
-}: Props) => {
-  return (
-    <StyledTextArea
-      style={{ color, textAlign, width }}
-      value={value}
-      onChange={onChange}
-      fontType={fontType}
-      rows={rows}
-      wrap={wrap}
-      placeholder={placeholder}
-      {...rest}
-    />
-  )
-}
+const TextArea = forwardRef<HTMLTextAreaElement, Props>(
+  (
+    {
+      value,
+      onChange,
+      color,
+      fontType = 'H1',
+      width = 'auto',
+      textAlign = 'left',
+      placeholder = '텍스트를 입력해주세요',
+      rows = 4,
+      wrap = 'soft',
+      ...rest
+    },
+    ref
+  ) => {
+    return (
+      <StyledTextArea
+        ref={ref}
+        style={{ color, textAlign, width }}
+        value={value}
+        onChange={onChange}
+        fontType={fontType}
+        rows={rows}
+        wrap={wrap}
+        placeholder={placeholder}
+        {...rest}
+      />
+    )
+  }
+)
 
 export default TextArea
 

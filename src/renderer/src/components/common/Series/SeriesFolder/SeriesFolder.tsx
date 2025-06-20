@@ -1,14 +1,14 @@
 import { IconFolder } from '@renderer/design/icons'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
-import { Text } from '@renderer/components/common'
+import { Text, ContextMenu } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
 import SeriesFile from '../SeriesFile/SeriesFile'
 import { useState } from 'react'
 import { TreeNode } from '@renderer/types/series/type'
 import { useContextMenu, useOutsideClick } from '@renderer/hooks'
-import { ContextMenu } from '@renderer/components/common'
 import { useSeriesTreeStore } from '@renderer/stores'
+import TempObject from '../TempObject/TempObject'
 
 interface Props {
   node: TreeNode
@@ -16,13 +16,12 @@ interface Props {
 
 const SeriesFolder = ({ node }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
+  const [creatingType, setCreatingType] = useState<'file' | 'folder' | null>(null)
+
   const { contextMenuVisible, contextMenuPosition, openContextMenu, closeContextMenu } =
     useContextMenu()
-
   const contextMenuRef = useOutsideClick<HTMLDivElement>(() => {
-    if (contextMenuVisible) {
-      closeContextMenu()
-    }
+    if (contextMenuVisible) closeContextMenu()
   })
 
   const handleOpenContextMenu = (e: React.MouseEvent<Element, MouseEvent>) => {
@@ -34,23 +33,17 @@ const SeriesFolder = ({ node }: Props) => {
     {
       label: '폴더 생성',
       value: 'create-folder',
-      onClick: async () => {
+      onClick: () => {
         closeContextMenu()
-        const result = await window.api.createFolder(node.path)
-        if (result.success) {
-          useSeriesTreeStore.getState().fetchTreeData()
-        }
+        setCreatingType('folder')
       }
     },
     {
       label: '파일 생성',
       value: 'create-file',
-      onClick: async () => {
+      onClick: () => {
         closeContextMenu()
-        const result = await window.api.createFile(node.path)
-        if (result.success) {
-          useSeriesTreeStore.getState().fetchTreeData()
-        }
+        setCreatingType('file')
       }
     },
     {
@@ -59,31 +52,48 @@ const SeriesFolder = ({ node }: Props) => {
       onClick: async () => {
         closeContextMenu()
         const result = await window.api.deleteSeriesTargetPath(node.path)
-        if (result.success) {
-          useSeriesTreeStore.getState().fetchTreeData()
-        }
+        if (result.success) useSeriesTreeStore.getState().fetchTreeData()
       }
     }
   ]
+
+  const handleSubmit = async (name: string) => {
+    const result =
+      creatingType === 'folder'
+        ? await window.api.createFolder(node.path, name)
+        : await window.api.createFile(node.path, name)
+
+    if (result.success) useSeriesTreeStore.getState().fetchTreeData()
+    setCreatingType(null)
+  }
 
   return (
     <>
       <StyledSeriesFolder onContextMenu={handleOpenContextMenu} onClick={() => setIsOpen(!isOpen)}>
         <IconFolder width={24} height={24} active={isOpen} />
-        <Text fontType="B2" color={color.G800} ellipsis={true}>
+        <Text fontType="B2" color={color.G800} ellipsis>
           {node.name}
         </Text>
       </StyledSeriesFolder>
+
       <FolderContent>
+        {isOpen && creatingType && (
+          <TempObject
+            type={creatingType}
+            onCancel={() => setCreatingType(null)}
+            onSubmit={handleSubmit}
+          />
+        )}
         {isOpen &&
           node.children?.map((child, i) =>
             child.type === 'folder' ? (
-              <SeriesFolder key={`${node.name}-${i}`} node={child} />
+              <SeriesFolder key={`${child.name}-${i}`} node={child} />
             ) : (
-              <SeriesFile key={`${node.name}-${i}`} node={child} />
+              <SeriesFile key={`${child.name}-${i}`} node={child} />
             )
           )}
       </FolderContent>
+
       {contextMenuVisible && (
         <div
           ref={contextMenuRef}
@@ -109,7 +119,6 @@ const StyledSeriesFolder = styled.div`
   padding: 4px;
   gap: 8px;
   cursor: pointer;
-
   &:hover {
     background: ${color.G20};
   }
