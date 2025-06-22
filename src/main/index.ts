@@ -11,9 +11,10 @@ import {
 } from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { createMetaJson, generateUniqueFilename } from './utils'
+import { createMetaJson, generateUniqueFilename, validatePathName } from './utils'
 import path, { join } from 'node:path'
 import fs from 'node:fs'
+import { dirname } from 'path'
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -262,5 +263,36 @@ ipcMain.handle('create-file', (_, parentPath: string, name: string) => {
     return { success: true, path: newPath }
   } catch (err) {
     return { success: false, message: '파일 생성 실패', error: err }
+  }
+})
+
+ipcMain.handle('rename-path', (_, oldPath: string, newName: string) => {
+  try {
+    if (!fs.existsSync(oldPath)) {
+      return { success: false, message: '파일 또는 폴더를 찾을 수 없습니다' }
+    }
+
+    const validation = validatePathName(newName)
+    if (!validation.isValid) {
+      return { success: false, message: validation.message }
+    }
+
+    const parentDir = dirname(oldPath)
+    const newPath = join(parentDir, newName)
+
+    if (oldPath === newPath) {
+      return { success: true, path: newPath, message: '동일한 이름입니다' }
+    }
+
+    if (fs.existsSync(newPath)) {
+      return { success: false, message: '이미 존재하는 이름입니다' }
+    }
+
+    fs.renameSync(oldPath, newPath)
+
+    return { success: true, path: newPath, oldPath, message: '이름이 변경되었습니다' }
+  } catch (err) {
+    console.error('Rename error:', err)
+    return { success: false, message: '이름 변경 실패', error: err }
   }
 })

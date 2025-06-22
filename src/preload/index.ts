@@ -27,7 +27,10 @@ const api = {
     ipcRenderer.invoke('create-folder', targetPath, name),
 
   createFile: (targetPath: string, name: string) =>
-    ipcRenderer.invoke('create-file', targetPath, name)
+    ipcRenderer.invoke('create-file', targetPath, name),
+
+  renamePath: (targetPath: string, name: string) =>
+    ipcRenderer.invoke('rename-path', targetPath, name)
 }
 
 if (process.contextIsolated) {
