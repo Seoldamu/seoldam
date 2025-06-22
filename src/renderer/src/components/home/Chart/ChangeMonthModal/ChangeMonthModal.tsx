@@ -6,7 +6,7 @@ import MonthSelector from './MonthSelector/MonthSelector'
 import { useEffect, useState } from 'react'
 import { Month } from '@renderer/types/home/type'
 import { useOutsideClick } from '@renderer/hooks'
-import useMonthStore from '@renderer/stores/monthStore'
+import { useMonthStore } from '@renderer/stores'
 
 interface Props {
   isOpen: boolean

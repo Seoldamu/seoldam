@@ -20,8 +20,14 @@ const extractSeriesList = (list: SeriesMeta[]): SeriesListItem[] => {
 const Series = () => {
   const [series, setSeries] = useState<SeriesListItem[]>([])
 
+  const refreshSeriesList = () => {
+    window.api.getSeriesList().then((data: SeriesMeta[]) => {
+      setSeries(extractSeriesList(data))
+    })
+  }
+
   const { handleOpen, Overlay } = useOverlay(({ isOpen, onClose }) => (
-    <SeriesCreateModal isOpen={isOpen} onClose={onClose} />
+    <SeriesCreateModal isOpen={isOpen} onClose={onClose} refreshSeriesList={refreshSeriesList} />
   ))
 
   useEffect(() => {

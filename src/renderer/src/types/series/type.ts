@@ -21,5 +21,6 @@ export type SeriesListItem = Pick<
 export type TreeNode = {
   name: string
   type: 'file' | 'folder'
+  path: string
   children?: TreeNode[]
 }

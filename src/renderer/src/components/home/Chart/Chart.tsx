@@ -6,9 +6,8 @@ import { Text } from '@renderer/components/common'
 import { styled } from 'styled-components'
 import { flex } from '@renderer/utils'
 import { IconCompareArrow } from '@renderer/design/icons'
-import useMonthStore from '@renderer/stores/monthStore'
+import { useMonthStore, useTodayCharCountStore } from '@renderer/stores'
 import { useEffect, useState } from 'react'
-import useTodayCharCountStore from '@renderer/stores/todayCharCountStore'
 
 const Chart = () => {
   const [compareMonthCharCountsList, setCompareMonthCharCountsList] = useState<number[]>([])

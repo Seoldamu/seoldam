@@ -6,13 +6,15 @@ import {
   copyFileSync,
   readdirSync,
   readFileSync,
-  statSync
+  statSync,
+  unlinkSync
 } from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { createMetaJson, generateUniqueFilename } from './utils'
+import { createMetaJson, generateUniqueFilename, validatePathName } from './utils'
 import path, { join } from 'node:path'
 import fs from 'node:fs'
+import { dirname } from 'path'
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -32,6 +34,7 @@ function createWindow(): void {
     height: 1024,
     show: false,
     autoHideMenuBar: true,
+    icon: icon,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -39,9 +42,12 @@ function createWindow(): void {
     }
   })
 
-  //dev 모드의 개발자 창
-  mainWindow.loadURL('http://localhost:5173')
-  mainWindow.webContents.openDevTools()
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    mainWindow.webContents.openDevTools()
+  } else {
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+  }
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -51,12 +57,6 @@ function createWindow(): void {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
-
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-  }
 }
 
 app.whenReady().then(async () => {
@@ -88,18 +88,7 @@ app.whenReady().then(async () => {
     }
     return new Response('Not Found', { status: 404 })
   })
-
-  const mainWindow = new BrowserWindow({
-    webPreferences: {
-      preload: path.join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
-  })
-
-  mainWindow.loadURL('http://localhost:5173')
-  mainWindow.webContents.openDevTools()
 })
-
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
@@ -211,6 +200,7 @@ function readDirectoryRecursive(dirPath: string): any[] {
     return {
       name,
       type: isDirectory ? 'folder' : 'file',
+      path: fullPath,
       children: isDirectory ? readDirectoryRecursive(fullPath) : undefined
     }
   })
@@ -223,5 +213,86 @@ ipcMain.handle('read-series-structure', (_, seriesPath: string) => {
     return { success: true, structure }
   } catch (err) {
     return { success: false, message: '디렉토리 읽기 실패' }
+  }
+})
+
+ipcMain.handle('delete-path', (_, targetPath: string) => {
+  try {
+    const stats = statSync(targetPath)
+
+    if (stats.isDirectory()) {
+      fs.rmSync(targetPath, { recursive: true, force: true })
+    } else {
+      unlinkSync(targetPath)
+    }
+
+    return { success: true }
+  } catch (err) {
+    return { success: false, message: '삭제 실패', error: err }
+  }
+})
+
+ipcMain.handle('create-folder', (_, parentPath: string, name: string) => {
+  try {
+    let baseName = name || '새 폴더'
+    let count = 1
+    let newPath = join(parentPath, baseName)
+
+    while (fs.existsSync(newPath)) {
+      newPath = join(parentPath, `${baseName} (${count++})`)
+    }
+
+    mkdirSync(newPath)
+    return { success: true, path: newPath }
+  } catch (err) {
+    return { success: false, message: '폴더 생성 실패', error: err }
+  }
+})
+
+ipcMain.handle('create-file', (_, parentPath: string, name: string) => {
+  try {
+    let baseName = name || '새 파일'
+    let count = 1
+    let newPath = join(parentPath, baseName)
+
+    while (fs.existsSync(newPath)) {
+      newPath = join(parentPath, `${baseName} (${count++})`)
+    }
+
+    writeFileSync(newPath, '새 파일')
+    return { success: true, path: newPath }
+  } catch (err) {
+    return { success: false, message: '파일 생성 실패', error: err }
+  }
+})
+
+ipcMain.handle('rename-path', (_, oldPath: string, newName: string) => {
+  try {
+    if (!fs.existsSync(oldPath)) {
+      return { success: false, message: '파일 또는 폴더를 찾을 수 없습니다' }
+    }
+
+    const validation = validatePathName(newName)
+    if (!validation.isValid) {
+      return { success: false, message: validation.message }
+    }
+
+    const parentDir = dirname(oldPath)
+    const newPath = join(parentDir, newName)
+
+    if (oldPath === newPath) {
+      return { success: true, path: newPath, message: '동일한 이름입니다' }
+    }
+
+    if (fs.existsSync(newPath)) {
+      return { success: false, message: '이미 존재하는 이름입니다' }
+    }
+
+    fs.renameSync(oldPath, newPath)
+
+    return { success: true, path: newPath, oldPath, message: '이름이 변경되었습니다' }
+  } catch (err) {
+    console.error('Rename error:', err)
+    return { success: false, message: '이름 변경 실패', error: err }
   }
 })
