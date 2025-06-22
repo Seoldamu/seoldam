@@ -1,7 +1,7 @@
 import { IconFolder } from '@renderer/design/icons'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
-import { Text, ContextMenu } from '@renderer/components/common'
+import { Text, ContextMenu, Row } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
 import SeriesFile from '../SeriesFile/SeriesFile'
 import { useState } from 'react'
@@ -17,6 +17,7 @@ interface Props {
 const SeriesFolder = ({ node }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const [creatingType, setCreatingType] = useState<'file' | 'folder' | null>(null)
+  const [updateType, setUpdateType] = useState<'file' | 'folder' | null>(null)
 
   const { contextMenuVisible, contextMenuPosition, openContextMenu, closeContextMenu } =
     useContextMenu()
@@ -47,6 +48,14 @@ const SeriesFolder = ({ node }: Props) => {
       }
     },
     {
+      label: '이름 변경',
+      value: 'rename',
+      onClick: async () => {
+        closeContextMenu()
+        setUpdateType('folder')
+      }
+    },
+    {
       label: '폴더 삭제',
       value: 'delete',
       onClick: async () => {
@@ -57,7 +66,7 @@ const SeriesFolder = ({ node }: Props) => {
     }
   ]
 
-  const handleSubmit = async (name: string) => {
+  const handleCreateSubmit = async (name: string) => {
     const result =
       creatingType === 'folder'
         ? await window.api.createFolder(node.path, name)
@@ -67,13 +76,28 @@ const SeriesFolder = ({ node }: Props) => {
     setCreatingType(null)
   }
 
+  const handleUpdateSumit = async (name: string) => {
+    const result = await window.api.renamePath(node.path, name)
+    if (result.success) useSeriesTreeStore.getState().fetchTreeData()
+  }
+
   return (
     <>
       <StyledSeriesFolder onContextMenu={handleOpenContextMenu} onClick={() => setIsOpen(!isOpen)}>
-        <IconFolder width={24} height={24} active={isOpen} />
-        <Text fontType="B2" color={color.G800} ellipsis>
-          {node.name}
-        </Text>
+        {updateType ? (
+          <TempObject
+            type={updateType}
+            onCancel={() => setUpdateType(null)}
+            onSubmit={handleUpdateSumit}
+          />
+        ) : (
+          <Row gap={8}>
+            <IconFolder width={24} height={24} active={isOpen} />
+            <Text fontType="B2" color={color.G800} ellipsis>
+              {node.name}
+            </Text>
+          </Row>
+        )}
       </StyledSeriesFolder>
 
       <FolderContent>
@@ -81,7 +105,7 @@ const SeriesFolder = ({ node }: Props) => {
           <TempObject
             type={creatingType}
             onCancel={() => setCreatingType(null)}
-            onSubmit={handleSubmit}
+            onSubmit={handleCreateSubmit}
           />
         )}
         {isOpen &&
