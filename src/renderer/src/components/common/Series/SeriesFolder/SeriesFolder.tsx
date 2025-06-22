@@ -17,7 +17,7 @@ interface Props {
 const SeriesFolder = ({ node }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const [creatingType, setCreatingType] = useState<'file' | 'folder' | null>(null)
-  const [updateType, setUpdateType] = useState<'file' | 'folder' | null>(null)
+  const [updateType, setUpdateType] = useState<'folder' | null>(null)
 
   const { contextMenuVisible, contextMenuPosition, openContextMenu, closeContextMenu } =
     useContextMenu()

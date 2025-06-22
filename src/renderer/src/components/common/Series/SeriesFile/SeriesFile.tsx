@@ -1,18 +1,22 @@
 import { IconArticle } from '@renderer/design/icons'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
-import { Text } from '@renderer/components/common'
+import { Row, Text } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
 import { TreeNode } from '@renderer/types/series/type'
 import { ContextMenu } from '@renderer/components/common'
 import { useContextMenu, useOutsideClick } from '@renderer/hooks'
 import { useSeriesTreeStore } from '@renderer/stores'
+import { useState } from 'react'
+import TempObject from '../TempObject/TempObject'
 
 interface Props {
   node: TreeNode
 }
 
 const SeriesFile = ({ node }: Props) => {
+  const [updateType, setUpdateType] = useState<'file' | null>(null)
+
   const { contextMenuVisible, contextMenuPosition, openContextMenu, closeContextMenu } =
     useContextMenu()
 
@@ -23,6 +27,14 @@ const SeriesFile = ({ node }: Props) => {
   })
 
   const contextMenuData = [
+    {
+      label: '이름 변경',
+      value: 'rename',
+      onClick: async () => {
+        closeContextMenu()
+        setUpdateType('file')
+      }
+    },
     {
       label: '파일 삭제',
       value: 'delete',
@@ -36,13 +48,28 @@ const SeriesFile = ({ node }: Props) => {
     }
   ]
 
+  const handleUpdateSumit = async (name: string) => {
+    const result = await window.api.renamePath(node.path, name)
+    if (result.success) useSeriesTreeStore.getState().fetchTreeData()
+  }
+
   return (
     <>
       <StyledSeriesFile onContextMenu={openContextMenu}>
-        <IconArticle width={24} height={24} />
-        <Text fontType="B2" color={color.G800} ellipsis={true}>
-          {node.name}
-        </Text>
+        {updateType ? (
+          <TempObject
+            type={updateType}
+            onCancel={() => setUpdateType(null)}
+            onSubmit={handleUpdateSumit}
+          />
+        ) : (
+          <Row gap={8}>
+            <IconArticle width={24} height={24} />
+            <Text fontType="B2" color={color.G800} ellipsis={true}>
+              {node.name}
+            </Text>
+          </Row>
+        )}
       </StyledSeriesFile>
       {contextMenuVisible && (
         <div
