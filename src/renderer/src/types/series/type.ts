@@ -19,8 +19,10 @@ export type SeriesListItem = Pick<
 >
 
 export type TreeNode = {
+  id: string
   name: string
   type: 'file' | 'folder'
   path: string
+  content?: string
   children?: TreeNode[]
 }
