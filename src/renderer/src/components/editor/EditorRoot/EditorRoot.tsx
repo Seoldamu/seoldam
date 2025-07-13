@@ -6,29 +6,47 @@ import {
   SeriesDropdown
 } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
-import { flex } from '@renderer/utils'
-import { useState } from 'react'
+import { useSeriesStore } from '@renderer/stores'
+import { TreeNode } from '@renderer/types/series/type'
+import { flex, flattenTree } from '@renderer/utils'
+import { useEffect, useState } from 'react'
 import { styled } from 'styled-components'
 
-const dummyFileData = [
-  { title: '잘 노는법', content: 'adfasdfsadfsdfasdffdbrbtr' },
-  { title: '몸을 흐름에 맡기는법', content: 'adfasdfsadfsdfasdffdbrbtr' },
-  {
-    title: '볼려고 하면 보인다 보려고 하지 않을 뿐',
-    content:
-      'adfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtradfasdfsadfsdfasdffdbrbtr'
-  },
-  { title: '몸을 흐름에 맡기는법1', content: 'adfasdfsadfsdfasdffdbrbtr' },
-  { title: '몸을 흐름에 맡기는법2', content: 'adfasdfsadfsdfasdffdbrbtr' },
-  { title: '몸을 흐름에 맡기는법3', content: 'adfasdfsadfsdfasdffdbrbtr' },
-  { title: '몸을 흐름에 맡기는법4', content: 'adfasdfsadfsdfasdffdbrbtr' }
-]
-
 const EditorRoot = () => {
-  const [title, setTitle] = useState('이 세계에서 로맨스는 현실적으로 불가능하다.')
+  const { currentSeriesPath, currentPath, setCurrentPath } = useSeriesStore()
+  const [childNodes, setChildNodes] = useState<TreeNode[]>([])
 
-  const handleChange = (value: string) => {
-    setTitle(value)
+  useEffect(() => {
+    const fetchStructure = async () => {
+      if (!currentPath) return
+
+      let result
+      if (currentPath === currentSeriesPath) {
+        result = await window.api.getSeriesRootDirectory(currentPath)
+      } else {
+        result = await window.api.getPathDirectory(currentPath)
+      }
+
+      if (result && result.success) {
+        const nodes = flattenTree(result.structure).filter((node) => node.type === 'file')
+        setChildNodes(nodes)
+      } else {
+        console.error('Failed to fetch series structure:', result?.message)
+        setChildNodes([])
+      }
+    }
+    fetchStructure()
+  }, [currentPath, currentSeriesPath])
+
+  const title = currentPath?.split(/[/\\]/).pop() || ''
+
+  const handleNodeClick = (node: TreeNode) => {
+    if (node.type === 'folder') {
+      setCurrentPath(node.path)
+    } else {
+      // TODO: 파일 클릭 시 에디터 뷰로 전환하는 로직 필요
+      console.log('File clicked:', node.name)
+    }
   }
 
   return (
@@ -37,17 +55,16 @@ const EditorRoot = () => {
         <Row gap={4}>
           <EditableText
             fontType="T2"
+            onChange={() => {}}
             color={color.G900}
             value={title}
-            onChange={setTitle}
             maxWidth={300}
-            ellipsis={true}
           />
           <SeriesDropdown
             name="series-title"
             value={title}
             data={[{ image: 'dummyImage1.png', value: '별종' }]}
-            onChange={handleChange}
+            onChange={() => {}}
           />
         </Row>
         <IconButton
@@ -59,8 +76,10 @@ const EditorRoot = () => {
         </IconButton>
       </Row>
       <FileList>
-        {dummyFileData.map((item) => (
-          <ContentPreview key={item.title} title={item.title} content={item.content} />
+        {childNodes.map((node) => (
+          <div key={node.id} onClick={() => handleNodeClick(node)}>
+            <ContentPreview title={node.name} content={node.content || ''} />
+          </div>
         ))}
       </FileList>
     </StyledEditorRoot>
@@ -85,4 +104,8 @@ const FileList = styled.div`
   flex-shrink: 0;
   align-self: stretch;
   flex-wrap: wrap;
+
+  > div {
+    cursor: pointer;
+  }
 `
