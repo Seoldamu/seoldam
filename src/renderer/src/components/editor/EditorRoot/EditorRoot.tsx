@@ -17,6 +17,7 @@ const EditorRoot = () => {
   const [childNodes, setChildNodes] = useState<TreeNode[]>([])
 
   useEffect(() => {
+    // TODO: 파일 명이 다른 컴포넌트(주로 사이드바)에서 변경되었을 경우 다시 렌더링 로직 추가
     const fetchStructure = async () => {
       if (!currentPath) return
 
@@ -97,13 +98,10 @@ const StyledEditorRoot = styled.div`
 `
 
 const FileList = styled.div`
-  ${flex({ alignItems: 'flex-start' })}
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 20px 10px;
   width: 100%;
-  align-content: flex-start;
-  gap: 20px;
-  flex-shrink: 0;
-  align-self: stretch;
-  flex-wrap: wrap;
 
   > div {
     cursor: pointer;
