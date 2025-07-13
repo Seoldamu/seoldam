@@ -14,9 +14,11 @@ interface Props {
 
 const SeriesItem = ({ title, coverImagePath, updatedAt, path }: Props) => {
   const setSeriesPath = useSeriesStore((state) => state.setSeriesPath)
+  const setCurrentPath = useSeriesStore((state) => state.setCurrentPath)
 
   const handleSeriesItemClick = () => {
     setSeriesPath(path)
+    setCurrentPath(null)
   }
 
   const imgSrc = `seoldam://series/${encodeURIComponent(title)}/${coverImagePath}`

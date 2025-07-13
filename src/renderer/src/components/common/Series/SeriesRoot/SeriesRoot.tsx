@@ -4,13 +4,17 @@ import { ContextMenu, Text } from '@renderer/components/common'
 import { IconAdd, IconDocument } from '@renderer/design/icons'
 import { color } from '@renderer/design/styles'
 import { useContextMenu, useOutsideClick } from '@renderer/hooks'
-import { useSeriesTreeStore } from '@renderer/stores'
+import { useSeriesTreeStore, useSeriesStore } from '@renderer/stores'
+import { useNavigate } from 'react-router-dom'
 
 interface Props {
   seriesPath: string
 }
 
 const SeriesRoot = ({ seriesPath }: Props) => {
+  const setCurrentPath = useSeriesStore((state) => state.setCurrentPath)
+
+  const navigate = useNavigate()
   const seriesName = seriesPath.split(/[/\\]/).pop() || ''
 
   const seriesRootPath = joinPath(seriesPath, 'root')
@@ -49,20 +53,21 @@ const SeriesRoot = ({ seriesPath }: Props) => {
     }
   ]
 
+  const handleSeriesRootClick = () => {
+    setCurrentPath(seriesPath)
+    navigate('/editor')
+  }
+
   return (
     <>
       <StyledSeriesRoot>
-        <IconDocument
-          width={24}
-          height={24}
-          onClick={() => {
-            /*시리즈 열기 조정 */
-          }}
-        />
-        <Text fontType="B1" color={color.G800} width="calc(100% - 58px)" ellipsis={true}>
-          {seriesName}
-        </Text>
-        <IconAdd width={20} height={20} onClick={openContextMenu} />
+        <NavigateBox onClick={handleSeriesRootClick}>
+          <IconDocument width={24} height={24} />
+          <Text fontType="B1" color={color.G800} width="100%" ellipsis={true}>
+            {seriesName}
+          </Text>
+        </NavigateBox>
+        <IconAdd style={{ cursor: 'pointer' }} width={20} height={20} onClick={openContextMenu} />
       </StyledSeriesRoot>
       {contextMenuVisible && (
         <div
@@ -86,5 +91,12 @@ export default SeriesRoot
 const StyledSeriesRoot = styled.div`
   ${flex({ alignItems: 'center', justifyContent: 'space-between' })}
   width: 100%;
+`
+
+const NavigateBox = styled.div`
+  ${flex({ alignItems: 'center' })}
+  width: 80%;
   gap: 6px;
+
+  cursor: pointer;
 `
