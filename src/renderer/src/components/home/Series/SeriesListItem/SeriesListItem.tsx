@@ -21,12 +21,12 @@ const SeriesItem = ({ title, coverImagePath, updatedAt, path }: Props) => {
     setCurrentPath(null)
   }
 
-  const imgSrc = `seoldam://series/${encodeURIComponent(title)}/${coverImagePath}`
+  console.log(coverImagePath)
 
   return (
     <StyledSeriesItem onClick={handleSeriesItemClick}>
       <SeriesItemImgWrapper>
-        <SeriesItemImg src={imgSrc} />
+        <SeriesItemImg src={coverImagePath} />
       </SeriesItemImgWrapper>
       <Column gap={4}>
         <Text fontType="H1" color={color.G900} ellipsis={2} whiteSpace="normal">

@@ -150,9 +150,14 @@ ipcMain.handle('get-series-list', () => {
         const meta = JSON.parse(readFileSync(metaPath, 'utf-8'))
         const fullPath = join(seriesRoot, dir)
 
+        const coverImageUrl = `seoldam://series/${encodeURIComponent(meta.title)}/${
+          meta.coverImagePath
+        }`
+
         seriesList.push({
           ...meta,
-          path: fullPath
+          path: fullPath,
+          coverImagePath: coverImageUrl
         })
       } catch {}
     }
