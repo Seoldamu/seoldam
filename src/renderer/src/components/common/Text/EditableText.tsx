@@ -24,7 +24,7 @@ const EditableText = ({
   color,
   fontType = 'H1',
   width = 'auto',
-  maxWidth = '300px',
+  maxWidth = 'auto',
   textAlign = 'left',
   ellipsis = false,
   whiteSpace = 'nowrap',

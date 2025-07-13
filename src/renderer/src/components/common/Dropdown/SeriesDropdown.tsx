@@ -9,6 +9,7 @@ import { CSSProperties, styled } from 'styled-components'
 interface Data {
   image: string
   value: string
+  label: string
 }
 
 interface Props {
@@ -16,15 +17,13 @@ interface Props {
   name: string
   value: string
   data: Data[]
-  onChange: (value: string, name: string) => void
-  placeholder?: string
+  onChange: (value: string) => void
   width?: CSSProperties['width']
   disabled?: boolean
 }
 
 const SeriesDropdown = ({
   icon = <IconArrowDirection width={28} height={28} direction="bottom" />,
-  name,
   data,
   onChange,
   disabled = false
@@ -34,7 +33,7 @@ const SeriesDropdown = ({
 
   const handleDropdownItemClick = (value: string) => {
     if (!disabled) {
-      onChange(value, name)
+      onChange(value)
       closeDropdown()
     }
   }
@@ -52,15 +51,15 @@ const SeriesDropdown = ({
       </StyledSeriesDropdown>
       <SeriesDropdownListBox $isOpen={isOpen && !disabled}>
         <SeriesDropdownList>
-          {data?.map((item, index) => {
+          {data?.map((item) => {
             return (
               <SeriesDropdownItem
-                key={`dropdown ${index}`}
+                key={`dropdown ${item.value}`}
                 onClick={() => handleDropdownItemClick(item.value)}
               >
                 <SeriesDropdownItemImage src={item.image} />
                 <Text fontType="L2" color={color.G900} ellipsis={true}>
-                  {item.value}
+                  {item.label}
                 </Text>
               </SeriesDropdownItem>
             )

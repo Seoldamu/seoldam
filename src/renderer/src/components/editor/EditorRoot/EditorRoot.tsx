@@ -7,17 +7,25 @@ import {
 } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
 import { useSeriesStore } from '@renderer/stores'
-import { TreeNode } from '@renderer/types/series/type'
+import { SeriesListItem, TreeNode } from '@renderer/types/series/type'
 import { flex, flattenTree } from '@renderer/utils'
 import { useEffect, useState } from 'react'
 import { styled } from 'styled-components'
 
 const EditorRoot = () => {
-  const { currentSeriesPath, currentPath, setCurrentPath } = useSeriesStore()
+  const { currentSeriesPath, currentPath, setCurrentPath, setSeriesPath } = useSeriesStore()
   const [childNodes, setChildNodes] = useState<TreeNode[]>([])
+  const [seriesList, setSeriesList] = useState<SeriesListItem[]>([])
 
   useEffect(() => {
-    // TODO: 파일 명이 다른 컴포넌트(주로 사이드바)에서 변경되었을 경우 다시 렌더링 로직 추가
+    const fetchSeriesList = async () => {
+      const list = await window.api.getSeriesList()
+      setSeriesList(list)
+    }
+    fetchSeriesList()
+  }, [])
+
+  useEffect(() => {
     const fetchStructure = async () => {
       if (!currentPath) return
 
@@ -39,33 +47,43 @@ const EditorRoot = () => {
     fetchStructure()
   }, [currentPath, currentSeriesPath])
 
-  const title = currentPath?.split(/[/\\]/).pop() || ''
+  const title = currentPath?.split(/[\\/]/).pop() || ''
 
   const handleNodeClick = (node: TreeNode) => {
     if (node.type === 'folder') {
       setCurrentPath(node.path)
     } else {
-      // TODO: 파일 클릭 시 에디터 뷰로 전환하는 로직 필요
       console.log('File clicked:', node.name)
     }
   }
 
+  const handleSeriesChange = (newSeriesPath: string) => {
+    setSeriesPath(newSeriesPath)
+    setCurrentPath(newSeriesPath)
+  }
+
+  const dropdownData = seriesList.map((series) => ({
+    image: series.coverImagePath,
+    value: series.path,
+    label: series.title
+  }))
+
   return (
     <StyledEditorRoot>
       <Row justifyContent="space-between">
-        <Row gap={4}>
+        <Row width="60%" gap={4}>
           <EditableText
             fontType="T2"
             onChange={() => {}}
             color={color.G900}
             value={title}
-            maxWidth={300}
+            width="100%"
           />
           <SeriesDropdown
             name="series-title"
             value={title}
-            data={[{ image: 'dummyImage1.png', value: '별종' }]}
-            onChange={() => {}}
+            data={dropdownData}
+            onChange={handleSeriesChange}
           />
         </Row>
         <IconButton
