@@ -196,20 +196,47 @@ function readDirectoryRecursive(dirPath: string): any[] {
     const fullPath = join(dirPath, name)
     const stats = statSync(fullPath)
     const isDirectory = stats.isDirectory()
+    const isFile = stats.isFile()
 
-    return {
+    const node: any = {
+      id: fullPath,
       name,
       type: isDirectory ? 'folder' : 'file',
       path: fullPath,
       children: isDirectory ? readDirectoryRecursive(fullPath) : undefined
     }
+
+    if (isFile) {
+      try {
+        node.content = readFileSync(fullPath, 'utf-8')
+      } catch (e) {
+        node.content = ''
+      }
+    }
+
+    return node
   })
 }
 
-ipcMain.handle('read-series-structure', (_, seriesPath: string) => {
+ipcMain.handle('get-series-root-directory', (_, seriesPath: string) => {
   const rootPath = join(seriesPath, 'root')
   try {
+    if (!existsSync(rootPath)) {
+      return { success: false, message: 'Root 디렉토리를 찾을 수 없습니다.' }
+    }
     const structure = readDirectoryRecursive(rootPath)
+    return { success: true, structure }
+  } catch (err) {
+    return { success: false, message: '디렉토리 읽기 실패' }
+  }
+})
+
+ipcMain.handle('get-path-directory', (_, dirPath: string) => {
+  try {
+    if (!existsSync(dirPath)) {
+      return { success: false, message: '경로가 존재하지 않습니다.' }
+    }
+    const structure = readDirectoryRecursive(dirPath)
     return { success: true, structure }
   } catch (err) {
     return { success: false, message: '디렉토리 읽기 실패' }
