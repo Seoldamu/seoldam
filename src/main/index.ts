@@ -301,7 +301,7 @@ ipcMain.handle('create-file', (_, parentPath: string, name: string) => {
 ipcMain.handle('rename-path', (_, oldPath: string, newName: string) => {
   try {
     if (!fs.existsSync(oldPath)) {
-      return { success: false, message: '파일 또는 폴더를 찾을 수 없습니다' }
+      return { success: false, message: '파일 또는 폴더를 찾을 수 없습��다' }
     }
 
     const validation = validatePathName(newName)
@@ -321,6 +321,22 @@ ipcMain.handle('rename-path', (_, oldPath: string, newName: string) => {
     }
 
     fs.renameSync(oldPath, newPath)
+
+    const seriesRoot = join(app.getPath('userData'), 'series')
+    const isSeriesDir = parentDir === seriesRoot
+
+    if (isSeriesDir && fs.existsSync(newPath)) {
+      const metaPath = join(newPath, 'meta.json')
+      if (fs.existsSync(metaPath)) {
+        try {
+          const meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8'))
+          meta.title = newName
+          fs.writeFileSync(metaPath, JSON.stringify(meta, null, 2), 'utf-8')
+        } catch (e) {
+          console.error('Failed to update meta.json:', e)
+        }
+      }
+    }
 
     return { success: true, path: newPath, oldPath, message: '이름이 변경되었습니다' }
   } catch (err) {

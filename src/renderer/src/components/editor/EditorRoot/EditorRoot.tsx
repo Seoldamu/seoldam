@@ -6,7 +6,7 @@ import {
   SeriesDropdown
 } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
-import { useSeriesStore } from '@renderer/stores'
+import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
 import { SeriesListItem, TreeNode } from '@renderer/types/series/type'
 import { flex, flattenTree } from '@renderer/utils'
 import { useEffect, useState } from 'react'
@@ -14,6 +14,7 @@ import { styled } from 'styled-components'
 
 const EditorRoot = () => {
   const { currentSeriesPath, currentPath, setCurrentPath, setSeriesPath } = useSeriesStore()
+  const { fetchTreeData } = useSeriesTreeStore()
   const [childNodes, setChildNodes] = useState<TreeNode[]>([])
   const [seriesList, setSeriesList] = useState<SeriesListItem[]>([])
 
@@ -25,7 +26,7 @@ const EditorRoot = () => {
       setSeriesList(list)
     }
     fetchSeriesList()
-  }, [])
+  }, [currentPath, currentSeriesPath])
 
   useEffect(() => {
     const fetchStructure = async () => {
@@ -64,6 +65,21 @@ const EditorRoot = () => {
     setCurrentPath(newSeriesPath)
   }
 
+  const handleNameChange = async (newName: string) => {
+    if (!currentPath || !newName) return
+
+    const result = await window.api.renamePath(currentPath, newName)
+    if (result.success) {
+      if (isRoot) {
+        setSeriesPath(result.path)
+      }
+      setCurrentPath(result.path)
+      fetchTreeData()
+    } else {
+      alert(`이름 변경 실패: ${result.message}`)
+    }
+  }
+
   const dropdownData = seriesList.map((series) => ({
     image: series.coverImagePath,
     value: series.path,
@@ -76,7 +92,7 @@ const EditorRoot = () => {
         <Row width="60%" gap={4}>
           <EditableText
             fontType="T2"
-            onChange={() => {}}
+            onChange={handleNameChange}
             color={color.G900}
             value={title}
             width="100%"
