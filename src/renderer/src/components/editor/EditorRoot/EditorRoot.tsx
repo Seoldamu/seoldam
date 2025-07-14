@@ -17,6 +17,8 @@ const EditorRoot = () => {
   const [childNodes, setChildNodes] = useState<TreeNode[]>([])
   const [seriesList, setSeriesList] = useState<SeriesListItem[]>([])
 
+  const isRoot = currentPath === currentSeriesPath
+
   useEffect(() => {
     const fetchSeriesList = async () => {
       const list = await window.api.getSeriesList()
@@ -30,7 +32,7 @@ const EditorRoot = () => {
       if (!currentPath) return
 
       let result
-      if (currentPath === currentSeriesPath) {
+      if (isRoot) {
         result = await window.api.getSeriesRootDirectory(currentPath)
       } else {
         result = await window.api.getPathDirectory(currentPath)
@@ -79,12 +81,14 @@ const EditorRoot = () => {
             value={title}
             width="100%"
           />
-          <SeriesDropdown
-            name="series-title"
-            value={title}
-            data={dropdownData}
-            onChange={handleSeriesChange}
-          />
+          {isRoot ? (
+            <SeriesDropdown
+              name="series-title"
+              value={title}
+              data={dropdownData}
+              onChange={handleSeriesChange}
+            />
+          ) : null}
         </Row>
         <IconButton
           onClick={() => {
