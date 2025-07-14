@@ -3,23 +3,52 @@ import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 import Toolbar from './Toolbar/Toolbar'
 import SavePanel from './SavePanel/SavePanel'
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
+import { useSeriesStore } from '@renderer/stores'
 
 const FileEditor = () => {
+  const { currentPath } = useSeriesStore()
+
   const fileNameRef = useRef<HTMLDivElement>(null)
   const fileContentRef = useRef<HTMLDivElement>(null)
 
-  const handleFileNameKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      fileContentRef.current?.focus()
+  const [fileData, setFileData] = useState({ fileName: '', content: '' })
+
+  useEffect(() => {
+    const loadFileInfo = async () => {
+      if (!currentPath) return
+
+      const result = await window.api.getFileInfo(currentPath)
+
+      setFileData({
+        fileName: result.fileName,
+        content: result.content
+      })
     }
-  }
+
+    loadFileInfo()
+  }, [currentPath])
+
+  useEffect(() => {
+    if (fileNameRef.current) {
+      fileNameRef.current.textContent = fileData.fileName
+    }
+    if (fileContentRef.current) {
+      fileContentRef.current.textContent = fileData.content
+    }
+  }, [fileData])
 
   const handleOnInput = (e: React.FormEvent<HTMLDivElement>) => {
     const el = e.currentTarget
     if (el.textContent === '') {
       el.innerHTML = ''
+    }
+  }
+
+  const handleFileNameKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      fileContentRef.current?.focus()
     }
   }
 
@@ -35,15 +64,17 @@ const FileEditor = () => {
           contentEditable
           data-placeholder="파일 이름을 입력하세요"
           onKeyDown={handleFileNameKeyDown}
-          spellCheck={false}
           onInput={handleOnInput}
+          spellCheck={false}
+          suppressContentEditableWarning={true}
         />
         <FileCotent
           ref={fileContentRef}
           contentEditable
           data-placeholder="내용을 입력하세요"
-          spellCheck={false}
           onInput={handleOnInput}
+          spellCheck={false}
+          suppressContentEditableWarning={true}
         />
       </WriteBox>
     </StyledFileEditor>
@@ -61,9 +92,10 @@ const StyledFileEditor = styled.div`
 `
 
 const FileEditorHeader = styled.div`
-  ${flex({ justifyContent: 'space-between' })}
+  ${flex({ justifyContent: 'space-between', alignItems: 'center' })}
   width: 80%;
   padding: 0px 24px 0px 24px;
+  position: relative;
 `
 
 const WriteBox = styled.div`
