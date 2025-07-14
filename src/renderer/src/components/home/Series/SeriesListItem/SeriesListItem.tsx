@@ -21,8 +21,6 @@ const SeriesItem = ({ title, coverImagePath, updatedAt, path }: Props) => {
     setCurrentPath(null)
   }
 
-  console.log(coverImagePath)
-
   return (
     <StyledSeriesItem onClick={handleSeriesItemClick}>
       <SeriesItemImgWrapper>
