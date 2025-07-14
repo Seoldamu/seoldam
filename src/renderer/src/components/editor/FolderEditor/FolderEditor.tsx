@@ -75,12 +75,12 @@ const FolderEditor = () => {
     }
   }
 
-  const hanldeNewFileCreateButton = async () => {
+  const handleNewFileCreateButton = async () => {
     if (!currentPath) return
 
     const result = isRoot
       ? await window.api.createFile(joinPath(currentPath, 'root'), '새 파일.md')
-      : await window.api.createFile(currentPath, name)
+      : await window.api.createFile(currentPath, '새 파일.md')
 
     if (result.success) {
       useSeriesTreeStore.getState().fetchTreeData()
@@ -114,7 +114,7 @@ const FolderEditor = () => {
             />
           ) : null}
         </Row>
-        <IconButton onClick={hanldeNewFileCreateButton}>새 글</IconButton>
+        <IconButton onClick={handleNewFileCreateButton}>새 글</IconButton>
       </Row>
       <FileList>
         {childNodes.map((node) => (

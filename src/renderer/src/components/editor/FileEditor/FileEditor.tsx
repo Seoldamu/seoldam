@@ -139,7 +139,7 @@ const FileEditor = () => {
           spellCheck={false}
           suppressContentEditableWarning={true}
         />
-        <FileCotent
+        <FileContent
           ref={fileContentRef}
           contentEditable
           data-placeholder="내용을 입력하세요"
@@ -189,7 +189,7 @@ const FileName = styled.div`
   }
 `
 
-const FileCotent = styled.div`
+const FileContent = styled.div`
   ${font.B1}
   color: ${color.G500};
   width: 100%;
