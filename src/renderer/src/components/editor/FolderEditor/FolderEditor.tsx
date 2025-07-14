@@ -118,7 +118,12 @@ const FolderEditor = () => {
       <FileList>
         {childNodes.map((node) => (
           <div key={node.id} onClick={() => handleNodeClick(node)}>
-            <ContentPreview title={node.name} content={node.content || ''} />
+            <ContentPreview
+              title={node.name}
+              content={node.content || ''}
+              path={node.path}
+              onDelete={fetchStructure}
+            />
           </div>
         ))}
       </FileList>

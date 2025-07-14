@@ -5,7 +5,7 @@ import { styled } from 'styled-components'
 interface Data {
   label: string
   value: string
-  onClick: () => void
+  onClick: (e: React.MouseEvent<HTMLDivElement>) => void
 }
 
 interface Props {
@@ -18,8 +18,9 @@ const ContextMenu = ({ data }: Props) => {
       {data.map((item) => (
         <ContextMenuItem
           key={item.value}
-          onClick={() => {
-            item.onClick()
+          onClick={(e) => {
+            e.stopPropagation()
+            item.onClick(e)
           }}
         >
           {item.label}
