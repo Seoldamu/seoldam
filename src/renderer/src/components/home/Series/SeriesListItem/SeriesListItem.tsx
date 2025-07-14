@@ -18,7 +18,7 @@ const SeriesItem = ({ title, coverImagePath, updatedAt, path }: Props) => {
 
   const handleSeriesItemClick = () => {
     setSeriesPath(path)
-    setCurrentPath(null)
+    setCurrentPath(path)
   }
 
   return (
