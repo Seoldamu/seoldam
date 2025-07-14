@@ -9,6 +9,7 @@ import { useContextMenu, useOutsideClick } from '@renderer/hooks'
 import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
 import { useState } from 'react'
 import TempObject from '../TempObject/TempObject'
+import { useNavigate } from 'react-router-dom'
 
 interface Props {
   node: TreeNode
@@ -16,6 +17,8 @@ interface Props {
 
 const SeriesFile = ({ node }: Props) => {
   const setCurrentPath = useSeriesStore((state) => state.setCurrentPath)
+
+  const navigate = useNavigate()
 
   const [updateType, setUpdateType] = useState<'file' | null>(null)
 
@@ -57,6 +60,7 @@ const SeriesFile = ({ node }: Props) => {
 
   const handleFileDoubleClick = () => {
     setCurrentPath(node.path)
+    navigate('/editor')
   }
 
   return (

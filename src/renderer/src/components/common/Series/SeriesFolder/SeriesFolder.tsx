@@ -9,6 +9,7 @@ import { TreeNode } from '@renderer/types/series/type'
 import { useContextMenu, useOutsideClick } from '@renderer/hooks'
 import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
 import TempObject from '../TempObject/TempObject'
+import { useNavigate } from 'react-router-dom'
 
 interface Props {
   node: TreeNode
@@ -16,6 +17,8 @@ interface Props {
 
 const SeriesFolder = ({ node }: Props) => {
   const setCurrentPath = useSeriesStore((state) => state.setCurrentPath)
+
+  const navigate = useNavigate()
 
   const [isOpen, setIsOpen] = useState(false)
   const [creatingType, setCreatingType] = useState<'file' | 'folder' | null>(null)
@@ -86,6 +89,7 @@ const SeriesFolder = ({ node }: Props) => {
   const handleFolderDoubleClick = () => {
     setIsOpen(true)
     setCurrentPath(node.path)
+    navigate('/editor')
   }
 
   return (
