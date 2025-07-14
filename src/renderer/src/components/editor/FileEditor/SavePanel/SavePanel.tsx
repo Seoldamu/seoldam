@@ -3,13 +3,17 @@ import { color } from '@renderer/design/styles'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 
-const SavePanel = () => {
+interface Props {
+  onSave: () => void
+}
+
+const SavePanel = ({ onSave }: Props) => {
   return (
     <StyledSavePanel>
       <Text fontType="B2" color={color.G700}>
         10000자
       </Text>
-      <Button property="DEFAULT" size="SMALL">
+      <Button property="DEFAULT" size="SMALL" onClick={onSave}>
         저장
       </Button>
     </StyledSavePanel>

@@ -4,10 +4,11 @@ import { styled } from 'styled-components'
 import Toolbar from './Toolbar/Toolbar'
 import SavePanel from './SavePanel/SavePanel'
 import { useRef, useEffect, useState } from 'react'
-import { useSeriesStore } from '@renderer/stores'
+import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
 
 const FileEditor = () => {
-  const { currentPath } = useSeriesStore()
+  const { currentPath, setCurrentPath } = useSeriesStore()
+  const { fetchTreeData } = useSeriesTreeStore()
 
   const fileNameRef = useRef<HTMLDivElement>(null)
   const fileContentRef = useRef<HTMLDivElement>(null)
@@ -52,11 +53,44 @@ const FileEditor = () => {
     }
   }
 
+  const handleFileSave = async () => {
+    if (!currentPath || !fileNameRef.current) return
+
+    const newFileName = fileNameRef.current.textContent?.trim() || ''
+    const content = fileContentRef.current?.textContent || ''
+    const oldPath = currentPath
+    const oldFileName = fileData.fileName
+
+    let pathToSave = currentPath
+
+    if (newFileName && newFileName !== oldFileName) {
+      const renameResult = await window.api.renamePath(oldPath, newFileName)
+      if (!renameResult.success) {
+        alert(renameResult.message)
+        return
+      }
+      pathToSave = renameResult.path
+      setCurrentPath(pathToSave)
+    }
+
+    const saveResult = await window.api.saveFileContent(pathToSave, content)
+    if (!saveResult.success) {
+      alert(saveResult.message)
+      return
+    }
+
+    setFileData({
+      fileName: newFileName,
+      content
+    })
+    fetchTreeData()
+  }
+
   return (
     <StyledFileEditor>
       <FileEditorHeader>
         <Toolbar />
-        <SavePanel />
+        <SavePanel onSave={handleFileSave} />
       </FileEditorHeader>
       <WriteBox>
         <FileName
