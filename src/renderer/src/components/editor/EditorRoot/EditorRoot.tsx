@@ -8,7 +8,7 @@ import {
 import { color } from '@renderer/design/styles'
 import { useSeriesStore, useSeriesTreeStore, useSeriesListStore } from '@renderer/stores'
 import { TreeNode } from '@renderer/types/series/type'
-import { flex, flattenTree } from '@renderer/utils'
+import { flex, flattenTree, joinPath } from '@renderer/utils'
 import { useEffect, useState } from 'react'
 import { styled } from 'styled-components'
 
@@ -20,25 +20,26 @@ const EditorRoot = () => {
 
   const isRoot = currentPath === currentSeriesPath
 
-  useEffect(() => {
-    const fetchStructure = async () => {
-      if (!currentPath) return
+  const fetchStructure = async () => {
+    if (!currentPath) return
 
-      let result
-      if (isRoot) {
-        result = await window.api.getSeriesRootDirectory(currentPath)
-      } else {
-        result = await window.api.getPathDirectory(currentPath)
-      }
-
-      if (result && result.success) {
-        const nodes = flattenTree(result.structure).filter((node) => node.type === 'file')
-        setChildNodes(nodes)
-      } else {
-        console.error('Failed to fetch series structure:', result?.message)
-        setChildNodes([])
-      }
+    let result
+    if (isRoot) {
+      result = await window.api.getSeriesRootDirectory(currentPath)
+    } else {
+      result = await window.api.getPathDirectory(currentPath)
     }
+
+    if (result && result.success) {
+      const nodes = flattenTree(result.structure).filter((node) => node.type === 'file')
+      setChildNodes(nodes)
+    } else {
+      console.error('Failed to fetch series structure:', result?.message)
+      setChildNodes([])
+    }
+  }
+
+  useEffect(() => {
     fetchStructure()
   }, [currentPath, currentSeriesPath])
 
@@ -79,6 +80,19 @@ const EditorRoot = () => {
     label: series.title
   }))
 
+  const hanldeNewFileCreateButton = async () => {
+    if (!currentPath) return
+
+    const result = isRoot
+      ? await window.api.createFile(joinPath(currentPath, 'root'), '새 파일.md')
+      : await window.api.createFile(currentPath, name)
+
+    if (result.success) {
+      useSeriesTreeStore.getState().fetchTreeData()
+      fetchStructure()
+    }
+  }
+
   return (
     <StyledEditorRoot>
       <Row justifyContent="space-between">
@@ -99,13 +113,7 @@ const EditorRoot = () => {
             />
           ) : null}
         </Row>
-        <IconButton
-          onClick={() => {
-            console.log('새 글 추가 버튼을 눌렀습니다.')
-          }}
-        >
-          새 글
-        </IconButton>
+        <IconButton onClick={hanldeNewFileCreateButton}>새 글</IconButton>
       </Row>
       <FileList>
         {childNodes.map((node) => (
