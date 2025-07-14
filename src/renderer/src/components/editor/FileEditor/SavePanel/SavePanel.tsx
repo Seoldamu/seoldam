@@ -7,7 +7,7 @@ const SavePanel = () => {
   return (
     <StyledSavePanel>
       <Text fontType="B2" color={color.G700}>
-        {`유동적으로 변경되는 글자 수`}자
+        {`글자 수`}자
       </Text>
       <Button property="DEFAULT" size="SMALL">
         저장
