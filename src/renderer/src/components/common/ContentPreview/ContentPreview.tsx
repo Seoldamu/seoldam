@@ -1,10 +1,10 @@
+import { styled } from 'styled-components'
 import { color } from '@renderer/design/styles'
 import { useContextMenu, useOutsideClick } from '@renderer/hooks'
-import { flex } from '@renderer/utils'
-import { styled } from 'styled-components'
-import Text from '../Text/Text'
 import { useSeriesTreeStore } from '@renderer/stores'
+import { flex } from '@renderer/utils'
 import ContextMenu from '../ContextMenu/ContextMenu'
+import Text from '../Text/Text'
 
 interface Props {
   title: string

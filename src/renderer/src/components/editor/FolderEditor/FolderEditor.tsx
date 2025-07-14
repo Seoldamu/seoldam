@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+import { styled } from 'styled-components'
 import {
   ContentPreview,
   EditableText,
@@ -9,14 +11,13 @@ import { color } from '@renderer/design/styles'
 import { useSeriesStore, useSeriesTreeStore, useSeriesListStore } from '@renderer/stores'
 import { TreeNode } from '@renderer/types/series/type'
 import { flex, flattenTree, joinPath } from '@renderer/utils'
-import { useEffect, useState } from 'react'
-import { styled } from 'styled-components'
 
 const FolderEditor = () => {
   const { currentSeriesPath, currentPath, setCurrentPath, setSeriesPath } = useSeriesStore()
   const { fetchTreeData } = useSeriesTreeStore()
-  const [childNodes, setChildNodes] = useState<TreeNode[]>([])
   const { seriesList, fetchSeriesList } = useSeriesListStore()
+
+  const [childNodes, setChildNodes] = useState<TreeNode[]>([])
 
   const isRoot = currentPath === currentSeriesPath
 
@@ -74,12 +75,6 @@ const FolderEditor = () => {
     }
   }
 
-  const dropdownData = seriesList.map((series) => ({
-    image: series.coverImagePath,
-    value: series.path,
-    label: series.title
-  }))
-
   const hanldeNewFileCreateButton = async () => {
     if (!currentPath) return
 
@@ -92,6 +87,12 @@ const FolderEditor = () => {
       fetchStructure()
     }
   }
+
+  const dropdownData = seriesList.map((series) => ({
+    image: series.coverImagePath,
+    value: series.path,
+    label: series.title
+  }))
 
   return (
     <StyledFolderEditor>

@@ -1,28 +1,24 @@
-import { IconFolder } from '@renderer/design/icons'
-import { flex } from '@renderer/utils'
-import { styled } from 'styled-components'
-import { Text, ContextMenu, Row } from '@renderer/components/common'
-import { color } from '@renderer/design/styles'
-import SeriesFile from '../SeriesFile/SeriesFile'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { styled } from 'styled-components'
+import { IconFolder } from '@renderer/design/icons'
+import { color } from '@renderer/design/styles'
+import { flex } from '@renderer/utils'
+import { Text, ContextMenu, Row } from '@renderer/components/common'
 import { TreeNode } from '@renderer/types/series/type'
 import { useContextMenu, useOutsideClick } from '@renderer/hooks'
 import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
+import SeriesFile from '../SeriesFile/SeriesFile'
 import TempObject from '../TempObject/TempObject'
-import { useNavigate } from 'react-router-dom'
 
 interface Props {
   node: TreeNode
 }
 
 const SeriesFolder = ({ node }: Props) => {
-  const setCurrentPath = useSeriesStore((state) => state.setCurrentPath)
-
   const navigate = useNavigate()
 
-  const [isOpen, setIsOpen] = useState(false)
-  const [creatingType, setCreatingType] = useState<'file' | 'folder' | null>(null)
-  const [updateType, setUpdateType] = useState<'folder' | null>(null)
+  const setCurrentPath = useSeriesStore((state) => state.setCurrentPath)
 
   const { contextMenuVisible, contextMenuPosition, openContextMenu, closeContextMenu } =
     useContextMenu()
@@ -30,9 +26,34 @@ const SeriesFolder = ({ node }: Props) => {
     if (contextMenuVisible) closeContextMenu()
   })
 
+  const [isOpen, setIsOpen] = useState(false)
+  const [creatingType, setCreatingType] = useState<'file' | 'folder' | null>(null)
+  const [updateType, setUpdateType] = useState<'folder' | null>(null)
+
   const handleOpenContextMenu = (e: React.MouseEvent<Element, MouseEvent>) => {
     setIsOpen(true)
     openContextMenu(e)
+  }
+
+  const handleCreateSubmit = async (name: string) => {
+    const result =
+      creatingType === 'folder'
+        ? await window.api.createFolder(node.path, name)
+        : await window.api.createFile(node.path, name)
+
+    if (result.success) useSeriesTreeStore.getState().fetchTreeData()
+    setCreatingType(null)
+  }
+
+  const handleUpdateSumit = async (name: string) => {
+    const result = await window.api.renamePath(node.path, name)
+    if (result.success) useSeriesTreeStore.getState().fetchTreeData()
+  }
+
+  const handleFolderDoubleClick = () => {
+    setIsOpen(true)
+    setCurrentPath(node.path)
+    navigate('/editor')
   }
 
   const contextMenuData = [
@@ -71,27 +92,6 @@ const SeriesFolder = ({ node }: Props) => {
     }
   ]
 
-  const handleCreateSubmit = async (name: string) => {
-    const result =
-      creatingType === 'folder'
-        ? await window.api.createFolder(node.path, name)
-        : await window.api.createFile(node.path, name)
-
-    if (result.success) useSeriesTreeStore.getState().fetchTreeData()
-    setCreatingType(null)
-  }
-
-  const handleUpdateSumit = async (name: string) => {
-    const result = await window.api.renamePath(node.path, name)
-    if (result.success) useSeriesTreeStore.getState().fetchTreeData()
-  }
-
-  const handleFolderDoubleClick = () => {
-    setIsOpen(true)
-    setCurrentPath(node.path)
-    navigate('/editor')
-  }
-
   return (
     <>
       <StyledSeriesFolder
@@ -107,7 +107,7 @@ const SeriesFolder = ({ node }: Props) => {
             onSubmit={handleUpdateSumit}
           />
         ) : (
-          <Row gap={8}>
+          <Row width="90%" gap={8}>
             <IconFolder width={24} height={24} active={isOpen} />
             <Text fontType="B2" color={color.G800} ellipsis>
               {node.name}

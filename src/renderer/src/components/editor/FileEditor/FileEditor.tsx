@@ -1,10 +1,10 @@
-import { color, font } from '@renderer/design/styles'
-import { countCharacters, flex } from '@renderer/utils'
+import { useEffect, useRef, useState } from 'react'
 import { styled } from 'styled-components'
-import Toolbar from './Toolbar/Toolbar'
-import SavePanel from './SavePanel/SavePanel'
-import { useRef, useEffect, useState } from 'react'
+import { color, font } from '@renderer/design/styles'
 import { useSeriesStore, useSeriesTreeStore, useTodayCharCountStore } from '@renderer/stores'
+import { countCharacters, flex } from '@renderer/utils'
+import SavePanel from './SavePanel/SavePanel'
+import Toolbar from './Toolbar/Toolbar'
 
 const FileEditor = () => {
   const { currentPath, setCurrentPath } = useSeriesStore()
