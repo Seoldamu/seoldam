@@ -14,6 +14,9 @@ importers:
       '@electron-toolkit/utils':
         specifier: ^4.0.0
         version: 4.0.0(electron@35.2.1)
+      '@tiptap/extension-text-align':
+        specifier: ^3.0.1
+        version: 3.0.1(@tiptap/core@3.0.1(@tiptap/pm@3.0.1))
       '@tiptap/pm':
         specifier: ^3.0.1
         version: 3.0.1
@@ -768,6 +771,11 @@ packages:
 
   '@tiptap/extension-strike@3.0.1':
     resolution: {integrity: sha512-ZYC/yLBtVtaABxj49jbM2uFmV2qM4RnpB52bMbFgL/5zlLaD1lGLPYgZkU1ZVaWhxLqx9lodXyEfRdNJSQnqrg==}
+    peerDependencies:
+      '@tiptap/core': ^3.0.1
+
+  '@tiptap/extension-text-align@3.0.1':
+    resolution: {integrity: sha512-T3M4JNpqZGbUNmfnJUdorgCi7idhY64STjycPkemcrdHWeEoEGNsM9bHP1ja04C1z1DQfv6M3DS/omZGlRv47A==}
     peerDependencies:
       '@tiptap/core': ^3.0.1
 
@@ -3761,6 +3769,10 @@ snapshots:
       '@tiptap/core': 3.0.1(@tiptap/pm@3.0.1)
 
   '@tiptap/extension-strike@3.0.1(@tiptap/core@3.0.1(@tiptap/pm@3.0.1))':
+    dependencies:
+      '@tiptap/core': 3.0.1(@tiptap/pm@3.0.1)
+
+  '@tiptap/extension-text-align@3.0.1(@tiptap/core@3.0.1(@tiptap/pm@3.0.1))':
     dependencies:
       '@tiptap/core': 3.0.1(@tiptap/pm@3.0.1)
 
