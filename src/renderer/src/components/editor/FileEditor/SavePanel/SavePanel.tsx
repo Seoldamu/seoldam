@@ -7,7 +7,7 @@ const SavePanel = () => {
   return (
     <StyledSavePanel>
       <Text fontType="B2" color={color.G700}>
-        {`글자 수`}자
+        10000자
       </Text>
       <Button property="DEFAULT" size="SMALL">
         저장
