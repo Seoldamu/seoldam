@@ -48,7 +48,7 @@ const EditorRoot = () => {
     if (node.type === 'folder') {
       setCurrentPath(node.path)
     } else {
-      console.log('File clicked:', node.name)
+      setCurrentPath(node.path)
     }
   }
 
