@@ -102,6 +102,7 @@ const SeriesFolder = ({ node }: Props) => {
         {updateType ? (
           <TempObject
             type={updateType}
+            initialName={node.name}
             onCancel={() => setUpdateType(null)}
             onSubmit={handleUpdateSumit}
           />

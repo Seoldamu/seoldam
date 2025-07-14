@@ -4,26 +4,36 @@ import { styled } from 'styled-components'
 import { TextArea } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
 import { useEffect, useRef, useState } from 'react'
+import { useOutsideClick } from '@renderer/hooks'
 
 interface Props {
   type: 'folder' | 'file'
+  initialName?: string
   onCancel: () => void
   onSubmit: (name: string) => void
 }
 
-const TempObject = ({ type, onCancel, onSubmit }: Props) => {
-  const [name, setName] = useState('')
+const TempObject = ({ type, initialName = '', onCancel, onSubmit }: Props) => {
+  const [name, setName] = useState(initialName)
+
+  const containerRef = useOutsideClick<HTMLDivElement>(onCancel)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
-    inputRef.current?.focus()
+    if (inputRef.current) {
+      inputRef.current.focus()
+      inputRef.current.setSelectionRange(0, inputRef.current.value.length)
+    }
+  }, [])
 
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Enter' && name.trim()) {
         e.preventDefault()
         onSubmit(name.trim())
       }
       if (e.key === 'Escape') {
+        e.preventDefault()
         onCancel()
       }
     }
@@ -32,8 +42,16 @@ const TempObject = ({ type, onCancel, onSubmit }: Props) => {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [name])
 
+  const handleBlur = () => {
+    if (name.trim()) {
+      onSubmit(name.trim())
+    } else {
+      onCancel()
+    }
+  }
+
   return (
-    <StyledSeriesFile>
+    <StyledSeriesFile ref={containerRef}>
       {type === 'folder' ? (
         <IconFolder width={24} height={24} />
       ) : (
@@ -48,7 +66,7 @@ const TempObject = ({ type, onCancel, onSubmit }: Props) => {
         placeholder={`${type === 'folder' ? '폴더' : '파일'} 명을 입력해주세요`}
         width="100%"
         rows={1}
-        onBlur={onCancel}
+        onBlur={handleBlur}
       />
     </StyledSeriesFile>
   )
