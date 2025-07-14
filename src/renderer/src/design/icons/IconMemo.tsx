@@ -2,7 +2,7 @@ import { SVGProps, useId } from 'react'
 import { color } from '@renderer/design/styles'
 
 type Props = SVGProps<SVGSVGElement> & {
-    active?: boolean
+  active?: boolean
 }
 
 const IconMemo = ({ active = false, ...props }: Props) => {
