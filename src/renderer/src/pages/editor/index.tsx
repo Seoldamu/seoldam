@@ -1,4 +1,4 @@
-import { EditorRoot, FileEditor } from '@renderer/components/editor'
+import { FolderEditor, FileEditor } from '@renderer/components/editor'
 import { useSeriesStore } from '@renderer/stores'
 import { useMemo } from 'react'
 
@@ -16,7 +16,7 @@ const Editor = () => {
     return null
   }
 
-  return <div>{isFolder ? <EditorRoot /> : <FileEditor />}</div>
+  return <div>{isFolder ? <FolderEditor /> : <FileEditor />}</div>
 }
 
 export default Editor

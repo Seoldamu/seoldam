@@ -12,7 +12,7 @@ import { flex, flattenTree, joinPath } from '@renderer/utils'
 import { useEffect, useState } from 'react'
 import { styled } from 'styled-components'
 
-const EditorRoot = () => {
+const FolderEditor = () => {
   const { currentSeriesPath, currentPath, setCurrentPath, setSeriesPath } = useSeriesStore()
   const { fetchTreeData } = useSeriesTreeStore()
   const [childNodes, setChildNodes] = useState<TreeNode[]>([])
@@ -94,7 +94,7 @@ const EditorRoot = () => {
   }
 
   return (
-    <StyledEditorRoot>
+    <StyledFolderEditor>
       <Row justifyContent="space-between">
         <Row width="60%" gap={4}>
           <EditableText
@@ -122,13 +122,13 @@ const EditorRoot = () => {
           </div>
         ))}
       </FileList>
-    </StyledEditorRoot>
+    </StyledFolderEditor>
   )
 }
 
-export default EditorRoot
+export default FolderEditor
 
-const StyledEditorRoot = styled.div`
+const StyledFolderEditor = styled.div`
   ${flex({ justifyContent: 'center', flexDirection: 'column' })}
   width: 100%;
   padding: 68px 205px 0px 72px;
