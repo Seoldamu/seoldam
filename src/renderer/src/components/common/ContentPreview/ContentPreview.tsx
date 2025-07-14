@@ -25,10 +25,10 @@ export default ContentPreview
 
 const StyledContentPreview = styled.div`
   ${flex({ alignItems: 'flex-start', flexDirection: 'column' })}
-  width: calc(20% - 20px);
+  width: 100%;
+  height: 180px;
   padding: 16px 10px;
   gap: 6px;
-
   border-radius: 8px;
   background: ${color.G20};
 `

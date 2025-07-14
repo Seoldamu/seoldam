@@ -6,15 +6,20 @@ import { color } from '@renderer/design/styles'
 import { TreeNode } from '@renderer/types/series/type'
 import { ContextMenu } from '@renderer/components/common'
 import { useContextMenu, useOutsideClick } from '@renderer/hooks'
-import { useSeriesTreeStore } from '@renderer/stores'
+import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
 import { useState } from 'react'
 import TempObject from '../TempObject/TempObject'
+import { useNavigate } from 'react-router-dom'
 
 interface Props {
   node: TreeNode
 }
 
 const SeriesFile = ({ node }: Props) => {
+  const setCurrentPath = useSeriesStore((state) => state.setCurrentPath)
+
+  const navigate = useNavigate()
+
   const [updateType, setUpdateType] = useState<'file' | null>(null)
 
   const { contextMenuVisible, contextMenuPosition, openContextMenu, closeContextMenu } =
@@ -53,12 +58,18 @@ const SeriesFile = ({ node }: Props) => {
     if (result.success) useSeriesTreeStore.getState().fetchTreeData()
   }
 
+  const handleFileDoubleClick = () => {
+    setCurrentPath(node.path)
+    navigate('/editor')
+  }
+
   return (
     <>
-      <StyledSeriesFile onContextMenu={openContextMenu}>
+      <StyledSeriesFile onContextMenu={openContextMenu} onDoubleClick={handleFileDoubleClick}>
         {updateType ? (
           <TempObject
             type={updateType}
+            initialName={node.name}
             onCancel={() => setUpdateType(null)}
             onSubmit={handleUpdateSumit}
           />

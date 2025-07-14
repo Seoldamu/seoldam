@@ -14,17 +14,17 @@ interface Props {
 
 const SeriesItem = ({ title, coverImagePath, updatedAt, path }: Props) => {
   const setSeriesPath = useSeriesStore((state) => state.setSeriesPath)
+  const setCurrentPath = useSeriesStore((state) => state.setCurrentPath)
 
   const handleSeriesItemClick = () => {
     setSeriesPath(path)
+    setCurrentPath(path)
   }
-
-  const imgSrc = `seoldam://series/${encodeURIComponent(title)}/${coverImagePath}`
 
   return (
     <StyledSeriesItem onClick={handleSeriesItemClick}>
       <SeriesItemImgWrapper>
-        <SeriesItemImg src={imgSrc} />
+        <SeriesItemImg src={coverImagePath} />
       </SeriesItemImgWrapper>
       <Column gap={4}>
         <Text fontType="H1" color={color.G900} ellipsis={2} whiteSpace="normal">

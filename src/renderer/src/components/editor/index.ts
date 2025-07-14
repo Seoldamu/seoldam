@@ -1,1 +1,2 @@
-export { default as EditorRoot } from './EditorRoot/EditorRoot'
+export { default as FolderEditor } from './FolderEditor/FolderEditor'
+export { default as FileEditor } from './FileEditor/FileEditor'

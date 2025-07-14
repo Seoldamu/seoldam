@@ -18,8 +18,10 @@ const api = {
 
   getPathForFile: (file) => webUtils.getPathForFile(file),
 
-  getSeriesStructure: (seriesPath: string) =>
-    ipcRenderer.invoke('read-series-structure', seriesPath),
+  getSeriesRootDirectory: (seriesPath: string) =>
+    ipcRenderer.invoke('get-series-root-directory', seriesPath),
+
+  getPathDirectory: (dirPath: string) => ipcRenderer.invoke('get-path-directory', dirPath),
 
   deleteSeriesTargetPath: (targetPath: string) => ipcRenderer.invoke('delete-path', targetPath),
 
@@ -30,7 +32,12 @@ const api = {
     ipcRenderer.invoke('create-file', targetPath, name),
 
   renamePath: (targetPath: string, name: string) =>
-    ipcRenderer.invoke('rename-path', targetPath, name)
+    ipcRenderer.invoke('rename-path', targetPath, name),
+
+  saveFileContent: (filePath: string, content: string) =>
+    ipcRenderer.invoke('save-file-content', filePath, content),
+
+  getFileInfo: (filePath: string) => ipcRenderer.invoke('get-file-info', filePath)
 }
 
 if (process.contextIsolated) {

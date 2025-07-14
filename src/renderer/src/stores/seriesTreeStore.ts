@@ -16,7 +16,7 @@ const useSeriesTreeStore = create<SeriesTreeStore>((set) => ({
     const currentSeriesPath = useSeriesStore.getState().currentSeriesPath
     if (!currentSeriesPath) return
 
-    const result = await window.api.getSeriesStructure(currentSeriesPath)
+    const result = await window.api.getSeriesRootDirectory(currentSeriesPath)
     if (result.success) {
       set({ treeData: result.structure })
     }

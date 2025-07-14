@@ -150,9 +150,14 @@ ipcMain.handle('get-series-list', () => {
         const meta = JSON.parse(readFileSync(metaPath, 'utf-8'))
         const fullPath = join(seriesRoot, dir)
 
+        const coverImageUrl = `seoldam://series/${encodeURIComponent(meta.title)}/${
+          meta.coverImagePath
+        }`
+
         seriesList.push({
           ...meta,
-          path: fullPath
+          path: fullPath,
+          coverImagePath: coverImageUrl
         })
       } catch {}
     }
@@ -196,20 +201,47 @@ function readDirectoryRecursive(dirPath: string): any[] {
     const fullPath = join(dirPath, name)
     const stats = statSync(fullPath)
     const isDirectory = stats.isDirectory()
+    const isFile = stats.isFile()
 
-    return {
+    const node: any = {
+      id: fullPath,
       name,
       type: isDirectory ? 'folder' : 'file',
       path: fullPath,
       children: isDirectory ? readDirectoryRecursive(fullPath) : undefined
     }
+
+    if (isFile) {
+      try {
+        node.content = readFileSync(fullPath, 'utf-8')
+      } catch (e) {
+        node.content = ''
+      }
+    }
+
+    return node
   })
 }
 
-ipcMain.handle('read-series-structure', (_, seriesPath: string) => {
+ipcMain.handle('get-series-root-directory', (_, seriesPath: string) => {
   const rootPath = join(seriesPath, 'root')
   try {
+    if (!existsSync(rootPath)) {
+      return { success: false, message: 'Root 디렉토리를 찾을 수 없습니다.' }
+    }
     const structure = readDirectoryRecursive(rootPath)
+    return { success: true, structure }
+  } catch (err) {
+    return { success: false, message: '디렉토리 읽기 실패' }
+  }
+})
+
+ipcMain.handle('get-path-directory', (_, dirPath: string) => {
+  try {
+    if (!existsSync(dirPath)) {
+      return { success: false, message: '경로가 존재하지 않습니다.' }
+    }
+    const structure = readDirectoryRecursive(dirPath)
     return { success: true, structure }
   } catch (err) {
     return { success: false, message: '디렉토리 읽기 실패' }
@@ -290,9 +322,68 @@ ipcMain.handle('rename-path', (_, oldPath: string, newName: string) => {
 
     fs.renameSync(oldPath, newPath)
 
+    const seriesRoot = join(app.getPath('userData'), 'series')
+    const isSeriesDir = parentDir === seriesRoot
+
+    if (isSeriesDir && fs.existsSync(newPath)) {
+      const metaPath = join(newPath, 'meta.json')
+      if (fs.existsSync(metaPath)) {
+        try {
+          const meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8'))
+          meta.title = newName
+          fs.writeFileSync(metaPath, JSON.stringify(meta, null, 2), 'utf-8')
+        } catch (e) {
+          console.error('Failed to update meta.json:', e)
+        }
+      }
+    }
+
     return { success: true, path: newPath, oldPath, message: '이름이 변경되었습니다' }
   } catch (err) {
     console.error('Rename error:', err)
     return { success: false, message: '이름 변경 실패', error: err }
+  }
+})
+
+ipcMain.handle('save-file-content', (_, filePath: string, content: string) => {
+  try {
+    writeFileSync(filePath, content, 'utf-8')
+    return { success: true }
+  } catch (err) {
+    console.error('Failed to save file content:', err)
+    return { success: false, message: '파일 저장 실패', error: err }
+  }
+})
+
+ipcMain.handle('get-file-info', (_, filePath: string) => {
+  try {
+    if (!existsSync(filePath)) {
+      return { success: false, message: '파일이 존재하지 않습니다.' }
+    }
+
+    const stats = statSync(filePath)
+    if (!stats.isFile()) {
+      return { success: false, message: '지정된 경로가 파일이 아닙니다.' }
+    }
+
+    const fileName = path.basename(filePath)
+
+    const content = readFileSync(filePath, 'utf-8')
+
+    return {
+      success: true,
+      fileName: fileName,
+      content: content,
+      filePath: filePath,
+      size: stats.size,
+      lastModified: stats.mtime
+    }
+  } catch (err) {
+    console.error('Failed to get file info:', err)
+    return {
+      success: false,
+      message: '파일 정보를 가져오는 중 오류가 발생했습니다.',
+      error: err
+    }
   }
 })

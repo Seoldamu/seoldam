@@ -7,14 +7,19 @@ import SeriesFile from '../SeriesFile/SeriesFile'
 import { useState } from 'react'
 import { TreeNode } from '@renderer/types/series/type'
 import { useContextMenu, useOutsideClick } from '@renderer/hooks'
-import { useSeriesTreeStore } from '@renderer/stores'
+import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
 import TempObject from '../TempObject/TempObject'
+import { useNavigate } from 'react-router-dom'
 
 interface Props {
   node: TreeNode
 }
 
 const SeriesFolder = ({ node }: Props) => {
+  const setCurrentPath = useSeriesStore((state) => state.setCurrentPath)
+
+  const navigate = useNavigate()
+
   const [isOpen, setIsOpen] = useState(false)
   const [creatingType, setCreatingType] = useState<'file' | 'folder' | null>(null)
   const [updateType, setUpdateType] = useState<'folder' | null>(null)
@@ -81,12 +86,23 @@ const SeriesFolder = ({ node }: Props) => {
     if (result.success) useSeriesTreeStore.getState().fetchTreeData()
   }
 
+  const handleFolderDoubleClick = () => {
+    setIsOpen(true)
+    setCurrentPath(node.path)
+    navigate('/editor')
+  }
+
   return (
     <>
-      <StyledSeriesFolder onContextMenu={handleOpenContextMenu} onClick={() => setIsOpen(!isOpen)}>
+      <StyledSeriesFolder
+        onContextMenu={handleOpenContextMenu}
+        onClick={() => setIsOpen(!isOpen)}
+        onDoubleClick={handleFolderDoubleClick}
+      >
         {updateType ? (
           <TempObject
             type={updateType}
+            initialName={node.name}
             onCancel={() => setUpdateType(null)}
             onSubmit={handleUpdateSumit}
           />

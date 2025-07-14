@@ -4,8 +4,9 @@ import { styled } from 'styled-components'
 import SeriesItem from './SeriesListItem/SeriesListItem'
 import useOverlay from '@renderer/hooks/useOverlay'
 import SeriesCreateModal from './SeriesCreateModal/SeriesCreateModal'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { SeriesListItem, SeriesMeta } from '@renderer/types/series/type'
+import { useSeriesListStore } from '@renderer/stores'
 
 const extractSeriesList = (list: SeriesMeta[]): SeriesListItem[] => {
   return list.map(({ id, title, coverImagePath, updatedAt, path }) => ({
@@ -18,11 +19,11 @@ const extractSeriesList = (list: SeriesMeta[]): SeriesListItem[] => {
 }
 
 const Series = () => {
-  const [series, setSeries] = useState<SeriesListItem[]>([])
+  const { seriesList, setSeriesList } = useSeriesListStore()
 
   const refreshSeriesList = () => {
     window.api.getSeriesList().then((data: SeriesMeta[]) => {
-      setSeries(extractSeriesList(data))
+      setSeriesList(extractSeriesList(data))
     })
   }
 
@@ -32,7 +33,7 @@ const Series = () => {
 
   useEffect(() => {
     window.api.getSeriesList().then((data: SeriesMeta[]) => {
-      setSeries(extractSeriesList(data))
+      setSeriesList(extractSeriesList(data))
     })
   }, [])
 
@@ -42,7 +43,7 @@ const Series = () => {
         <IconButton onClick={handleOpen}>새 시리즈</IconButton>
       </Row>
       <SeriesList>
-        {series.map((item) => (
+        {seriesList.map((item) => (
           <SeriesItem
             key={item.id}
             id={item.id}
