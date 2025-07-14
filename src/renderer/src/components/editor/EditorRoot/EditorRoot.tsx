@@ -6,8 +6,8 @@ import {
   SeriesDropdown
 } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
-import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
-import { SeriesListItem, TreeNode } from '@renderer/types/series/type'
+import { useSeriesStore, useSeriesTreeStore, useSeriesListStore } from '@renderer/stores'
+import { TreeNode } from '@renderer/types/series/type'
 import { flex, flattenTree } from '@renderer/utils'
 import { useEffect, useState } from 'react'
 import { styled } from 'styled-components'
@@ -16,17 +16,9 @@ const EditorRoot = () => {
   const { currentSeriesPath, currentPath, setCurrentPath, setSeriesPath } = useSeriesStore()
   const { fetchTreeData } = useSeriesTreeStore()
   const [childNodes, setChildNodes] = useState<TreeNode[]>([])
-  const [seriesList, setSeriesList] = useState<SeriesListItem[]>([])
+  const { seriesList, fetchSeriesList } = useSeriesListStore()
 
   const isRoot = currentPath === currentSeriesPath
-
-  useEffect(() => {
-    const fetchSeriesList = async () => {
-      const list = await window.api.getSeriesList()
-      setSeriesList(list)
-    }
-    fetchSeriesList()
-  }, [currentPath, currentSeriesPath])
 
   useEffect(() => {
     const fetchStructure = async () => {
@@ -75,6 +67,7 @@ const EditorRoot = () => {
       }
       setCurrentPath(result.path)
       fetchTreeData()
+      fetchSeriesList()
     } else {
       alert(`이름 변경 실패: ${result.message}`)
     }
