@@ -59,7 +59,7 @@ const Toolbar = () => {
 export default Toolbar
 
 const StyledToolbar = styled.div`
-  ${flex({ justifyContent: 'center', alignItems: 'center' })}
+  ${flex({ alignItems: 'center' })}
   width: 100%;
   gap: 16px;
 `
