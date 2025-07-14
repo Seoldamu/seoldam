@@ -35,7 +35,9 @@ const api = {
     ipcRenderer.invoke('rename-path', targetPath, name),
 
   saveFileContent: (filePath: string, content: string) =>
-    ipcRenderer.invoke('save-file-content', filePath, content)
+    ipcRenderer.invoke('save-file-content', filePath, content),
+
+  getFileInfo: (filePath: string) => ipcRenderer.invoke('get-file-info', filePath)
 }
 
 if (process.contextIsolated) {

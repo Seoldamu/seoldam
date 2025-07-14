@@ -354,3 +354,36 @@ ipcMain.handle('save-file-content', (_, filePath: string, content: string) => {
     return { success: false, message: '파일 저장 실패', error: err }
   }
 })
+
+ipcMain.handle('get-file-info', (_, filePath: string) => {
+  try {
+    if (!existsSync(filePath)) {
+      return { success: false, message: '파일이 존재하지 않습니다.' }
+    }
+
+    const stats = statSync(filePath)
+    if (!stats.isFile()) {
+      return { success: false, message: '지정된 경로가 파일이 아닙니다.' }
+    }
+
+    const fileName = path.basename(filePath)
+
+    const content = readFileSync(filePath, 'utf-8')
+
+    return {
+      success: true,
+      fileName: fileName,
+      content: content,
+      filePath: filePath,
+      size: stats.size,
+      lastModified: stats.mtime
+    }
+  } catch (err) {
+    console.error('Failed to get file info:', err)
+    return {
+      success: false,
+      message: '파일 정보를 가져오는 중 오류가 발생했습니다.',
+      error: err
+    }
+  }
+})
