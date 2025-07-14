@@ -1,5 +1,5 @@
 import { color, font } from '@renderer/design/styles'
-import { flex } from '@renderer/utils'
+import { countCharacters, flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 import Toolbar from './Toolbar/Toolbar'
 import SavePanel from './SavePanel/SavePanel'
@@ -14,6 +14,7 @@ const FileEditor = () => {
   const fileContentRef = useRef<HTMLDivElement>(null)
 
   const [fileData, setFileData] = useState({ fileName: '', content: '' })
+  const [charCount, setCharCount] = useState(0)
 
   useEffect(() => {
     const loadFileInfo = async () => {
@@ -37,7 +38,30 @@ const FileEditor = () => {
     if (fileContentRef.current) {
       fileContentRef.current.textContent = fileData.content
     }
+    setCharCount(countCharacters(fileData.content))
   }, [fileData])
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      if (fileContentRef.current) {
+        const text = fileContentRef.current.textContent || ''
+        setCharCount(countCharacters(text))
+      }
+    })
+
+    const target = fileContentRef.current
+    if (target) {
+      observer.observe(target, {
+        characterData: true,
+        subtree: true,
+        childList: true
+      })
+    }
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
 
   const handleOnInput = (e: React.FormEvent<HTMLDivElement>) => {
     const el = e.currentTarget
@@ -90,7 +114,7 @@ const FileEditor = () => {
     <StyledFileEditor>
       <FileEditorHeader>
         <Toolbar />
-        <SavePanel onSave={handleFileSave} />
+        <SavePanel charCount={charCount} onSave={handleFileSave} />
       </FileEditorHeader>
       <WriteBox>
         <FileName

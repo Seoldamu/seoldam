@@ -5,13 +5,14 @@ import { styled } from 'styled-components'
 
 interface Props {
   onSave: () => void
+  charCount: number
 }
 
-const SavePanel = ({ onSave }: Props) => {
+const SavePanel = ({ onSave, charCount }: Props) => {
   return (
     <StyledSavePanel>
       <Text fontType="B2" color={color.G700}>
-        10000자
+        {charCount.toLocaleString()}자
       </Text>
       <Button property="DEFAULT" size="SMALL" onClick={onSave}>
         저장
