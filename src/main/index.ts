@@ -344,3 +344,13 @@ ipcMain.handle('rename-path', (_, oldPath: string, newName: string) => {
     return { success: false, message: '이름 변경 실패', error: err }
   }
 })
+
+ipcMain.handle('save-file-content', (_, filePath: string, content: string) => {
+  try {
+    writeFileSync(filePath, content, 'utf-8')
+    return { success: true }
+  } catch (err) {
+    console.error('Failed to save file content:', err)
+    return { success: false, message: '파일 저장 실패', error: err }
+  }
+})

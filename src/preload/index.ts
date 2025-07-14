@@ -32,7 +32,10 @@ const api = {
     ipcRenderer.invoke('create-file', targetPath, name),
 
   renamePath: (targetPath: string, name: string) =>
-    ipcRenderer.invoke('rename-path', targetPath, name)
+    ipcRenderer.invoke('rename-path', targetPath, name),
+
+  saveFileContent: (filePath: string, content: string) =>
+    ipcRenderer.invoke('save-file-content', filePath, content)
 }
 
 if (process.contextIsolated) {
