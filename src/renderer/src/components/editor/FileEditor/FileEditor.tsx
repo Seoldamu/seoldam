@@ -1,5 +1,5 @@
 import { color, font } from '@renderer/design/styles'
-import { countCharacters, diffCharacterCount, flex } from '@renderer/utils'
+import { countCharacters, flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 import Toolbar from './Toolbar/Toolbar'
 import SavePanel from './SavePanel/SavePanel'
@@ -109,8 +109,11 @@ const FileEditor = () => {
     }
 
     const newCharCount = countCharacters(content)
-    const diff = diffCharacterCount(prevCharCount, newCharCount)
-    setTodayCharCount(todayCharCount + diff)
+    const diff = newCharCount - prevCharCount
+
+    if (diff > 0) {
+      setTodayCharCount(todayCharCount + diff)
+    }
     setPrevCharCount(newCharCount)
 
     setFileData({
