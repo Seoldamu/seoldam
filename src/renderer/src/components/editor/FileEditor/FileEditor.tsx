@@ -1,19 +1,21 @@
 import { color, font } from '@renderer/design/styles'
-import { countCharacters, flex } from '@renderer/utils'
+import { countCharacters, diffCharacterCount, flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 import Toolbar from './Toolbar/Toolbar'
 import SavePanel from './SavePanel/SavePanel'
 import { useRef, useEffect, useState } from 'react'
-import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
+import { useSeriesStore, useSeriesTreeStore, useTodayCharCountStore } from '@renderer/stores'
 
 const FileEditor = () => {
   const { currentPath, setCurrentPath } = useSeriesStore()
   const { fetchTreeData } = useSeriesTreeStore()
+  const { todayCharCount, setTodayCharCount } = useTodayCharCountStore()
 
   const fileNameRef = useRef<HTMLDivElement>(null)
   const fileContentRef = useRef<HTMLDivElement>(null)
 
   const [fileData, setFileData] = useState({ fileName: '', content: '' })
+  const [prevCharCount, setPrevCharCount] = useState(0)
   const [charCount, setCharCount] = useState(0)
 
   useEffect(() => {
@@ -38,7 +40,10 @@ const FileEditor = () => {
     if (fileContentRef.current) {
       fileContentRef.current.textContent = fileData.content
     }
-    setCharCount(countCharacters(fileData.content))
+
+    const initialCharCount = countCharacters(fileData.content)
+    setCharCount(initialCharCount)
+    setPrevCharCount(initialCharCount)
   }, [fileData])
 
   useEffect(() => {
@@ -102,6 +107,11 @@ const FileEditor = () => {
       alert(saveResult.message)
       return
     }
+
+    const newCharCount = countCharacters(content)
+    const diff = diffCharacterCount(prevCharCount, newCharCount)
+    setTodayCharCount(todayCharCount + diff)
+    setPrevCharCount(newCharCount)
 
     setFileData({
       fileName: newFileName,
