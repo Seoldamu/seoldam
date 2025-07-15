@@ -1,3 +1,4 @@
+import { seriesService } from '@renderer/services/seriesService'
 import { color } from '@renderer/design/styles'
 import ReactECharts from 'echarts-for-react'
 import ChangeMonthModal from './ChangeMonthModal/ChangeMonthModal'
@@ -16,11 +17,11 @@ const Chart = () => {
   const { todayCharCount } = useTodayCharCountStore()
 
   useEffect(() => {
-    window.api.getSeriesCharCountsList(compareMonth).then((data: number[]) => {
+    seriesService.getCharCountsList(compareMonth).then((data: number[]) => {
       setCompareMonthCharCountsList(data)
     })
 
-    window.api.getSeriesCharCountsList(comparedMonth).then((data: number[]) => {
+    seriesService.getCharCountsList(comparedMonth).then((data: number[]) => {
       setComparedMonthCharCountsList(data)
     })
   }, [compareMonth, comparedMonth])

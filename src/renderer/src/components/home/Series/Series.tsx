@@ -1,3 +1,4 @@
+import { seriesService } from '@renderer/services/seriesService'
 import { Row, IconButton } from '@renderer/components/common'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
@@ -22,7 +23,7 @@ const Series = () => {
   const { seriesList, setSeriesList } = useSeriesListStore()
 
   const refreshSeriesList = () => {
-    window.api.getSeriesList().then((data: SeriesMeta[]) => {
+    seriesService.getList().then((data: SeriesMeta[]) => {
       setSeriesList(extractSeriesList(data))
     })
   }
@@ -32,7 +33,7 @@ const Series = () => {
   ))
 
   useEffect(() => {
-    window.api.getSeriesList().then((data: SeriesMeta[]) => {
+    seriesService.getList().then((data: SeriesMeta[]) => {
       setSeriesList(extractSeriesList(data))
     })
   }, [])

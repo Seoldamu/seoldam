@@ -1,3 +1,4 @@
+import { aiService } from '@renderer/services/aiService'
 import ChatInput from '@renderer/components/common/Input/ChatInput'
 import { color } from '@renderer/design/styles'
 import { flex } from '@renderer/utils'
@@ -20,7 +21,7 @@ const ChatBot = () => {
     setIsLoading(true)
 
     try {
-      const response = await window.api.askChatbot(msg, currentSeriesPath)
+      const response = await aiService.askChatbot(msg, currentSeriesPath)
       addMessage('assistant', response)
     } catch (error) {
       console.error('Error asking chatbot:', error)

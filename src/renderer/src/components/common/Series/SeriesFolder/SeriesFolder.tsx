@@ -1,3 +1,4 @@
+import { fileSystemService } from '@renderer/services/fileSystemService'
 import { IconFolder } from '@renderer/design/icons'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
@@ -65,7 +66,7 @@ const SeriesFolder = ({ node }: Props) => {
       value: 'delete',
       onClick: async () => {
         closeContextMenu()
-        const result = await window.api.deleteSeriesTargetPath(node.path)
+        const result = await fileSystemService.delete(node.path)
         if (result.success) useSeriesTreeStore.getState().fetchTreeData()
       }
     }
@@ -74,15 +75,15 @@ const SeriesFolder = ({ node }: Props) => {
   const handleCreateSubmit = async (name: string) => {
     const result =
       creatingType === 'folder'
-        ? await window.api.createFolder(node.path, name)
-        : await window.api.createFile(node.path, name)
+        ? await fileSystemService.createFolder(node.path, name)
+        : await fileSystemService.createFile(node.path, name)
 
     if (result.success) useSeriesTreeStore.getState().fetchTreeData()
     setCreatingType(null)
   }
 
   const handleUpdateSumit = async (name: string) => {
-    const result = await window.api.renamePath(node.path, name)
+    const result = await fileSystemService.rename(node.path, name)
     if (result.success) useSeriesTreeStore.getState().fetchTreeData()
   }
 

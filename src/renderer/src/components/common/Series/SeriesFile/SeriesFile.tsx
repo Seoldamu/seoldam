@@ -1,4 +1,4 @@
-import { IconArticle } from '@renderer/design/icons'
+import { fileSystemService } from '@renderer/services/fileSystemService'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 import { Row, Text } from '@renderer/components/common'
@@ -10,6 +10,7 @@ import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
 import { useState } from 'react'
 import TempObject from '../TempObject/TempObject'
 import { useNavigate } from 'react-router-dom'
+import { IconArticle } from '@renderer/design/icons'
 
 interface Props {
   node: TreeNode
@@ -45,7 +46,7 @@ const SeriesFile = ({ node }: Props) => {
       value: 'delete',
       onClick: async () => {
         closeContextMenu()
-        const result = await window.api.deleteSeriesTargetPath(node.path)
+        const result = await fileSystemService.delete(node.path)
         if (result.success) {
           useSeriesTreeStore.getState().fetchTreeData()
         }
@@ -54,7 +55,7 @@ const SeriesFile = ({ node }: Props) => {
   ]
 
   const handleUpdateSumit = async (name: string) => {
-    const result = await window.api.renamePath(node.path, name)
+    const result = await fileSystemService.rename(node.path, name)
     if (result.success) useSeriesTreeStore.getState().fetchTreeData()
   }
 

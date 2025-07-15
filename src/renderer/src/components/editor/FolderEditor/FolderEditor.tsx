@@ -1,3 +1,5 @@
+import { seriesService } from '@renderer/services/seriesService'
+import { fileSystemService } from '@renderer/services/fileSystemService'
 import {
   ContentPreview,
   EditableText,
@@ -25,9 +27,9 @@ const FolderEditor = () => {
 
     let result
     if (isRoot) {
-      result = await window.api.getSeriesRootDirectory(currentPath)
+      result = await seriesService.getRootDirectory(currentPath)
     } else {
-      result = await window.api.getPathDirectory(currentPath)
+      result = await fileSystemService.getDirectory(currentPath)
     }
 
     if (result && result.success) {
@@ -61,7 +63,7 @@ const FolderEditor = () => {
   const handleNameChange = async (newName: string) => {
     if (!currentPath || !newName) return
 
-    const result = await window.api.renamePath(currentPath, newName)
+    const result = await fileSystemService.rename(currentPath, newName)
     if (result.success) {
       if (isRoot) {
         setSeriesPath(result.path)
@@ -84,8 +86,8 @@ const FolderEditor = () => {
     if (!currentPath) return
 
     const result = isRoot
-      ? await window.api.createFile(joinPath(currentPath, 'root'), '새 파일.md')
-      : await window.api.createFile(currentPath, '새 파일.md')
+      ? await fileSystemService.createFile(joinPath(currentPath, 'root'), '새 파일.md')
+      : await fileSystemService.createFile(currentPath, '새 파일.md')
 
     if (result.success) {
       useSeriesTreeStore.getState().fetchTreeData()

@@ -1,3 +1,4 @@
+import { fileSystemService } from '@renderer/services/fileSystemService'
 import { flex, joinPath } from '@renderer/utils'
 import { styled } from 'styled-components'
 import { ContextMenu, Text } from '@renderer/components/common'
@@ -34,7 +35,7 @@ const SeriesRoot = ({ seriesPath }: Props) => {
       value: 'create-folder',
       onClick: async () => {
         closeContextMenu()
-        const result = await window.api.createFolder(seriesRootPath)
+        const result = await fileSystemService.createFolder(seriesRootPath)
         if (result.success) {
           useSeriesTreeStore.getState().fetchTreeData()
         }
@@ -45,7 +46,7 @@ const SeriesRoot = ({ seriesPath }: Props) => {
       value: 'create-file',
       onClick: async () => {
         closeContextMenu()
-        const result = await window.api.createFile(seriesRootPath)
+        const result = await fileSystemService.createFile(seriesRootPath)
         if (result.success) {
           useSeriesTreeStore.getState().fetchTreeData()
         }
