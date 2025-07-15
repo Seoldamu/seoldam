@@ -1,11 +1,11 @@
 import { color, font } from '@renderer/design/styles'
 import { styled } from 'styled-components'
 
-interface UserMessageProps {
+interface Props {
   message: string
 }
 
-const UserMessage = ({ message }: UserMessageProps) => {
+const UserMessage = ({ message }: Props) => {
   return (
     <MessageWrapper>
       <StyledUserMessage>{message}</StyledUserMessage>
@@ -18,7 +18,7 @@ export default UserMessage
 const MessageWrapper = styled.div`
   display: flex;
   justify-content: flex-start;
-  padding: 4px 0;
+  padding: 4px 10px;
 `
 
 const StyledUserMessage = styled.div`
