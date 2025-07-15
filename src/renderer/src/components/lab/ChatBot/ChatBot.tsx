@@ -4,22 +4,41 @@ import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 import UserMessage from './ChatMessage/UserMessage'
 import AssistantMessage from './ChatMessage/AssistantMessage'
+import { useChatStore } from '@renderer/stores/chatStore'
 
 const ChatBot = () => {
+  const { messages, addMessage } = useChatStore()
+
+  const handleSend = async (msg: string) => {
+    if (!msg.trim()) return
+
+    addMessage('user', msg)
+
+    try {
+      const response = await window.api.askChatbot(msg)
+      addMessage('assistant', response)
+    } catch (error) {
+      console.error('Error asking chatbot:', error)
+      addMessage('assistant', '오류가 발생했습니다. 다시 시도해주세요.')
+    }
+  }
+
   return (
     <StyledChatBot>
       <ScrollArea>
         <MessageContainer>
-          <UserMessage message="안녕하세요!" />
-          <AssistantMessage message="무엇을 도와드릴까요?\n여러 줄도 가능합니다." />
-          <UserMessage message="또 질문 있습니다." />
-          <AssistantMessage message="언제든지 물어보세요!" />
-          {/* ... */}
+          {messages.map((msg) =>
+            msg.role === 'user' ? (
+              <UserMessage key={msg.id} message={msg.content} />
+            ) : (
+              <AssistantMessage key={msg.id} message={msg.content} />
+            ),
+          )}
         </MessageContainer>
       </ScrollArea>
 
       <StickyInputWrapper>
-        <ChatInput onSend={(msg) => console.log(msg)} />
+        <ChatInput onSend={handleSend} />
       </StickyInputWrapper>
     </StyledChatBot>
   )
