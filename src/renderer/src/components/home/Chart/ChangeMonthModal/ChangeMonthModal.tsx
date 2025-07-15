@@ -1,12 +1,13 @@
 import { Button, OverlayWrapper, Row, Text } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
-import { flex } from '@renderer/utils'
-import { styled } from 'styled-components'
-import MonthSelector from './MonthSelector/MonthSelector'
-import { useEffect, useState } from 'react'
-import { Month } from '@renderer/types/home/type'
 import { useOutsideClick } from '@renderer/hooks'
 import { useMonthStore } from '@renderer/stores'
+import { Month } from '@renderer/types/home/type'
+import { flex } from '@renderer/utils'
+import { useEffect, useState } from 'react'
+import { styled } from 'styled-components'
+
+import MonthSelector from './MonthSelector/MonthSelector'
 
 interface Props {
   isOpen: boolean

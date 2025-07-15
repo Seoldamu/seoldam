@@ -1,4 +1,4 @@
-import { FolderEditor, FileEditor } from '@renderer/components/editor'
+import { FileEditor, FolderEditor } from '@renderer/components/editor'
 import { useSeriesStore } from '@renderer/stores'
 import { useMemo } from 'react'
 

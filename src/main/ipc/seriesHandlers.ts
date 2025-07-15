@@ -1,5 +1,3 @@
-
-import { app, ipcMain } from 'electron'
 import {
   existsSync,
   mkdirSync,
@@ -10,6 +8,9 @@ import {
   statSync
 } from 'fs'
 import { join, extname } from 'path'
+
+import { app, ipcMain } from 'electron'
+
 import { createMetaJson, generateUniqueFilename } from '../utils'
 
 const handleCreateSeries = (_, seriesTitle: string, seriesImagePath: string) => {

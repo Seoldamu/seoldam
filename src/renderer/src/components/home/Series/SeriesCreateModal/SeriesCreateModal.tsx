@@ -1,12 +1,12 @@
-import { seriesService } from '@renderer/services/seriesService'
 import { Button, Column, OverlayWrapper, Row, TextArea } from '@renderer/components/common'
 import ImageUploader from '@renderer/components/common/Image/ImageUploader'
 import { color } from '@renderer/design/styles'
 import { useOutsideClick } from '@renderer/hooks'
+import { fileSystemService } from '@renderer/services/fileSystemService'
+import { seriesService } from '@renderer/services/seriesService'
 import { flex } from '@renderer/utils'
 import { useState } from 'react'
 import { styled } from 'styled-components'
-import { fileSystemService } from '@renderer/services/fileSystemService'
 
 interface Props {
   isOpen: boolean
@@ -17,6 +17,7 @@ interface Props {
 const SeriesCreateModal = ({ isOpen, onClose, refreshSeriesList }: Props) => {
   const [seriesTitle, setSeriesTitle] = useState('')
   const [seriesImage, setSeriesImage] = useState<File | null>(null)
+
   const modalRef = useOutsideClick<HTMLDivElement>(onClose)
 
   if (!isOpen) return null

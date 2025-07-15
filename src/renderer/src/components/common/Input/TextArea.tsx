@@ -1,7 +1,6 @@
 import { color, font } from '@renderer/design/styles'
 import { forwardRef, HTMLAttributes } from 'react'
-import { CSSProperties } from 'styled-components'
-import styled from 'styled-components'
+import styled, { CSSProperties } from 'styled-components'
 
 type Font = keyof typeof font
 

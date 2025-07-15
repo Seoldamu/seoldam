@@ -1,5 +1,3 @@
-import { seriesService } from '@renderer/services/seriesService'
-import { fileSystemService } from '@renderer/services/fileSystemService'
 import {
   ContentPreview,
   EditableText,
@@ -8,6 +6,8 @@ import {
   SeriesDropdown
 } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
+import { fileSystemService } from '@renderer/services/fileSystemService'
+import { seriesService } from '@renderer/services/seriesService'
 import { useSeriesStore, useSeriesTreeStore, useSeriesListStore } from '@renderer/stores'
 import { TreeNode } from '@renderer/types/series/type'
 import { flex, flattenTree, joinPath } from '@renderer/utils'
@@ -17,8 +17,9 @@ import { styled } from 'styled-components'
 const FolderEditor = () => {
   const { currentSeriesPath, currentPath, setCurrentPath, setSeriesPath } = useSeriesStore()
   const { fetchTreeData } = useSeriesTreeStore()
-  const [childNodes, setChildNodes] = useState<TreeNode[]>([])
   const { seriesList, fetchSeriesList } = useSeriesListStore()
+
+  const [childNodes, setChildNodes] = useState<TreeNode[]>([])
 
   const isRoot = currentPath === currentSeriesPath
 

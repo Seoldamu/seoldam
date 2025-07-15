@@ -1,6 +1,6 @@
+import { color } from '@renderer/design/styles'
 import type { SVGProps } from 'react'
 import { useId } from 'react'
-import { color } from '@renderer/design/styles'
 
 type Props = SVGProps<SVGSVGElement> & {
   active?: boolean

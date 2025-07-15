@@ -1,10 +1,10 @@
-import { IconArticle, IconFolder } from '@renderer/design/icons'
-import { flex } from '@renderer/utils'
-import { styled } from 'styled-components'
 import { TextArea } from '@renderer/components/common'
+import { IconArticle, IconFolder } from '@renderer/design/icons'
 import { color } from '@renderer/design/styles'
-import { useEffect, useRef, useState } from 'react'
 import { useOutsideClick } from '@renderer/hooks'
+import { flex } from '@renderer/utils'
+import { useEffect, useRef, useState } from 'react'
+import { styled } from 'styled-components'
 
 interface Props {
   type: 'folder' | 'file'

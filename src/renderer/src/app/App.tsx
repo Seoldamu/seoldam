@@ -1,5 +1,6 @@
-import { Home, Editor, Plot, Lab, Memo, Character } from '@renderer/pages'
+import { Character, Editor, Home, Lab, Memo, Plot } from '@renderer/pages'
 import { Route, Routes } from 'react-router-dom'
+
 import AppLayout from './AppLayout'
 
 const App = () => {

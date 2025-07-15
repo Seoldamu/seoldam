@@ -1,4 +1,3 @@
-import { ipcMain, app } from 'electron'
 import {
   existsSync,
   statSync,
@@ -10,6 +9,9 @@ import {
 } from 'fs'
 import fs from 'node:fs'
 import { join, dirname, basename } from 'path'
+
+import { ipcMain, app } from 'electron'
+
 import { validatePathName } from '../utils'
 
 function readDirectoryRecursive(dirPath: string): any[] {
@@ -70,7 +72,7 @@ const handleDeletePath = (_, targetPath: string) => {
 
 const handleCreateFolder = (_, parentPath: string, name: string) => {
   try {
-    let baseName = name || '새 폴더'
+    const baseName = name || '새 폴더'
     let count = 1
     let newPath = join(parentPath, baseName)
 
@@ -87,7 +89,7 @@ const handleCreateFolder = (_, parentPath: string, name: string) => {
 
 const handleCreateFile = (_, parentPath: string, name: string) => {
   try {
-    let baseName = name || '새 파일'
+    const baseName = name || '새 파일'
     let count = 1
     let newPath = join(parentPath, baseName)
 

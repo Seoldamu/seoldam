@@ -1,8 +1,8 @@
+import { IconAdd } from '@renderer/design/icons'
 import { color, font } from '@renderer/design/styles'
 import { flex } from '@renderer/utils'
 import { ButtonHTMLAttributes, ReactNode } from 'react'
 import { CSSProperties, styled } from 'styled-components'
-import { IconAdd } from '@renderer/design/icons'
 
 type Props = {
   children: ReactNode

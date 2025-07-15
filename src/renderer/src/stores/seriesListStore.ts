@@ -1,6 +1,6 @@
 import { seriesService } from '@renderer/services/seriesService'
-import { create } from 'zustand'
 import { SeriesListItem } from '@renderer/types/series/type'
+import { create } from 'zustand'
 
 interface SeriesListStore {
   seriesList: SeriesListItem[]

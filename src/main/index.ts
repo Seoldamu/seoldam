@@ -1,8 +1,11 @@
-import { app, shell, BrowserWindow, protocol, net } from 'electron'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
-import { join } from 'node:path'
 import fs from 'node:fs'
+import { join } from 'node:path'
+
+import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { app, shell, BrowserWindow, protocol, net } from 'electron'
+
+import icon from '../../resources/icon.png?asset'
+
 import { registerIpcHandlers } from './ipc'
 
 protocol.registerSchemesAsPrivileged([

@@ -1,10 +1,9 @@
-
-
-import { ipcMain } from 'electron'
-import { GoogleGenerativeAI } from '@google/generative-ai'
 import { existsSync, readFileSync, readdirSync, statSync } from 'fs'
 import { join, relative } from 'path'
+
+import { GoogleGenerativeAI } from '@google/generative-ai'
 import dotenv from 'dotenv'
+import { ipcMain } from 'electron'
 
 dotenv.config()
 
@@ -106,4 +105,3 @@ ${stringifyTree(fileTree)}
 export function registerAiHandlers(): void {
   ipcMain.handle('ask-chatbot', handleAskChatbot)
 }
-

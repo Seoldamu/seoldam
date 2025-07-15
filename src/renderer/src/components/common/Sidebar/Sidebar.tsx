@@ -1,16 +1,16 @@
-import { color } from '@renderer/design/styles'
-import { css, styled } from 'styled-components'
 import { Column, SeriesSidebar, Text } from '@renderer/components/common'
-import { flex } from '@renderer/utils'
 import {
-  IconHome,
+  IconCharacter,
   IconEditor,
-  IconPlot,
+  IconHome,
   IconLab,
   IconMemo,
-  IconCharacter
+  IconPlot
 } from '@renderer/design/icons'
+import { color } from '@renderer/design/styles'
+import { flex } from '@renderer/utils'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { css, styled } from 'styled-components'
 
 export const NAVIGATION_DATA = [
   { route: '/', name: '홈', icon: IconHome },

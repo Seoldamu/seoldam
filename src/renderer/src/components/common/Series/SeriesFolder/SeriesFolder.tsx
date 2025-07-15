@@ -1,16 +1,17 @@
-import { fileSystemService } from '@renderer/services/fileSystemService'
+import { ContextMenu, Row, Text } from '@renderer/components/common'
 import { IconFolder } from '@renderer/design/icons'
-import { flex } from '@renderer/utils'
-import { styled } from 'styled-components'
-import { Text, ContextMenu, Row } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
-import SeriesFile from '../SeriesFile/SeriesFile'
-import { useState } from 'react'
-import { TreeNode } from '@renderer/types/series/type'
 import { useContextMenu, useOutsideClick } from '@renderer/hooks'
+import { fileSystemService } from '@renderer/services/fileSystemService'
 import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
-import TempObject from '../TempObject/TempObject'
+import { TreeNode } from '@renderer/types/series/type'
+import { flex } from '@renderer/utils'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { styled } from 'styled-components'
+
+import SeriesFile from '../SeriesFile/SeriesFile'
+import TempObject from '../TempObject/TempObject'
 
 interface Props {
   node: TreeNode

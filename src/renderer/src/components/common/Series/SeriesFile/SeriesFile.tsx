@@ -1,31 +1,30 @@
-import { fileSystemService } from '@renderer/services/fileSystemService'
-import { flex } from '@renderer/utils'
-import { styled } from 'styled-components'
-import { Row, Text } from '@renderer/components/common'
-import { color } from '@renderer/design/styles'
-import { TreeNode } from '@renderer/types/series/type'
-import { ContextMenu } from '@renderer/components/common'
-import { useContextMenu, useOutsideClick } from '@renderer/hooks'
-import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
-import { useState } from 'react'
-import TempObject from '../TempObject/TempObject'
-import { useNavigate } from 'react-router-dom'
+import { ContextMenu, Row, Text } from '@renderer/components/common'
 import { IconArticle } from '@renderer/design/icons'
+import { color } from '@renderer/design/styles'
+import { useContextMenu, useOutsideClick } from '@renderer/hooks'
+import { fileSystemService } from '@renderer/services/fileSystemService'
+import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
+import { TreeNode } from '@renderer/types/series/type'
+import { flex } from '@renderer/utils'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { styled } from 'styled-components'
+
+import TempObject from '../TempObject/TempObject'
 
 interface Props {
   node: TreeNode
 }
 
 const SeriesFile = ({ node }: Props) => {
-  const setCurrentPath = useSeriesStore((state) => state.setCurrentPath)
-
-  const navigate = useNavigate()
-
   const [updateType, setUpdateType] = useState<'file' | null>(null)
 
+  const setCurrentPath = useSeriesStore((state) => state.setCurrentPath)
+  const fetchTreeData = useSeriesTreeStore((state) => state.fetchTreeData)
+
+  const navigate = useNavigate()
   const { contextMenuVisible, contextMenuPosition, openContextMenu, closeContextMenu } =
     useContextMenu()
-
   const contextMenuRef = useOutsideClick<HTMLDivElement>(() => {
     if (contextMenuVisible) {
       closeContextMenu()
@@ -48,7 +47,7 @@ const SeriesFile = ({ node }: Props) => {
         closeContextMenu()
         const result = await fileSystemService.delete(node.path)
         if (result.success) {
-          useSeriesTreeStore.getState().fetchTreeData()
+          fetchTreeData()
         }
       }
     }
@@ -56,7 +55,7 @@ const SeriesFile = ({ node }: Props) => {
 
   const handleUpdateSumit = async (name: string) => {
     const result = await fileSystemService.rename(node.path, name)
-    if (result.success) useSeriesTreeStore.getState().fetchTreeData()
+    if (result.success) fetchTreeData()
   }
 
   const handleFileDoubleClick = () => {

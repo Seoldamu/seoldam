@@ -1,6 +1,7 @@
 import { seriesService } from '@renderer/services/seriesService'
-import { create } from 'zustand'
 import { TreeNode } from '@renderer/types/series/type'
+import { create } from 'zustand'
+
 import useSeriesStore from './seriesStore'
 
 interface SeriesTreeStore {
