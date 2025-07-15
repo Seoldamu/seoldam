@@ -1,14 +1,7 @@
-const Lab = () => {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
+import ChatBot from '@renderer/components/lab/ChatBot/ChatBot'
 
-  return (
-    <div>
-      <div>실험실 페이지 입니다.</div>
-      <a target="_blank" rel="noreferrer" onClick={ipcHandle}>
-        Send IPC
-      </a>
-    </div>
-  )
+const Lab = () => {
+  return <ChatBot />
 }
 
 export default Lab

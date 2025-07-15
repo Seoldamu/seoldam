@@ -68,7 +68,6 @@ const NavigationItem = styled.div<{ $active: boolean }>`
   padding: 10px 24px;
   ${flex({ flexDirection: 'row', alignItems: 'center' })}
   gap: 10px;
-  border-radius: 12px;
   cursor: pointer;
 
   ${({ $active }) =>
