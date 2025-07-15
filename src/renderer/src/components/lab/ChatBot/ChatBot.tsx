@@ -6,20 +6,21 @@ import UserMessage from './ChatMessage/UserMessage'
 import AssistantMessage from './ChatMessage/AssistantMessage'
 import { useChatStore } from '@renderer/stores/chatStore'
 import { useState } from 'react'
+import useSeriesStore from '@renderer/stores/seriesStore'
 
 const ChatBot = () => {
   const { messages, addMessage } = useChatStore()
+  const { currentSeriesPath } = useSeriesStore()
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSend = async (msg: string) => {
-    if (!msg.trim()) return
     if (!msg.trim() || isLoading) return
 
     addMessage('user', msg)
     setIsLoading(true)
 
     try {
-      const response = await window.api.askChatbot(msg)
+      const response = await window.api.askChatbot(msg, currentSeriesPath)
       addMessage('assistant', response)
     } catch (error) {
       console.error('Error asking chatbot:', error)

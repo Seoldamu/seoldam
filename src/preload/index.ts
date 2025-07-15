@@ -8,7 +8,8 @@ interface CreateSeriesResult {
 }
 
 const api = {
-  askChatbot: (prompt: string): Promise<string> => ipcRenderer.invoke('ask-chatbot', prompt),
+  askChatbot: (prompt: string, seriesPath: string | null): Promise<string> =>
+    ipcRenderer.invoke('ask-chatbot', prompt, seriesPath),
 
   createSeries: (seriesName: string, seriesImagePath: string): Promise<CreateSeriesResult> =>
     ipcRenderer.invoke('create-series', seriesName, seriesImagePath),
