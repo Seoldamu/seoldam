@@ -5,21 +5,28 @@ import { styled } from 'styled-components'
 import UserMessage from './ChatMessage/UserMessage'
 import AssistantMessage from './ChatMessage/AssistantMessage'
 import { useChatStore } from '@renderer/stores/chatStore'
+import { useState } from 'react'
 
 const ChatBot = () => {
   const { messages, addMessage } = useChatStore()
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleSend = async (msg: string) => {
     if (!msg.trim()) return
+    if (!msg.trim() || isLoading) return
 
     addMessage('user', msg)
+    setIsLoading(true)
 
     try {
       const response = await window.api.askChatbot(msg)
       addMessage('assistant', response)
     } catch (error) {
       console.error('Error asking chatbot:', error)
-      addMessage('assistant', '오류가 발생했습니다. 다시 시도해주세요.')
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      addMessage('assistant', `오류가 발생했습니다: ${errorMessage}`)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -32,13 +39,14 @@ const ChatBot = () => {
               <UserMessage key={msg.id} message={msg.content} />
             ) : (
               <AssistantMessage key={msg.id} message={msg.content} />
-            ),
+            )
           )}
+          {isLoading && <AssistantMessage message="생각 중..." />}
         </MessageContainer>
       </ScrollArea>
 
       <StickyInputWrapper>
-        <ChatInput onSend={handleSend} />
+        <ChatInput onSend={handleSend} isLoading={isLoading} />
       </StickyInputWrapper>
     </StyledChatBot>
   )
@@ -85,12 +93,9 @@ const MessageContainer = styled.div`
 
 const StickyInputWrapper = styled.div`
   position: sticky;
-  bottom: 0;
+  width: 70%;
+  bottom: 10px;
   background: ${color.G0};
   padding: 12px 0 16px 0;
   z-index: 10;
-
-  & > * {
-    width: 70%;
-  }
 `

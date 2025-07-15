@@ -6,12 +6,14 @@ import { flex } from '@renderer/utils'
 
 interface ChatInputProps {
   onSend?: (message: string) => void
+  isLoading?: boolean
 }
 
-const ChatInput = ({ onSend }: ChatInputProps) => {
+const ChatInput = ({ onSend, isLoading }: ChatInputProps) => {
   const ref = useRef<HTMLDivElement>(null)
 
   const handleSend = () => {
+    if (isLoading) return
     const text = ref.current?.innerText.trim()
     if (!text) return
     onSend?.(text)
@@ -47,10 +49,14 @@ const ChatInput = ({ onSend }: ChatInputProps) => {
   }
 
   return (
-    <InputWrapper>
+    <InputWrapper
+      style={{
+        backgroundColor: isLoading ? color.G20 : color.G0
+      }}
+    >
       <Column>
         <ContentEditable
-          contentEditable
+          contentEditable={!isLoading}
           ref={ref}
           onKeyDown={handleKeyDown}
           onInput={scrollToCaret}
