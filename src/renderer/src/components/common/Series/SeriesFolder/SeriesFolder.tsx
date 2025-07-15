@@ -1,15 +1,17 @@
+import { ContextMenu, Row, Text } from '@renderer/components/common'
 import { IconFolder } from '@renderer/design/icons'
-import { flex } from '@renderer/utils'
-import { styled } from 'styled-components'
-import { Text, ContextMenu, Row } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
-import SeriesFile from '../SeriesFile/SeriesFile'
-import { useState } from 'react'
-import { TreeNode } from '@renderer/types/series/type'
 import { useContextMenu, useOutsideClick } from '@renderer/hooks'
+import { fileSystemService } from '@renderer/services/fileSystemService'
 import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
-import TempObject from '../TempObject/TempObject'
+import { TreeNode } from '@renderer/types/series/type'
+import { flex } from '@renderer/utils'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { styled } from 'styled-components'
+
+import SeriesFile from '../SeriesFile/SeriesFile'
+import TempObject from '../TempObject/TempObject'
 
 interface Props {
   node: TreeNode
@@ -65,7 +67,7 @@ const SeriesFolder = ({ node }: Props) => {
       value: 'delete',
       onClick: async () => {
         closeContextMenu()
-        const result = await window.api.deleteSeriesTargetPath(node.path)
+        const result = await fileSystemService.delete(node.path)
         if (result.success) useSeriesTreeStore.getState().fetchTreeData()
       }
     }
@@ -74,15 +76,15 @@ const SeriesFolder = ({ node }: Props) => {
   const handleCreateSubmit = async (name: string) => {
     const result =
       creatingType === 'folder'
-        ? await window.api.createFolder(node.path, name)
-        : await window.api.createFile(node.path, name)
+        ? await fileSystemService.createFolder(node.path, name)
+        : await fileSystemService.createFile(node.path, name)
 
     if (result.success) useSeriesTreeStore.getState().fetchTreeData()
     setCreatingType(null)
   }
 
   const handleUpdateSumit = async (name: string) => {
-    const result = await window.api.renamePath(node.path, name)
+    const result = await fileSystemService.rename(node.path, name)
     if (result.success) useSeriesTreeStore.getState().fetchTreeData()
   }
 

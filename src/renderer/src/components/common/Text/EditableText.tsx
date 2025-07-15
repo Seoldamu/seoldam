@@ -1,7 +1,7 @@
-import { useRef, useState, useEffect } from 'react'
-import styled, { CSSProperties, css } from 'styled-components'
 import { color, font } from '@renderer/design/styles'
 import { useBoolean, useOutsideClick } from '@renderer/hooks'
+import { useEffect, useRef, useState } from 'react'
+import styled, { CSSProperties, css } from 'styled-components'
 
 type Font = keyof typeof font
 

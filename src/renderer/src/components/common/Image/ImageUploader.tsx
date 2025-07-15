@@ -1,7 +1,8 @@
-import { useRef, useState, useEffect } from 'react'
-import styled, { CSSProperties } from 'styled-components'
-import Text from '../Text/Text'
 import { color } from '@renderer/design/styles'
+import { useEffect, useRef, useState } from 'react'
+import styled, { CSSProperties } from 'styled-components'
+
+import Text from '../Text/Text'
 
 interface Props {
   width?: CSSProperties['width']

@@ -2,6 +2,8 @@ import { Button, Column, OverlayWrapper, Row, TextArea } from '@renderer/compone
 import ImageUploader from '@renderer/components/common/Image/ImageUploader'
 import { color } from '@renderer/design/styles'
 import { useOutsideClick } from '@renderer/hooks'
+import { fileSystemService } from '@renderer/services/fileSystemService'
+import { seriesService } from '@renderer/services/seriesService'
 import { flex } from '@renderer/utils'
 import { useState } from 'react'
 import { styled } from 'styled-components'
@@ -15,6 +17,7 @@ interface Props {
 const SeriesCreateModal = ({ isOpen, onClose, refreshSeriesList }: Props) => {
   const [seriesTitle, setSeriesTitle] = useState('')
   const [seriesImage, setSeriesImage] = useState<File | null>(null)
+
   const modalRef = useOutsideClick<HTMLDivElement>(onClose)
 
   if (!isOpen) return null
@@ -24,8 +27,8 @@ const SeriesCreateModal = ({ isOpen, onClose, refreshSeriesList }: Props) => {
       alert('이미지를 추가해주세요.')
       return
     }
-    const seriesImagePath = window.api.getPathForFile(seriesImage)
-    const result = await window.api.createSeries(seriesTitle, seriesImagePath)
+    const seriesImagePath = await fileSystemService.getPathForFile(seriesImage)
+    const result = await seriesService.create(seriesTitle, seriesImagePath)
     if (result.success) {
       alert(`성공적으로 생성됨: ${result.path}`)
       refreshSeriesList()

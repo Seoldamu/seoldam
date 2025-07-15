@@ -6,6 +6,8 @@ import {
   SeriesDropdown
 } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
+import { fileSystemService } from '@renderer/services/fileSystemService'
+import { seriesService } from '@renderer/services/seriesService'
 import { useSeriesStore, useSeriesTreeStore, useSeriesListStore } from '@renderer/stores'
 import { TreeNode } from '@renderer/types/series/type'
 import { flex, flattenTree, joinPath } from '@renderer/utils'
@@ -15,8 +17,9 @@ import { styled } from 'styled-components'
 const FolderEditor = () => {
   const { currentSeriesPath, currentPath, setCurrentPath, setSeriesPath } = useSeriesStore()
   const { fetchTreeData } = useSeriesTreeStore()
-  const [childNodes, setChildNodes] = useState<TreeNode[]>([])
   const { seriesList, fetchSeriesList } = useSeriesListStore()
+
+  const [childNodes, setChildNodes] = useState<TreeNode[]>([])
 
   const isRoot = currentPath === currentSeriesPath
 
@@ -25,9 +28,9 @@ const FolderEditor = () => {
 
     let result
     if (isRoot) {
-      result = await window.api.getSeriesRootDirectory(currentPath)
+      result = await seriesService.getRootDirectory(currentPath)
     } else {
-      result = await window.api.getPathDirectory(currentPath)
+      result = await fileSystemService.getDirectory(currentPath)
     }
 
     if (result && result.success) {
@@ -61,7 +64,7 @@ const FolderEditor = () => {
   const handleNameChange = async (newName: string) => {
     if (!currentPath || !newName) return
 
-    const result = await window.api.renamePath(currentPath, newName)
+    const result = await fileSystemService.rename(currentPath, newName)
     if (result.success) {
       if (isRoot) {
         setSeriesPath(result.path)
@@ -84,8 +87,8 @@ const FolderEditor = () => {
     if (!currentPath) return
 
     const result = isRoot
-      ? await window.api.createFile(joinPath(currentPath, 'root'), '새 파일.md')
-      : await window.api.createFile(currentPath, '새 파일.md')
+      ? await fileSystemService.createFile(joinPath(currentPath, 'root'), '새 파일.md')
+      : await fileSystemService.createFile(currentPath, '새 파일.md')
 
     if (result.success) {
       useSeriesTreeStore.getState().fetchTreeData()

@@ -1,10 +1,11 @@
-import { flex } from '@renderer/utils'
-import { styled } from 'styled-components'
-import SeriesRoot from './SeriesRoot/SeriesRoot'
-import { useEffect } from 'react'
-import SeriesFolder from './SeriesFolder/SeriesFolder'
-import SeriesFile from './SeriesFile/SeriesFile'
 import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
+import { flex } from '@renderer/utils'
+import { useEffect } from 'react'
+import { styled } from 'styled-components'
+
+import SeriesFile from './SeriesFile/SeriesFile'
+import SeriesFolder from './SeriesFolder/SeriesFolder'
+import SeriesRoot from './SeriesRoot/SeriesRoot'
 
 const SeriesSidebar = () => {
   const currentSeriesPath = useSeriesStore((state) => state.currentSeriesPath)

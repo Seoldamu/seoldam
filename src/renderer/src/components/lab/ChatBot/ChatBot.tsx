@@ -1,12 +1,14 @@
 import ChatInput from '@renderer/components/common/Input/ChatInput'
 import { color } from '@renderer/design/styles'
-import { flex } from '@renderer/utils'
-import { styled } from 'styled-components'
-import UserMessage from './ChatMessage/UserMessage'
-import AssistantMessage from './ChatMessage/AssistantMessage'
+import { aiService } from '@renderer/services/aiService'
 import { useChatStore } from '@renderer/stores/chatStore'
-import { useState } from 'react'
 import useSeriesStore from '@renderer/stores/seriesStore'
+import { flex } from '@renderer/utils'
+import { useState } from 'react'
+import { styled } from 'styled-components'
+
+import AssistantMessage from './ChatMessage/AssistantMessage'
+import UserMessage from './ChatMessage/UserMessage'
 
 const ChatBot = () => {
   const { messages, addMessage } = useChatStore()
@@ -20,7 +22,7 @@ const ChatBot = () => {
     setIsLoading(true)
 
     try {
-      const response = await window.api.askChatbot(msg, currentSeriesPath)
+      const response = await aiService.askChatbot(msg, currentSeriesPath)
       addMessage('assistant', response)
     } catch (error) {
       console.error('Error asking chatbot:', error)

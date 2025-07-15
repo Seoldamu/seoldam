@@ -1,11 +1,12 @@
-import { flex, joinPath } from '@renderer/utils'
-import { styled } from 'styled-components'
 import { ContextMenu, Text } from '@renderer/components/common'
 import { IconAdd, IconDocument } from '@renderer/design/icons'
 import { color } from '@renderer/design/styles'
 import { useContextMenu, useOutsideClick } from '@renderer/hooks'
+import { fileSystemService } from '@renderer/services/fileSystemService'
 import { useSeriesTreeStore, useSeriesStore } from '@renderer/stores'
+import { flex, joinPath } from '@renderer/utils'
 import { useNavigate } from 'react-router-dom'
+import { styled } from 'styled-components'
 
 interface Props {
   seriesPath: string
@@ -15,8 +16,8 @@ const SeriesRoot = ({ seriesPath }: Props) => {
   const setCurrentPath = useSeriesStore((state) => state.setCurrentPath)
 
   const navigate = useNavigate()
-  const seriesName = seriesPath.split(/[/\\]/).pop() || ''
 
+  const seriesName = seriesPath.split(/[/\\]/).pop() || ''
   const seriesRootPath = joinPath(seriesPath, 'root')
 
   const { contextMenuVisible, contextMenuPosition, openContextMenu, closeContextMenu } =
@@ -34,7 +35,7 @@ const SeriesRoot = ({ seriesPath }: Props) => {
       value: 'create-folder',
       onClick: async () => {
         closeContextMenu()
-        const result = await window.api.createFolder(seriesRootPath)
+        const result = await fileSystemService.createFolder(seriesRootPath, '새 폴더')
         if (result.success) {
           useSeriesTreeStore.getState().fetchTreeData()
         }
@@ -45,7 +46,7 @@ const SeriesRoot = ({ seriesPath }: Props) => {
       value: 'create-file',
       onClick: async () => {
         closeContextMenu()
-        const result = await window.api.createFile(seriesRootPath)
+        const result = await fileSystemService.createFile(seriesRootPath, '새 파일.md')
         if (result.success) {
           useSeriesTreeStore.getState().fetchTreeData()
         }

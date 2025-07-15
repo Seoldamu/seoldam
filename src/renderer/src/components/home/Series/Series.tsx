@@ -1,12 +1,14 @@
-import { Row, IconButton } from '@renderer/components/common'
-import { flex } from '@renderer/utils'
-import { styled } from 'styled-components'
-import SeriesItem from './SeriesListItem/SeriesListItem'
+import { IconButton, Row } from '@renderer/components/common'
 import useOverlay from '@renderer/hooks/useOverlay'
-import SeriesCreateModal from './SeriesCreateModal/SeriesCreateModal'
-import { useEffect } from 'react'
-import { SeriesListItem, SeriesMeta } from '@renderer/types/series/type'
+import { seriesService } from '@renderer/services/seriesService'
 import { useSeriesListStore } from '@renderer/stores'
+import { SeriesListItem, SeriesMeta } from '@renderer/types/series/type'
+import { flex } from '@renderer/utils'
+import { useEffect } from 'react'
+import { styled } from 'styled-components'
+
+import SeriesCreateModal from './SeriesCreateModal/SeriesCreateModal'
+import SeriesItem from './SeriesListItem/SeriesListItem'
 
 const extractSeriesList = (list: SeriesMeta[]): SeriesListItem[] => {
   return list.map(({ id, title, coverImagePath, updatedAt, path }) => ({
@@ -22,7 +24,7 @@ const Series = () => {
   const { seriesList, setSeriesList } = useSeriesListStore()
 
   const refreshSeriesList = () => {
-    window.api.getSeriesList().then((data: SeriesMeta[]) => {
+    seriesService.getList().then((data: SeriesMeta[]) => {
       setSeriesList(extractSeriesList(data))
     })
   }
@@ -32,7 +34,7 @@ const Series = () => {
   ))
 
   useEffect(() => {
-    window.api.getSeriesList().then((data: SeriesMeta[]) => {
+    seriesService.getList().then((data: SeriesMeta[]) => {
       setSeriesList(extractSeriesList(data))
     })
   }, [])

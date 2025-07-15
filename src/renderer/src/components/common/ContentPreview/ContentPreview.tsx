@@ -1,6 +1,7 @@
 import { color } from '@renderer/design/styles'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
+
 import Text from '../Text/Text'
 
 interface Props {

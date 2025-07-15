@@ -1,5 +1,5 @@
-import { SVGProps } from 'react'
 import { color } from '@renderer/design/styles'
+import { SVGProps } from 'react'
 
 type Direction = 'before' | 'after'
 

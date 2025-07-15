@@ -1,5 +1,7 @@
-import { create } from 'zustand'
+import { seriesService } from '@renderer/services/seriesService'
 import { TreeNode } from '@renderer/types/series/type'
+import { create } from 'zustand'
+
 import useSeriesStore from './seriesStore'
 
 interface SeriesTreeStore {
@@ -16,7 +18,7 @@ const useSeriesTreeStore = create<SeriesTreeStore>((set) => ({
     const currentSeriesPath = useSeriesStore.getState().currentSeriesPath
     if (!currentSeriesPath) return
 
-    const result = await window.api.getSeriesRootDirectory(currentSeriesPath)
+    const result = await seriesService.getRootDirectory(currentSeriesPath)
     if (result.success) {
       set({ treeData: result.structure })
     }

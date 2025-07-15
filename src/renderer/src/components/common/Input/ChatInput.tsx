@@ -1,8 +1,9 @@
 import { color, font } from '@renderer/design/styles'
-import { useRef } from 'react'
-import styled from 'styled-components'
-import Column from '../Flex/Column'
 import { flex } from '@renderer/utils'
+import { useRef } from 'react'
+import { styled } from 'styled-components'
+
+import Column from '../Flex/Column'
 
 interface ChatInputProps {
   onSend?: (message: string) => void

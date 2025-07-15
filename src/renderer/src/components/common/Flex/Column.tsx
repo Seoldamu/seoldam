@@ -1,5 +1,6 @@
 import { flex } from '@renderer/utils'
-import styled from 'styled-components'
+import { styled } from 'styled-components'
+
 import type { FlexProps } from './Flex.type'
 
 const Column = ({ children, gap, justifyContent, alignItems, width, height, style }: FlexProps) => {

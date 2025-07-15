@@ -1,13 +1,15 @@
-import { color } from '@renderer/design/styles'
-import ReactECharts from 'echarts-for-react'
-import ChangeMonthModal from './ChangeMonthModal/ChangeMonthModal'
-import { useOverlay } from '@renderer/hooks'
 import { Text } from '@renderer/components/common'
-import { styled } from 'styled-components'
-import { flex } from '@renderer/utils'
 import { IconCompareArrow } from '@renderer/design/icons'
+import { color } from '@renderer/design/styles'
+import { useOverlay } from '@renderer/hooks'
+import { seriesService } from '@renderer/services/seriesService'
 import { useMonthStore, useTodayCharCountStore } from '@renderer/stores'
+import { flex } from '@renderer/utils'
+import ReactECharts from 'echarts-for-react'
 import { useEffect, useState } from 'react'
+import { styled } from 'styled-components'
+
+import ChangeMonthModal from './ChangeMonthModal/ChangeMonthModal'
 
 const Chart = () => {
   const [compareMonthCharCountsList, setCompareMonthCharCountsList] = useState<number[]>([])
@@ -16,11 +18,11 @@ const Chart = () => {
   const { todayCharCount } = useTodayCharCountStore()
 
   useEffect(() => {
-    window.api.getSeriesCharCountsList(compareMonth).then((data: number[]) => {
+    seriesService.getCharCountsList(compareMonth).then((data: number[]) => {
       setCompareMonthCharCountsList(data)
     })
 
-    window.api.getSeriesCharCountsList(comparedMonth).then((data: number[]) => {
+    seriesService.getCharCountsList(comparedMonth).then((data: number[]) => {
       setComparedMonthCharCountsList(data)
     })
   }, [compareMonth, comparedMonth])

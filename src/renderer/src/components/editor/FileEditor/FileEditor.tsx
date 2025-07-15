@@ -1,10 +1,12 @@
 import { color, font } from '@renderer/design/styles'
-import { countCharacters, flex } from '@renderer/utils'
-import { styled } from 'styled-components'
-import Toolbar from './Toolbar/Toolbar'
-import SavePanel from './SavePanel/SavePanel'
-import { useRef, useEffect, useState } from 'react'
+import { fileSystemService } from '@renderer/services/fileSystemService'
 import { useSeriesStore, useSeriesTreeStore, useTodayCharCountStore } from '@renderer/stores'
+import { countCharacters, flex } from '@renderer/utils'
+import { useEffect, useRef, useState } from 'react'
+import { styled } from 'styled-components'
+
+import SavePanel from './SavePanel/SavePanel'
+import Toolbar from './Toolbar/Toolbar'
 
 const FileEditor = () => {
   const { currentPath, setCurrentPath } = useSeriesStore()
@@ -22,7 +24,7 @@ const FileEditor = () => {
     const loadFileInfo = async () => {
       if (!currentPath) return
 
-      const result = await window.api.getFileInfo(currentPath)
+      const result = await fileSystemService.getFileInfo(currentPath)
 
       setFileData({
         fileName: result.fileName,
@@ -93,7 +95,7 @@ const FileEditor = () => {
     let pathToSave = currentPath
 
     if (newFileName && newFileName !== oldFileName) {
-      const renameResult = await window.api.renamePath(oldPath, newFileName)
+      const renameResult = await fileSystemService.rename(oldPath, newFileName)
       if (!renameResult.success) {
         alert(renameResult.message)
         return
@@ -102,7 +104,7 @@ const FileEditor = () => {
       setCurrentPath(pathToSave)
     }
 
-    const saveResult = await window.api.saveFileContent(pathToSave, content)
+    const saveResult = await fileSystemService.saveFile(pathToSave, content)
     if (!saveResult.success) {
       alert(saveResult.message)
       return
