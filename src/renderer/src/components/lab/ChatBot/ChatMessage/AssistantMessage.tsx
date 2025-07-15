@@ -1,5 +1,5 @@
 import { color, font } from '@renderer/design/styles'
-import styled from 'styled-components'
+import { styled } from 'styled-components'
 
 interface Props {
   message: string
