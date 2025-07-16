@@ -163,10 +163,28 @@ const FileEditor = () => {
     fetchTreeData()
   }
 
+  const onFormat = (command: 'bold' | 'italic' | 'underline' | 'strikeThrough') => {
+    const selection = window.getSelection()
+    if (!selection) return
+
+    if (document.activeElement !== fileContentRef.current) {
+      const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null
+
+      fileContentRef.current?.focus()
+
+      if (range) {
+        selection.removeAllRanges()
+        selection.addRange(range)
+      }
+    }
+
+    document.execCommand(command, false)
+  }
+
   return (
     <StyledFileEditor>
       <FileEditorHeader>
-        <Toolbar />
+        <Toolbar onFormat={onFormat} />
         <SavePanel charCount={charCount} onSave={handleFileSave} />
       </FileEditorHeader>
       <WriteBox>

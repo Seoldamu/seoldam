@@ -18,7 +18,15 @@ import { color } from '@renderer/design/styles'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 
-const Toolbar = () => {
+interface Props {
+  onFormat: (command: 'bold' | 'italic' | 'underline' | 'strikeThrough') => void
+}
+
+const Toolbar = ({ onFormat }: Props) => {
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault()
+  }
+
   return (
     <StyledToolbar>
       <Row gap={10}>
@@ -29,10 +37,34 @@ const Toolbar = () => {
       <Line />
 
       <Row gap={10}>
-        <IconBold width={24} height={24} />
-        <IconItalic width={24} height={24} />
-        <IconUnderline width={24} height={24} />
-        <IconStrikethrough width={24} height={24} />
+        <IconBold
+          width={24}
+          height={24}
+          style={{ cursor: 'pointer' }}
+          onClick={() => onFormat('bold')}
+          onMouseDown={handleMouseDown}
+        />
+        <IconItalic
+          width={24}
+          height={24}
+          style={{ cursor: 'pointer' }}
+          onClick={() => onFormat('italic')}
+          onMouseDown={handleMouseDown}
+        />
+        <IconUnderline
+          width={24}
+          height={24}
+          style={{ cursor: 'pointer' }}
+          onClick={() => onFormat('underline')}
+          onMouseDown={handleMouseDown}
+        />
+        <IconStrikethrough
+          width={24}
+          height={24}
+          style={{ cursor: 'pointer' }}
+          onClick={() => onFormat('strikeThrough')}
+          onMouseDown={handleMouseDown}
+        />
         <IconColorText width={24} height={24} />
       </Row>
 
