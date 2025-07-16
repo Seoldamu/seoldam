@@ -1,4 +1,5 @@
 import { marked } from 'marked'
+import TurndownService from 'turndown'
 import { color, font } from '@renderer/design/styles'
 import { fileSystemService } from '@renderer/services/fileSystemService'
 import { useSeriesStore, useSeriesTreeStore, useTodayCharCountStore } from '@renderer/stores'
@@ -8,6 +9,18 @@ import { styled } from 'styled-components'
 
 import SavePanel from './SavePanel/SavePanel'
 import Toolbar from './Toolbar/Toolbar'
+
+const turndownService = new TurndownService()
+
+turndownService.addRule('underline', {
+  filter: ['u'],
+  replacement: (content) => `__${content}__`
+})
+
+turndownService.addRule('strikethrough', {
+  filter: ['s', 'strike'],
+  replacement: (content) => `~~${content}~~`
+})
 
 const FileEditor = () => {
   const { currentPath, setCurrentPath } = useSeriesStore()
@@ -77,6 +90,23 @@ const FileEditor = () => {
     }
   }, [])
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!e.ctrlKey && !e.metaKey) return
+
+    const command = (() => {
+      if (e.key === 'b') return 'bold'
+      if (e.key === 'i') return 'italic'
+      if (e.key === 'u') return 'underline'
+      if (e.key.toLowerCase() === 's' && e.shiftKey) return 'strikethrough'
+      return null
+    })()
+
+    if (!command) return
+
+    e.preventDefault()
+    document.execCommand(command)
+  }
+
   const handleOnInput = (e: React.FormEvent<HTMLDivElement>) => {
     const el = e.currentTarget
     if (el.textContent === '') {
@@ -95,7 +125,8 @@ const FileEditor = () => {
     if (!currentPath || !fileNameRef.current) return
 
     const newFileName = fileNameRef.current.textContent?.trim() || ''
-    const content = fileContentRef.current?.textContent || ''
+    const contentHTML = fileContentRef.current?.innerHTML || ''
+    const markdownText = turndownService.turndown(contentHTML)
     const oldPath = currentPath
     const oldFileName = fileData.fileName
 
@@ -111,13 +142,13 @@ const FileEditor = () => {
       setCurrentPath(pathToSave)
     }
 
-    const saveResult = await fileSystemService.saveFile(pathToSave, content)
+    const saveResult = await fileSystemService.saveFile(pathToSave, markdownText)
     if (!saveResult.success) {
       alert(saveResult.message)
       return
     }
 
-    const newCharCount = countCharacters(content)
+    const newCharCount = countCharacters(markdownText)
     const diff = newCharCount - prevCharCount
 
     if (diff > 0) {
@@ -127,7 +158,7 @@ const FileEditor = () => {
 
     setFileData({
       fileName: newFileName,
-      content
+      content: markdownText
     })
     fetchTreeData()
   }
@@ -153,6 +184,7 @@ const FileEditor = () => {
           contentEditable
           data-placeholder="내용을 입력하세요"
           onInput={handleOnInput}
+          onKeyDown={handleKeyDown}
           spellCheck={false}
           suppressContentEditableWarning={true}
         />
