@@ -11,7 +11,21 @@ import SavePanel from './SavePanel/SavePanel'
 import Toolbar from './Toolbar/Toolbar'
 import { FormatState } from '@renderer/types/editor/clinet'
 
-const turndownService = new TurndownService()
+const turndownService = new TurndownService({
+  headingStyle: 'atx',
+  bulletListMarker: '-',
+  codeBlockStyle: 'fenced',
+  preformattedCode: true
+})
+
+turndownService.addRule('preserveSpaces', {
+  filter: (node) => {
+    return node.nodeName === '#text'
+  },
+  replacement: (content) => {
+    return content.replace(/\u00A0/g, ' ')
+  }
+})
 
 turndownService.addRule('underline', {
   filter: ['u'],
@@ -108,6 +122,12 @@ const FileEditor = () => {
   }, [])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === ' ') {
+      e.preventDefault()
+      document.execCommand('insertHTML', false, '&nbsp;')
+      return
+    }
+
     if (!e.ctrlKey && !e.metaKey) return
 
     const command = (() => {
