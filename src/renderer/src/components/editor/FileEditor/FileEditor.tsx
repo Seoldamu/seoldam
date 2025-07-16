@@ -1,3 +1,4 @@
+import { marked } from 'marked'
 import { color, font } from '@renderer/design/styles'
 import { fileSystemService } from '@renderer/services/fileSystemService'
 import { useSeriesStore, useSeriesTreeStore, useTodayCharCountStore } from '@renderer/stores'
@@ -36,16 +37,22 @@ const FileEditor = () => {
   }, [currentPath])
 
   useEffect(() => {
-    if (fileNameRef.current) {
-      fileNameRef.current.textContent = fileData.fileName
-    }
-    if (fileContentRef.current) {
-      fileContentRef.current.textContent = fileData.content
+    const parseMarkdown = async () => {
+      if (fileNameRef.current) {
+        fileNameRef.current.textContent = fileData.fileName
+      }
+
+      if (fileContentRef.current) {
+        const html = await marked.parse(fileData.content)
+        fileContentRef.current.innerHTML = html
+      }
+
+      const initialCharCount = countCharacters(fileData.content)
+      setCharCount(initialCharCount)
+      setPrevCharCount(initialCharCount)
     }
 
-    const initialCharCount = countCharacters(fileData.content)
-    setCharCount(initialCharCount)
-    setPrevCharCount(initialCharCount)
+    parseMarkdown()
   }, [fileData])
 
   useEffect(() => {
