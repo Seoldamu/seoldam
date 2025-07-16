@@ -15,14 +15,16 @@ import {
   IconUnderline
 } from '@renderer/design/icons'
 import { color } from '@renderer/design/styles'
+import { FormatState } from '@renderer/types/editor/clinet'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 
 interface Props {
   onFormat: (command: 'bold' | 'italic' | 'underline' | 'strikeThrough') => void
+  formatState: FormatState
 }
 
-const Toolbar = ({ onFormat }: Props) => {
+const Toolbar = ({ onFormat, formatState }: Props) => {
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
   }
@@ -40,30 +42,33 @@ const Toolbar = ({ onFormat }: Props) => {
         <IconBold
           width={24}
           height={24}
-          style={{ cursor: 'pointer' }}
           onClick={() => onFormat('bold')}
           onMouseDown={handleMouseDown}
+          style={{ color: formatState.bold ? color.primary : 'inherit', cursor: 'pointer' }}
         />
         <IconItalic
           width={24}
           height={24}
-          style={{ cursor: 'pointer' }}
           onClick={() => onFormat('italic')}
           onMouseDown={handleMouseDown}
+          style={{ color: formatState.italic ? color.primary : 'inherit', cursor: 'pointer' }}
         />
         <IconUnderline
           width={24}
           height={24}
-          style={{ cursor: 'pointer' }}
           onClick={() => onFormat('underline')}
           onMouseDown={handleMouseDown}
+          style={{ color: formatState.underline ? color.primary : 'inherit', cursor: 'pointer' }}
         />
         <IconStrikethrough
           width={24}
           height={24}
-          style={{ cursor: 'pointer' }}
           onClick={() => onFormat('strikeThrough')}
           onMouseDown={handleMouseDown}
+          style={{
+            color: formatState.strikethrough ? color.primary : 'inherit',
+            cursor: 'pointer'
+          }}
         />
         <IconColorText width={24} height={24} />
       </Row>

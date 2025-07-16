@@ -9,6 +9,7 @@ import { styled } from 'styled-components'
 
 import SavePanel from './SavePanel/SavePanel'
 import Toolbar from './Toolbar/Toolbar'
+import { FormatState } from '@renderer/types/editor/clinet'
 
 const turndownService = new TurndownService()
 
@@ -33,6 +34,22 @@ const FileEditor = () => {
   const [fileData, setFileData] = useState({ fileName: '', content: '' })
   const [prevCharCount, setPrevCharCount] = useState(0)
   const [charCount, setCharCount] = useState(0)
+  const [formatState, setFormatState] = useState<FormatState>({
+    bold: false,
+    italic: false,
+    underline: false,
+    strikethrough: false
+  })
+
+  const checkFormatState = () => {
+    const newFormatState: FormatState = {
+      bold: document.queryCommandState('bold'),
+      italic: document.queryCommandState('italic'),
+      underline: document.queryCommandState('underline'),
+      strikethrough: document.queryCommandState('strikeThrough')
+    }
+    setFormatState(newFormatState)
+  }
 
   useEffect(() => {
     const loadFileInfo = async () => {
@@ -105,6 +122,7 @@ const FileEditor = () => {
 
     e.preventDefault()
     document.execCommand(command)
+    setTimeout(checkFormatState, 0)
   }
 
   const handleOnInput = (e: React.FormEvent<HTMLDivElement>) => {
@@ -164,27 +182,26 @@ const FileEditor = () => {
   }
 
   const onFormat = (command: 'bold' | 'italic' | 'underline' | 'strikeThrough') => {
-    const selection = window.getSelection()
-    if (!selection) return
-
-    if (document.activeElement !== fileContentRef.current) {
-      const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null
-
-      fileContentRef.current?.focus()
-
-      if (range) {
-        selection.removeAllRanges()
-        selection.addRange(range)
-      }
-    }
-
     document.execCommand(command, false)
+
+    setTimeout(checkFormatState, 0)
   }
+
+  const handleSelectionChange = () => {
+    checkFormatState()
+  }
+
+  useEffect(() => {
+    document.addEventListener('selectionchange', handleSelectionChange)
+    return () => {
+      document.removeEventListener('selectionchange', handleSelectionChange)
+    }
+  }, [])
 
   return (
     <StyledFileEditor>
       <FileEditorHeader>
-        <Toolbar onFormat={onFormat} />
+        <Toolbar onFormat={onFormat} formatState={formatState} />
         <SavePanel charCount={charCount} onSave={handleFileSave} />
       </FileEditorHeader>
       <WriteBox>
