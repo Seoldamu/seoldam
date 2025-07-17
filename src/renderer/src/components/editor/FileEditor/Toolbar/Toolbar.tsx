@@ -1,3 +1,4 @@
+import { Editor } from '@tiptap/react'
 import { Row } from '@renderer/components/common'
 import {
   IconAlignCenter,
@@ -20,20 +21,40 @@ import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 
 interface Props {
-  onFormat: (command: 'bold' | 'italic' | 'underline' | 'strikeThrough') => void
+  editor: Editor | null
   formatState: FormatState
 }
 
-const Toolbar = ({ onFormat, formatState }: Props) => {
+const Toolbar = ({ editor, formatState }: Props) => {
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
+  }
+
+  if (!editor) {
+    return null
   }
 
   return (
     <StyledToolbar>
       <Row gap={10}>
-        <IconForward width={24} height={24} direction="before" active={false} />
-        <IconForward width={24} height={24} direction="after" active={true} />
+        <IconForward
+          width={24}
+          height={24}
+          direction="before"
+          active={editor.can().undo()}
+          onClick={() => editor.chain().focus().undo().run()}
+          onMouseDown={handleMouseDown}
+          style={{ cursor: 'pointer' }}
+        />
+        <IconForward
+          width={24}
+          height={24}
+          direction="after"
+          active={editor.can().redo()}
+          onClick={() => editor.chain().focus().redo().run()}
+          onMouseDown={handleMouseDown}
+          style={{ cursor: 'pointer' }}
+        />
       </Row>
 
       <Line />
@@ -42,28 +63,28 @@ const Toolbar = ({ onFormat, formatState }: Props) => {
         <IconBold
           width={24}
           height={24}
-          onClick={() => onFormat('bold')}
+          onClick={() => editor.chain().focus().toggleBold().run()}
           onMouseDown={handleMouseDown}
           style={{ color: formatState.bold ? color.primary : 'inherit', cursor: 'pointer' }}
         />
         <IconItalic
           width={24}
           height={24}
-          onClick={() => onFormat('italic')}
+          onClick={() => editor.chain().focus().toggleItalic().run()}
           onMouseDown={handleMouseDown}
           style={{ color: formatState.italic ? color.primary : 'inherit', cursor: 'pointer' }}
         />
         <IconUnderline
           width={24}
           height={24}
-          onClick={() => onFormat('underline')}
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
           onMouseDown={handleMouseDown}
           style={{ color: formatState.underline ? color.primary : 'inherit', cursor: 'pointer' }}
         />
         <IconStrikethrough
           width={24}
           height={24}
-          onClick={() => onFormat('strikeThrough')}
+          onClick={() => editor.chain().focus().toggleStrike().run()}
           onMouseDown={handleMouseDown}
           style={{
             color: formatState.strikethrough ? color.primary : 'inherit',

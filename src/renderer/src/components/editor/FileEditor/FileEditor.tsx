@@ -1,9 +1,15 @@
+import { EditorContent, useEditor } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import Underline from '@tiptap/extension-underline'
+import Placeholder from '@tiptap/extension-placeholder'
+import CharacterCount from '@tiptap/extension-character-count'
 import { marked } from 'marked'
 import TurndownService from 'turndown'
+
 import { color, font } from '@renderer/design/styles'
 import { fileSystemService } from '@renderer/services/fileSystemService'
 import { useSeriesStore, useSeriesTreeStore, useTodayCharCountStore } from '@renderer/stores'
-import { countCharacters, flex } from '@renderer/utils'
+import { flex } from '@renderer/utils'
 import { useEffect, useRef, useState } from 'react'
 import { styled } from 'styled-components'
 
@@ -18,23 +24,9 @@ const turndownService = new TurndownService({
   preformattedCode: true
 })
 
-turndownService.addRule('preserveSpaces', {
-  filter: (node) => {
-    return node.nodeName === '#text'
-  },
-  replacement: (content) => {
-    return content.replace(/\u00A0/g, ' ')
-  }
-})
-
 turndownService.addRule('underline', {
   filter: ['u'],
   replacement: (content) => `__${content}__`
-})
-
-turndownService.addRule('strikethrough', {
-  filter: ['s', 'strike'],
-  replacement: (content) => `~~${content}~~`
 })
 
 const FileEditor = () => {
@@ -43,11 +35,10 @@ const FileEditor = () => {
   const { todayCharCount, setTodayCharCount } = useTodayCharCountStore()
 
   const fileNameRef = useRef<HTMLDivElement>(null)
-  const fileContentRef = useRef<HTMLDivElement>(null)
 
-  const [fileData, setFileData] = useState({ fileName: '', content: '' })
+  const [fileName, setFileName] = useState('')
+  const [initialContent, setInitialContent] = useState('')
   const [prevCharCount, setPrevCharCount] = useState(0)
-  const [charCount, setCharCount] = useState(0)
   const [formatState, setFormatState] = useState<FormatState>({
     bold: false,
     italic: false,
@@ -55,118 +46,84 @@ const FileEditor = () => {
     strikethrough: false
   })
 
-  const checkFormatState = () => {
-    const newFormatState: FormatState = {
-      bold: document.queryCommandState('bold'),
-      italic: document.queryCommandState('italic'),
-      underline: document.queryCommandState('underline'),
-      strikethrough: document.queryCommandState('strikeThrough')
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      Placeholder.configure({
+        placeholder: '내용을 입력하세요'
+      }),
+      CharacterCount.configure()
+    ],
+    editorProps: {
+      attributes: {
+        class: 'ProseMirror'
+      }
+    },
+    onUpdate({ editor }) {
+      const newFormatState: FormatState = {
+        bold: editor.isActive('bold'),
+        italic: editor.isActive('italic'),
+        underline: editor.isActive('underline'),
+        strikethrough: editor.isActive('strike')
+      }
+      setFormatState(newFormatState)
+    },
+    onSelectionUpdate({ editor }) {
+      const newFormatState: FormatState = {
+        bold: editor.isActive('bold'),
+        italic: editor.isActive('italic'),
+        underline: editor.isActive('underline'),
+        strikethrough: editor.isActive('strike')
+      }
+      setFormatState(newFormatState)
     }
-    setFormatState(newFormatState)
-  }
+  })
 
   useEffect(() => {
     const loadFileInfo = async () => {
       if (!currentPath) return
 
       const result = await fileSystemService.getFileInfo(currentPath)
+      setFileName(result.fileName)
 
-      setFileData({
-        fileName: result.fileName,
-        content: result.content
-      })
+      const htmlContent = await marked.parse(result.content)
+      setInitialContent(htmlContent)
     }
 
     loadFileInfo()
   }, [currentPath])
 
   useEffect(() => {
-    const parseMarkdown = async () => {
-      if (fileNameRef.current) {
-        fileNameRef.current.textContent = fileData.fileName
-      }
-
-      if (fileContentRef.current) {
-        const html = await marked.parse(fileData.content)
-        fileContentRef.current.innerHTML = html
-      }
-
-      const initialCharCount = countCharacters(fileData.content)
-      setCharCount(initialCharCount)
+    if (editor && initialContent) {
+      editor.commands.setContent(initialContent, { emitUpdate: false })
+      const initialCharCount = turndownService.turndown(initialContent).length
       setPrevCharCount(initialCharCount)
     }
-
-    parseMarkdown()
-  }, [fileData])
+  }, [editor, initialContent])
 
   useEffect(() => {
-    const observer = new MutationObserver(() => {
-      if (fileContentRef.current) {
-        const text = fileContentRef.current.textContent || ''
-        setCharCount(countCharacters(text))
-      }
-    })
-
-    const target = fileContentRef.current
-    if (target) {
-      observer.observe(target, {
-        characterData: true,
-        subtree: true,
-        childList: true
-      })
+    if (fileNameRef.current) {
+      fileNameRef.current.textContent = fileName
     }
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [])
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === ' ') {
-      e.preventDefault()
-      document.execCommand('insertHTML', false, '&nbsp;')
-      return
-    }
-
-    if (!e.ctrlKey && !e.metaKey) return
-
-    const command = (() => {
-      if (e.key === 'b') return 'bold'
-      if (e.key === 'i') return 'italic'
-      if (e.key === 'u') return 'underline'
-      if (e.key.toLowerCase() === 's' && e.shiftKey) return 'strikethrough'
-      return null
-    })()
-
-    if (!command) return
-
-    e.preventDefault()
-    document.execCommand(command)
-    setTimeout(checkFormatState, 0)
-  }
-
-  const handleOnInput = (e: React.FormEvent<HTMLDivElement>) => {
-    const el = e.currentTarget
-    if (el.textContent === '') {
-      el.innerHTML = ''
-    }
-  }
+  }, [fileName])
 
   const handleFileNameKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault()
-      fileContentRef.current?.focus()
+      editor?.chain().focus().run()
     }
   }
 
   const handleFileSave = async () => {
-    if (!currentPath || !fileNameRef.current) return
+    if (!currentPath || !fileNameRef.current || !editor) return
 
     const newFileName = fileNameRef.current.textContent?.trim() || ''
-    const contentHTML = fileContentRef.current?.innerHTML || ''
+    const contentHTML = editor.getHTML()
     const markdownText = turndownService.turndown(contentHTML)
+
     const oldPath = currentPath
-    const oldFileName = fileData.fileName
+    const oldFileName = fileName
 
     let pathToSave = currentPath
 
@@ -186,7 +143,7 @@ const FileEditor = () => {
       return
     }
 
-    const newCharCount = countCharacters(markdownText)
+    const newCharCount = markdownText.length
     const diff = newCharCount - prevCharCount
 
     if (diff > 0) {
@@ -194,35 +151,19 @@ const FileEditor = () => {
     }
     setPrevCharCount(newCharCount)
 
-    setFileData({
-      fileName: newFileName,
-      content: markdownText
-    })
+    setFileName(newFileName)
     fetchTreeData()
   }
 
-  const onFormat = (command: 'bold' | 'italic' | 'underline' | 'strikeThrough') => {
-    document.execCommand(command, false)
-
-    setTimeout(checkFormatState, 0)
+  if (!editor) {
+    return null
   }
-
-  const handleSelectionChange = () => {
-    checkFormatState()
-  }
-
-  useEffect(() => {
-    document.addEventListener('selectionchange', handleSelectionChange)
-    return () => {
-      document.removeEventListener('selectionchange', handleSelectionChange)
-    }
-  }, [])
 
   return (
     <StyledFileEditor>
       <FileEditorHeader>
-        <Toolbar onFormat={onFormat} formatState={formatState} />
-        <SavePanel charCount={charCount} onSave={handleFileSave} />
+        <Toolbar editor={editor} formatState={formatState} />
+        <SavePanel charCount={editor.storage.characterCount.characters()} onSave={handleFileSave} />
       </FileEditorHeader>
       <WriteBox>
         <FileName
@@ -230,19 +171,17 @@ const FileEditor = () => {
           contentEditable
           data-placeholder="파일 이름을 입력하세요"
           onKeyDown={handleFileNameKeyDown}
-          onInput={handleOnInput}
+          onInput={(e) => {
+            if (e.currentTarget.textContent === '') {
+              e.currentTarget.innerHTML = ''
+            }
+          }}
           spellCheck={false}
           suppressContentEditableWarning={true}
         />
-        <FileContent
-          ref={fileContentRef}
-          contentEditable
-          data-placeholder="내용을 입력하세요"
-          onInput={handleOnInput}
-          onKeyDown={handleKeyDown}
-          spellCheck={false}
-          suppressContentEditableWarning={true}
-        />
+        <FileContent>
+          <EditorContent editor={editor} />
+        </FileContent>
       </WriteBox>
     </StyledFileEditor>
   )
@@ -268,7 +207,7 @@ const FileEditorHeader = styled.div`
 const WriteBox = styled.div`
   ${flex({ flexDirection: 'column' })}
   width: 70%;
-  height: auto;
+  min-height: 300px;
   padding: 38px 24px 738px 24px;
   gap: 8px;
 `
@@ -286,13 +225,34 @@ const FileName = styled.div`
 `
 
 const FileContent = styled.div`
-  ${font.B1}
-  color: ${color.G500};
-  width: 100%;
-  min-height: 200px;
-  outline: none;
-  &:empty:before {
-    content: attr(data-placeholder);
-    color: ${color.G80};
+  .ProseMirror {
+    ${font.B1}
+    color: ${color.G500};
+    width: 100%;
+    min-height: 200px;
+    outline: none;
+
+    display: block;
+
+    & > * {
+      display: block;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    p {
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+    }
+
+    p.is-editor-empty:first-child::before {
+      content: attr(data-placeholder);
+      float: left;
+      color: ${color.G80};
+      pointer-events: none;
+      height: 0;
+    }
   }
 `
