@@ -27,13 +27,13 @@ const StyledHome = styled.div`
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: ${color.G50};
+    background-color: ${color.G40};
     border-radius: 4px;
     transition: background-color 0.2s ease;
   }
 
   &::-webkit-scrollbar-thumb:hover {
-    background-color: ${color.G100};
+    background-color: ${color.G80};
   }
 
   &::-webkit-scrollbar-track {
