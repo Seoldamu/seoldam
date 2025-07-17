@@ -72,7 +72,7 @@ const StyledFileEditor = styled.div`
   ${flex({ flexDirection: 'column' })}
   width: 100%;
   height: 100vh;
-  padding: 40px 0px 0px 102px;
+  padding: 40px 0px 0px 132px;
   gap: 19px;
   background: ${color.G0};
 `
