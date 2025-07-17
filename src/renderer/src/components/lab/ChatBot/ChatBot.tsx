@@ -1,5 +1,5 @@
 import ChatInput from '@renderer/components/common/Input/ChatInput'
-import { color, font } from '@renderer/design/styles'
+import { color } from '@renderer/design/styles'
 import { aiService } from '@renderer/services/aiService'
 import { useChatStore } from '@renderer/stores/chatStore'
 import useSeriesStore from '@renderer/stores/seriesStore'
@@ -9,6 +9,7 @@ import { styled } from 'styled-components'
 
 import AssistantMessage from './ChatMessage/AssistantMessage'
 import UserMessage from './ChatMessage/UserMessage'
+import { Text } from '@renderer/components/common'
 
 const ChatBot = () => {
   const { messages, addMessage } = useChatStore()
@@ -38,11 +39,15 @@ const ChatBot = () => {
       <ScrollArea>
         <MessageContainer>
           {messages.length === 0 ? (
-            <EmptyMessage>
-              <div style={{ textAlign: 'center' }}>설다무에게 궁금한 점을 물어보세요!</div>
-              <br />
-              (예: 이 시리즈의 다음 줄거리를 추천해 줘)
-            </EmptyMessage>
+            <EmptyBox>
+              <Text fontType="H1" color={color.G500}>
+                <div style={{ textAlign: 'center' }}>
+                  <span style={{ color: color.primary }}>설다무</span>에게 궁금한 점을 물어보세요!
+                </div>
+                <br />
+                (예: 이 시리즈의 다음 줄거리를 추천해 줘)
+              </Text>
+            </EmptyBox>
           ) : (
             messages.map((msg) =>
               msg.role === 'user' ? (
@@ -116,10 +121,8 @@ const StickyInputWrapper = styled.div`
   z-index: 10;
 `
 
-const EmptyMessage = styled.div`
+const EmptyBox = styled.div`
   ${flex({ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' })}
   width: 100%;
   height: 100%;
-  color: ${color.G500};
-  ${font.H1}
 `
