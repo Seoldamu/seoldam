@@ -34,6 +34,7 @@ const StyledAssistantMessage = styled.div`
 
   ${font.B1};
   word-break: break-word;
+  white-space: pre-wrap;
 
   h1,
   h2,
