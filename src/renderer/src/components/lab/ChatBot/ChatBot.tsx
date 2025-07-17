@@ -1,5 +1,5 @@
 import ChatInput from '@renderer/components/common/Input/ChatInput'
-import { color } from '@renderer/design/styles'
+import { color, font } from '@renderer/design/styles'
 import { aiService } from '@renderer/services/aiService'
 import { useChatStore } from '@renderer/stores/chatStore'
 import useSeriesStore from '@renderer/stores/seriesStore'
@@ -37,11 +37,19 @@ const ChatBot = () => {
     <StyledChatBot>
       <ScrollArea>
         <MessageContainer>
-          {messages.map((msg) =>
-            msg.role === 'user' ? (
-              <UserMessage key={msg.id} message={msg.content} />
-            ) : (
-              <AssistantMessage key={msg.id} message={msg.content} />
+          {messages.length === 0 ? (
+            <EmptyMessage>
+              궁금한 점을 물어보세요!
+              <br />
+              (예: 이 시리즈의 다음 줄거리를 추천해 줘)
+            </EmptyMessage>
+          ) : (
+            messages.map((msg) =>
+              msg.role === 'user' ? (
+                <UserMessage key={msg.id} message={msg.content} />
+              ) : (
+                <AssistantMessage key={msg.id} message={msg.content} />
+              )
             )
           )}
           {isLoading && <AssistantMessage message="생각 중..." />}
@@ -101,4 +109,12 @@ const StickyInputWrapper = styled.div`
   background: ${color.G0};
   padding: 12px 0 16px 0;
   z-index: 10;
+`
+
+const EmptyMessage = styled.div`
+  ${flex({ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' })}
+  width: 100%;
+  height: 100%;
+  color: ${color.G500};
+  ${font.H1}
 `
