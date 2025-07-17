@@ -39,7 +39,7 @@ const ChatBot = () => {
         <MessageContainer>
           {messages.length === 0 ? (
             <EmptyMessage>
-              궁금한 점을 물어보세요!
+              <div style={{ textAlign: 'center' }}>설다무에게 궁금한 점을 물어보세요!</div>
               <br />
               (예: 이 시리즈의 다음 줄거리를 추천해 줘)
             </EmptyMessage>
@@ -79,24 +79,29 @@ const ScrollArea = styled.div`
   overflow-y: auto;
   display: flex;
   padding: 40px 24px 20px 0;
-  scrollbar-width: thin;
 
   &::-webkit-scrollbar {
     width: 6px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: ${color.G30};
+    background-color: ${color.G50};
     border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${color.G100};
   }
 
   &::-webkit-scrollbar-track {
-    background: transparent;
+    background-color: transparent;
   }
 `
 
 const MessageContainer = styled.div`
   width: 70%;
+  padding: 0px 24px;
   display: flex;
   flex-direction: column;
   gap: 12px;
