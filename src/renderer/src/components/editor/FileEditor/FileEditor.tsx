@@ -48,20 +48,22 @@ const FileEditor = () => {
         <Toolbar editor={editor} formatState={formatState} />
         <SavePanel charCount={editor.storage.characterCount.characters()} onSave={handleFileSave} />
       </FileEditorHeader>
-      <WriteBox>
-        <FileName
-          ref={fileNameRef}
-          contentEditable
-          data-placeholder="파일 이름을 입력하세요"
-          onKeyDown={handleFileNameKeyDown}
-          onInput={handleFileNameInput}
-          spellCheck={false}
-          suppressContentEditableWarning={true}
-        />
-        <FileContent>
-          <EditorContent editor={editor} />
-        </FileContent>
-      </WriteBox>
+      <ScrollArea>
+        <WriteBox>
+          <FileName
+            ref={fileNameRef}
+            contentEditable
+            data-placeholder="파일 이름을 입력하세요"
+            onKeyDown={handleFileNameKeyDown}
+            onInput={handleFileNameInput}
+            spellCheck={false}
+            suppressContentEditableWarning={true}
+          />
+          <FileContent>
+            <EditorContent editor={editor} />
+          </FileContent>
+        </WriteBox>
+      </ScrollArea>
     </StyledFileEditor>
   )
 }
@@ -85,27 +87,37 @@ const FileEditorHeader = styled.div`
   flex-shrink: 0;
 `
 
-const WriteBox = styled.div`
-  ${flex({ flexDirection: 'column' })}
-  width: 70%;
-  height: 100%;
-  min-height: 300px;
-  padding: 38px 24px 40px 24px;
-  gap: 8px;
+const ScrollArea = styled.div`
+  flex-grow: 1;
   overflow-y: auto;
+  display: flex;
+  padding: 38px 24px 40px 24px;
 
   &::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: ${color.G100};
+    background-color: ${color.G50};
     border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${color.G100};
   }
 
   &::-webkit-scrollbar-track {
     background-color: transparent;
   }
+`
+
+const WriteBox = styled.div`
+  ${flex({ flexDirection: 'column' })}
+  width: 70%;
+  height: 100%;
+  min-height: 300px;
+  gap: 8px;
 `
 
 const FileName = styled.div`
