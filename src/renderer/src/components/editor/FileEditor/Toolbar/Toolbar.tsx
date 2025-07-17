@@ -1,3 +1,4 @@
+import { Editor } from '@tiptap/react'
 import { Row } from '@renderer/components/common'
 import {
   IconAlignCenter,
@@ -15,24 +16,81 @@ import {
   IconUnderline
 } from '@renderer/design/icons'
 import { color } from '@renderer/design/styles'
+import { FormatState } from '@renderer/types/editor/clinet'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 
-const Toolbar = () => {
+interface Props {
+  editor: Editor | null
+  formatState: FormatState
+}
+
+const Toolbar = ({ editor, formatState }: Props) => {
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault()
+  }
+
+  if (!editor) {
+    return null
+  }
+
   return (
     <StyledToolbar>
       <Row gap={10}>
-        <IconForward width={24} height={24} direction="before" active={false} />
-        <IconForward width={24} height={24} direction="after" active={true} />
+        <IconForward
+          width={24}
+          height={24}
+          direction="before"
+          active={editor.can().undo()}
+          onClick={() => editor.chain().focus().undo().run()}
+          onMouseDown={handleMouseDown}
+          style={{ cursor: 'pointer' }}
+        />
+        <IconForward
+          width={24}
+          height={24}
+          direction="after"
+          active={editor.can().redo()}
+          onClick={() => editor.chain().focus().redo().run()}
+          onMouseDown={handleMouseDown}
+          style={{ cursor: 'pointer' }}
+        />
       </Row>
 
       <Line />
 
       <Row gap={10}>
-        <IconBold width={24} height={24} />
-        <IconItalic width={24} height={24} />
-        <IconUnderline width={24} height={24} />
-        <IconStrikethrough width={24} height={24} />
+        <IconBold
+          width={24}
+          height={24}
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          onMouseDown={handleMouseDown}
+          style={{ color: formatState.bold ? color.primary : 'inherit', cursor: 'pointer' }}
+        />
+        <IconItalic
+          width={24}
+          height={24}
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          onMouseDown={handleMouseDown}
+          style={{ color: formatState.italic ? color.primary : 'inherit', cursor: 'pointer' }}
+        />
+        <IconUnderline
+          width={24}
+          height={24}
+          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          onMouseDown={handleMouseDown}
+          style={{ color: formatState.underline ? color.primary : 'inherit', cursor: 'pointer' }}
+        />
+        <IconStrikethrough
+          width={24}
+          height={24}
+          onClick={() => editor.chain().focus().toggleStrike().run()}
+          onMouseDown={handleMouseDown}
+          style={{
+            color: formatState.strikethrough ? color.primary : 'inherit',
+            cursor: 'pointer'
+          }}
+        />
         <IconColorText width={24} height={24} />
       </Row>
 

@@ -9,6 +9,7 @@ import { styled } from 'styled-components'
 
 import AssistantMessage from './ChatMessage/AssistantMessage'
 import UserMessage from './ChatMessage/UserMessage'
+import { Text } from '@renderer/components/common'
 
 const ChatBot = () => {
   const { messages, addMessage } = useChatStore()
@@ -37,11 +38,23 @@ const ChatBot = () => {
     <StyledChatBot>
       <ScrollArea>
         <MessageContainer>
-          {messages.map((msg) =>
-            msg.role === 'user' ? (
-              <UserMessage key={msg.id} message={msg.content} />
-            ) : (
-              <AssistantMessage key={msg.id} message={msg.content} />
+          {messages.length === 0 ? (
+            <EmptyBox>
+              <Text fontType="H1" color={color.G500}>
+                <div style={{ textAlign: 'center' }}>
+                  <span style={{ color: color.primary }}>설다무</span>에게 궁금한 점을 물어보세요!
+                </div>
+                <br />
+                (예: 이 시리즈의 다음 줄거리를 추천해 줘)
+              </Text>
+            </EmptyBox>
+          ) : (
+            messages.map((msg) =>
+              msg.role === 'user' ? (
+                <UserMessage key={msg.id} message={msg.content} />
+              ) : (
+                <AssistantMessage key={msg.id} message={msg.content} />
+              )
             )
           )}
           {isLoading && <AssistantMessage message="생각 중..." />}
@@ -71,24 +84,29 @@ const ScrollArea = styled.div`
   overflow-y: auto;
   display: flex;
   padding: 40px 24px 20px 0;
-  scrollbar-width: thin;
 
   &::-webkit-scrollbar {
     width: 6px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: ${color.G30};
+    background-color: ${color.G50};
     border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${color.G100};
   }
 
   &::-webkit-scrollbar-track {
-    background: transparent;
+    background-color: transparent;
   }
 `
 
 const MessageContainer = styled.div`
   width: 70%;
+  padding: 0px 24px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -101,4 +119,10 @@ const StickyInputWrapper = styled.div`
   background: ${color.G0};
   padding: 12px 0 16px 0;
   z-index: 10;
+`
+
+const EmptyBox = styled.div`
+  ${flex({ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' })}
+  width: 100%;
+  height: 100%;
 `

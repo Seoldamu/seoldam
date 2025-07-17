@@ -74,6 +74,6 @@ const SeriesList = styled.div`
   width: 100%;
   align-content: flex-start;
   flex-wrap: wrap;
-  gap: 32px 5px;
+  gap: 32px 4px;
   overflow-x: hidden;
 `

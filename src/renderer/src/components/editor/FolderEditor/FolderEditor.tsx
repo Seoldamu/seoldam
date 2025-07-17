@@ -118,13 +118,15 @@ const FolderEditor = () => {
         </Row>
         <IconButton onClick={handleNewFileCreateButton}>새 글</IconButton>
       </Row>
-      <FileList>
-        {childNodes.map((node) => (
-          <div key={node.id} onClick={() => handleNodeClick(node)}>
-            <ContentPreview title={node.name} content={node.content || ''} />
-          </div>
-        ))}
-      </FileList>
+      <ScrollArea>
+        <FileList>
+          {childNodes.map((node) => (
+            <div key={node.id} onClick={() => handleNodeClick(node)}>
+              <ContentPreview title={node.name} content={node.content || ''} />
+            </div>
+          ))}
+        </FileList>
+      </ScrollArea>
     </StyledFolderEditor>
   )
 }
@@ -132,11 +134,36 @@ const FolderEditor = () => {
 export default FolderEditor
 
 const StyledFolderEditor = styled.div`
-  ${flex({ justifyContent: 'center', flexDirection: 'column' })}
+  ${flex({ flexDirection: 'column' })}
   width: 100%;
+  height: 100vh;
   padding: 68px 205px 0px 72px;
   gap: 38px;
   background: ${color.G0};
+`
+
+const ScrollArea = styled.div`
+  flex-grow: 1 0 0;
+  overflow-y: auto;
+  padding-right: 10px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${color.G40};
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${color.G80};
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
 `
 
 const FileList = styled.div`
