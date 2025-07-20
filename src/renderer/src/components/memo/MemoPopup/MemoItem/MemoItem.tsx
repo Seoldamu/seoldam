@@ -15,7 +15,7 @@ const MemoItem = ({ title, updateAt }: Props) => {
       <Text fontType="H1" color={color.G900} ellipsis>
         {title}
       </Text>
-      <Text fontType="T3" color={color.G100}>
+      <Text fontType="B3" color={color.G100}>
         {updateAt}
       </Text>
     </StyledMemoItem>
