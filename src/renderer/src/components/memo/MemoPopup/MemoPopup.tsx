@@ -8,6 +8,7 @@ import { flex, formatDateToDotString } from '@renderer/utils'
 import { useEffect, useState } from 'react'
 import { styled } from 'styled-components'
 import MemoItem from './MemoItem/MemoItem'
+import MemoViewer from './MemoViewer/MemoViewer'
 
 const MemoPopup = () => {
   const { currentSeriesPath } = useSeriesStore()
@@ -40,23 +41,27 @@ const MemoPopup = () => {
         </Text>
         <IconClose />
       </Row>
-      <ScrollArea>
-        <Column width="100%" alignItems="center">
-          {memoList.map((memo) => (
-            <div
-              key={memo.path}
-              onClick={() => handleMemoClick(memo.path)}
-              style={{ width: '100%' }}
-            >
-              <MemoItem
-                title={memo.name.replace(/\.md$/, '')}
-                path={memo.path}
-                updateAt={formatDateToDotString(new Date(memo.updateAt))}
-              />
-            </div>
-          ))}
-        </Column>
-      </ScrollArea>
+      {!currentMemoPath ? (
+        <ScrollArea>
+          <Column width="100%" alignItems="center">
+            {memoList.map((memo) => (
+              <div
+                key={memo.path}
+                onClick={() => handleMemoClick(memo.path)}
+                style={{ width: '100%' }}
+              >
+                <MemoItem
+                  title={memo.name.replace(/\.md$/, '')}
+                  path={memo.path}
+                  updateAt={formatDateToDotString(new Date(memo.updateAt))}
+                />
+              </div>
+            ))}
+          </Column>
+        </ScrollArea>
+      ) : (
+        <MemoViewer />
+      )}
     </StyledMemoPopup>
   )
 }
