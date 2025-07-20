@@ -45,7 +45,7 @@ const FolderMemo = () => {
       <ScrollArea>
         <MemoList>
           {memoList.map((memo) => (
-            <div key={memo.path} onClick={() => {}}>
+            <div key={memo.path} onClick={() => {}} style={{ width: '100%' }}>
               <MemoItem
                 title={memo.name.replace(/\.md$/, '')}
                 path={memo.path}
