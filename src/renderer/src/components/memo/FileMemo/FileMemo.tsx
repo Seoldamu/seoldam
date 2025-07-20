@@ -110,7 +110,6 @@ const FileName = styled.div`
   width: 100%;
   min-height: 32px;
   outline: none;
-  padding: 4px 8px;
 `
 
 const FileContent = styled.div`

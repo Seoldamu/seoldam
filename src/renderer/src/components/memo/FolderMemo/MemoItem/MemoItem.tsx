@@ -30,6 +30,7 @@ const StyledMemoItem = styled.div`
 
   border-bottom: 1px solid ${color.G30};
   background: ${color.G0};
+  cursor: pointer;
 `
 
 const MemoItemDateText = styled.div`
