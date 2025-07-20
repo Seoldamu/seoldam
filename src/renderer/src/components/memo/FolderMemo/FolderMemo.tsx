@@ -2,7 +2,7 @@ import { IconButton, Row, Text } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
 import { memoSystemService } from '@renderer/services/memoSystemService'
 import { useMemoStore, useSeriesStore } from '@renderer/stores'
-import { flex, formatDateToDotString } from '@renderer/utils'
+import { flex, formatDateToDotString, getDisplayFilePath } from '@renderer/utils'
 import { useEffect, useState } from 'react'
 import { styled } from 'styled-components'
 import { FileMemo } from '..'
@@ -67,7 +67,7 @@ const FolderMemo = () => {
               style={{ width: '100%' }}
             >
               <MemoItem
-                title={memo.name.replace(/\.md$/, '')}
+                title={getDisplayFilePath(memo.name)}
                 path={memo.path}
                 updateAt={formatDateToDotString(new Date(memo.updateAt))}
               />
