@@ -40,7 +40,7 @@ const handleCreateMemoFile = (_, seriesPath: string) => {
       newPath = join(memoPath, `새 메모 (${count++}).md`)
     }
 
-    writeFileSync(newPath, '# 새 메모')
+    writeFileSync(newPath, '새 메모')
     return { success: true, path: newPath }
   } catch (err) {
     return { success: false, message: '메모 파일 생성 실패', error: err }
