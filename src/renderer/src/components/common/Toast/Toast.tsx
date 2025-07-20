@@ -4,19 +4,21 @@ import { styled } from 'styled-components'
 import Row from '../Flex/Row'
 import { IconCheckCircle, IconCloseCircle } from '@renderer/design/icons'
 import Text from '../Text/Text'
+import { ToastType } from '@renderer/stores'
 
 interface Props {
-  label: string
-  type: 'SUCCESS' | 'ERROR'
+  message: string
+  type: ToastType
+  onClose: () => void
 }
 
-const Toast = ({ label, type }: Props) => {
+const Toast = ({ message, type, onClose }: Props) => {
   return (
-    <StyledToast>
+    <StyledToast onClick={onClose}>
       <Row gap={8} justifyContent="center" alignItems="center">
         {type === 'SUCCESS' ? <IconCheckCircle /> : <IconCloseCircle />}
         <Text fontType="B1" color={color.G900}>
-          {label}
+          {message}
         </Text>
       </Row>
     </StyledToast>
@@ -26,9 +28,8 @@ const Toast = ({ label, type }: Props) => {
 export default Toast
 
 const StyledToast = styled.div`
+  cursor: pointer;
   ${flex({ alignItems: 'flex-start' })}
-  position: fixed;
-  top: 50px;
   width: 257px;
   padding: 20px 16px;
 
@@ -36,28 +37,25 @@ const StyledToast = styled.div`
   background: ${color.G0};
   box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
 
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
   opacity: 0;
   animation: fadeInOut 3s ease forwards;
 
   @keyframes fadeInOut {
     0% {
       opacity: 0;
-      transform: translate(-50%, 20px);
+      transform: translateY(20px);
     }
     10% {
       opacity: 1;
-      transform: translate(-50%, 0);
+      transform: translateY(0);
     }
     90% {
       opacity: 1;
-      transform: translate(-50%, 0);
+      transform: translateY(0);
     }
     100% {
       opacity: 0;
-      transform: translate(-50%, 20px);
+      transform: translateY(20px);
     }
   }
 `
