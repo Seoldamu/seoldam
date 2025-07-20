@@ -1,6 +1,7 @@
 import { color } from '@renderer/design/styles'
 import { useEffect, useRef, useState } from 'react'
 import styled, { CSSProperties } from 'styled-components'
+import defaultImage from '../../../../public/DefaultSeriesCover.png'
 
 import Text from '../Text/Text'
 
@@ -22,8 +23,6 @@ const ImageUploader = ({
   const [isHover, setIsHover] = useState(false)
   const [preview, setPreview] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-
-  const defaultImage = '/DefaultSeriesCover.png'
 
   useEffect(() => {
     if (!value) {
