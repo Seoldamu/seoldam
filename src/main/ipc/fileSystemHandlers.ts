@@ -116,7 +116,13 @@ const handleRenamePath = (_, oldPath: string, newName: string) => {
     }
 
     const parentDir = dirname(oldPath)
-    const newNameWithExt = newName.endsWith('.md') ? newName : `${newName}.md`
+    const isDirectory = fs.statSync(oldPath).isDirectory()
+
+    const newNameWithExt = isDirectory
+      ? newName
+      : newName.endsWith('.md')
+        ? newName
+        : `${newName}.md`
     const newPath = join(parentDir, newNameWithExt)
 
     if (oldPath === newPath) {
