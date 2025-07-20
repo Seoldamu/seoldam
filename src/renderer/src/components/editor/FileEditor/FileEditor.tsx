@@ -15,7 +15,7 @@ const FileEditor = () => {
   const { fileName, setFileName, initialContent } = useFileContent(currentPath)
   const { editor, formatState } = useTiptapEditor({ initialContent })
   const fileNameRef = useRef<HTMLDivElement>(null)
-  const { handleFileSave } = useFileSave({ editor, fileName, initialContent, fileNameRef })
+  const { handleFileSave } = useFileSave({ editor, initialContent, fileNameRef })
 
   useEffect(() => {
     if (fileNameRef.current) {

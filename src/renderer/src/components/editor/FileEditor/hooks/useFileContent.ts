@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { marked } from 'marked'
 import { fileSystemService } from '@renderer/services/fileSystemService'
+import { getDisplayFilePath } from '@renderer/utils'
 
 export const useFileContent = (currentPath: string | null) => {
   const [fileName, setFileName] = useState('')
@@ -11,7 +12,7 @@ export const useFileContent = (currentPath: string | null) => {
       if (!currentPath) return
 
       const result = await fileSystemService.getFileInfo(currentPath)
-      setFileName(result.fileName)
+      setFileName(getDisplayFilePath(result.fileName))
 
       const htmlContent = await marked.parse(result.content)
       setInitialContent(htmlContent)

@@ -5,7 +5,7 @@ import { useContextMenu, useOutsideClick } from '@renderer/hooks'
 import { fileSystemService } from '@renderer/services/fileSystemService'
 import { useSeriesStore, useSeriesTreeStore } from '@renderer/stores'
 import { TreeNode } from '@renderer/types/series/type'
-import { flex } from '@renderer/utils'
+import { flex, getDisplayFilePath, getRealFilePath } from '@renderer/utils'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { styled } from 'styled-components'
@@ -54,8 +54,11 @@ const SeriesFile = ({ node }: Props) => {
   ]
 
   const handleUpdateSumit = async (name: string) => {
-    const result = await fileSystemService.rename(node.path, name)
-    if (result.success) fetchTreeData()
+    const result = await fileSystemService.rename(node.path, getRealFilePath(name))
+    if (result.success) {
+      fetchTreeData()
+      setUpdateType(null)
+    }
   }
 
   const handleFileDoubleClick = () => {
@@ -69,7 +72,7 @@ const SeriesFile = ({ node }: Props) => {
         {updateType ? (
           <TempObject
             type={updateType}
-            initialName={node.name}
+            initialName={getDisplayFilePath(node.name)}
             onCancel={() => setUpdateType(null)}
             onSubmit={handleUpdateSumit}
           />
@@ -77,7 +80,7 @@ const SeriesFile = ({ node }: Props) => {
           <Row gap={8}>
             <IconArticle width={24} height={24} />
             <Text fontType="B2" color={color.G800} ellipsis={true}>
-              {node.name}
+              {getDisplayFilePath(node.name)}
             </Text>
           </Row>
         )}

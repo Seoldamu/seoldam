@@ -11,7 +11,7 @@ import { fileSystemService } from '@renderer/services/fileSystemService'
 import { seriesService } from '@renderer/services/seriesService'
 import { useSeriesStore, useSeriesTreeStore, useSeriesListStore } from '@renderer/stores'
 import { TreeNode } from '@renderer/types/series/type'
-import { flex, flattenTree, joinPath } from '@renderer/utils'
+import { flex, flattenTree, joinPath, getDisplayFilePath } from '@renderer/utils'
 import { useEffect, useState } from 'react'
 import { styled } from 'styled-components'
 
@@ -91,8 +91,8 @@ const FolderEditor = () => {
     if (!currentPath) return
 
     const result = isRoot
-      ? await fileSystemService.createFile(joinPath(currentPath, 'root'), '새 파일.md')
-      : await fileSystemService.createFile(currentPath, '새 파일.md')
+      ? await fileSystemService.createFile(joinPath(currentPath, 'root'), '새 파일')
+      : await fileSystemService.createFile(currentPath, '새 파일')
 
     if (result.success) {
       useSeriesTreeStore.getState().fetchTreeData()
@@ -126,7 +126,7 @@ const FolderEditor = () => {
         <FileList>
           {childNodes.map((node) => (
             <div key={node.id} onClick={() => handleNodeClick(node)}>
-              <ContentPreview title={node.name} content={node.content || ''} />
+              <ContentPreview title={getDisplayFilePath(node.name)} content={node.content || ''} />
             </div>
           ))}
         </FileList>
