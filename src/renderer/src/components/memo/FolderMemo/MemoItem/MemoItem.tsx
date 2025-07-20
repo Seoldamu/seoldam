@@ -3,13 +3,19 @@ import { color } from '@renderer/design/styles'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 
-const MemoItem = () => {
+interface Props {
+  title: string
+  path: string
+  updateAt: string
+}
+
+const MemoItem = ({ title, updateAt }: Props) => {
   return (
     <StyledMemoItem>
       <Text fontType="T4" color={color.G900} ellipsis>
-        {'메모제목'}
+        {title}
       </Text>
-      <MemoItemDateText>{'마지막 메모 수정 또는 작성 시간(ex 2025.04.18)'}</MemoItemDateText>
+      <MemoItemDateText>{updateAt}</MemoItemDateText>
     </StyledMemoItem>
   )
 }
