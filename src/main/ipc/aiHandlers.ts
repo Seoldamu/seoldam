@@ -2,10 +2,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'fs'
 import { join, relative } from 'path'
 
 import { GoogleGenerativeAI } from '@google/generative-ai'
-import dotenv from 'dotenv'
 import { ipcMain } from 'electron'
-
-dotenv.config()
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string)
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' })
@@ -88,6 +85,8 @@ ${stringifyTree(fileTree)}
     Always present your answers in a readable, well-structured, and visually clear manner.
     Use lists, headings, and formatting where appropriate to make your answers easy to scan and understand.
     Guide the user toward better writing and creative clarity through informed and supportive answers.
+
+    You must always answer in Korean, regardless of the language used in the prompt.
     `
 
     const finalPrompt = `${systemPrompt}\n\nUser's request: "${prompt}"`
