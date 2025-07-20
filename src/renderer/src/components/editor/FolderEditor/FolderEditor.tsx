@@ -6,6 +6,7 @@ import {
   SeriesDropdown
 } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
+import { useToast } from '@renderer/hooks'
 import { fileSystemService } from '@renderer/services/fileSystemService'
 import { seriesService } from '@renderer/services/seriesService'
 import { useSeriesStore, useSeriesTreeStore, useSeriesListStore } from '@renderer/stores'
@@ -20,6 +21,8 @@ const FolderEditor = () => {
   const { seriesList, fetchSeriesList } = useSeriesListStore()
 
   const [childNodes, setChildNodes] = useState<TreeNode[]>([])
+
+  const toast = useToast()
 
   const isRoot = currentPath === currentSeriesPath
 
@@ -66,6 +69,7 @@ const FolderEditor = () => {
 
     const result = await fileSystemService.rename(currentPath, newName)
     if (result.success) {
+      toast('SUCCESS', `이름 변경에 성공하였습니다`)
       if (isRoot) {
         setSeriesPath(result.path)
       }
@@ -73,7 +77,7 @@ const FolderEditor = () => {
       fetchTreeData()
       fetchSeriesList()
     } else {
-      alert(`이름 변경 실패: ${result.message}`)
+      toast('ERROR', `이름 변경 실패: ${result.message}`)
     }
   }
 

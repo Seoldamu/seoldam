@@ -1,4 +1,4 @@
-import { Sidebar } from '@renderer/components/common'
+import { Sidebar, ToastContainer } from '@renderer/components/common'
 import { flex } from '@renderer/utils'
 import { Outlet } from 'react-router-dom'
 import { styled } from 'styled-components'
@@ -6,6 +6,7 @@ import { styled } from 'styled-components'
 const AppLayout = () => {
   return (
     <StyledAppLayout>
+      <ToastContainer />
       <Sidebar />
       <Section>
         <Outlet />

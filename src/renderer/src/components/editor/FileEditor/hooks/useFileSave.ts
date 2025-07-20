@@ -3,6 +3,7 @@ import { fileSystemService } from '@renderer/services/fileSystemService'
 import { useSeriesStore, useSeriesTreeStore, useTodayCharCountStore } from '@renderer/stores'
 import TurndownService from 'turndown'
 import { useEffect, useState } from 'react'
+import { useToast } from '@renderer/hooks'
 
 const turndownService = new TurndownService({
   headingStyle: 'atx',
@@ -23,11 +24,18 @@ interface UseFileSaveProps {
   fileNameRef: React.RefObject<HTMLDivElement | null>
 }
 
-export const useFileSave = ({ editor, fileName, initialContent, fileNameRef }: UseFileSaveProps) => {
+export const useFileSave = ({
+  editor,
+  fileName,
+  initialContent,
+  fileNameRef
+}: UseFileSaveProps) => {
   const { currentPath, setCurrentPath } = useSeriesStore()
   const { fetchTreeData } = useSeriesTreeStore()
   const { todayCharCount, setTodayCharCount } = useTodayCharCountStore()
   const [prevCharCount, setPrevCharCount] = useState(0)
+
+  const toast = useToast()
 
   useEffect(() => {
     if (editor) {
@@ -51,7 +59,7 @@ export const useFileSave = ({ editor, fileName, initialContent, fileNameRef }: U
     if (newFileName && newFileName !== oldFileName) {
       const renameResult = await fileSystemService.rename(oldPath, newFileName)
       if (!renameResult.success) {
-        alert(renameResult.message)
+        toast('ERROR', '파일명 변경에 실패했습니다')
         return
       }
       pathToSave = renameResult.path
@@ -60,9 +68,10 @@ export const useFileSave = ({ editor, fileName, initialContent, fileNameRef }: U
 
     const saveResult = await fileSystemService.saveFile(pathToSave, markdownText)
     if (!saveResult.success) {
-      alert(saveResult.message)
+      toast('ERROR', '파일 저장에 실패했습니다')
       return
     }
+    toast('SUCCESS', '파일이 성공적으로 저장되었습니다')
 
     const newCharCount = markdownText.length
     const diff = newCharCount - prevCharCount
