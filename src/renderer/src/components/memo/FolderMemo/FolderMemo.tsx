@@ -1,11 +1,13 @@
 import { IconButton, Row, Text } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
 import { memoSystemService } from '@renderer/services/memoSystemService'
-import { useSeriesStore } from '@renderer/stores'
+import { useMemoStore, useSeriesStore } from '@renderer/stores'
 import { flex, formatDateToDotString } from '@renderer/utils'
 import { useEffect, useState } from 'react'
 import { styled } from 'styled-components'
+import { FileMemo } from '..'
 import MemoItem from './MemoItem/MemoItem'
+import { useToast } from '@renderer/hooks'
 
 interface Memo {
   name: string
@@ -15,8 +17,10 @@ interface Memo {
 
 const FolderMemo = () => {
   const { currentSeriesPath } = useSeriesStore()
-
+  const { currentMemoPath, setCurrentMemoPath } = useMemoStore()
   const [memoList, setMemoList] = useState<Memo[]>([])
+
+  const toast = useToast()
 
   const fetchMemoList = async () => {
     if (!currentSeriesPath) return
@@ -30,7 +34,24 @@ const FolderMemo = () => {
 
   useEffect(() => {
     fetchMemoList()
-  }, [currentSeriesPath])
+  }, [currentSeriesPath, currentMemoPath])
+
+  const handleNewMemo = async () => {
+    if (!currentSeriesPath) return
+    const result = await memoSystemService.createMemoFile(currentSeriesPath)
+    if (result.success) {
+      setCurrentMemoPath(result.path)
+      toast('SUCCESS', '메모가 생성되었습니다')
+    }
+  }
+
+  const handleMemoClick = (path: string) => {
+    setCurrentMemoPath(path)
+  }
+
+  if (currentMemoPath) {
+    return <FileMemo />
+  }
 
   return (
     <StyledFolderMemo>
@@ -40,12 +61,16 @@ const FolderMemo = () => {
             메모
           </Text>
         </Row>
-        <IconButton onClick={() => {}}>새 메모</IconButton>
+        <IconButton onClick={handleNewMemo}>새 메모</IconButton>
       </Row>
       <ScrollArea>
         <MemoList>
           {memoList.map((memo) => (
-            <div key={memo.path} onClick={() => {}} style={{ width: '100%' }}>
+            <div
+              key={memo.path}
+              onClick={() => handleMemoClick(memo.path)}
+              style={{ width: '100%' }}
+            >
               <MemoItem
                 title={memo.name.replace(/\.md$/, '')}
                 path={memo.path}

@@ -8,6 +8,7 @@ import {
   IconPlot
 } from '@renderer/design/icons'
 import { color } from '@renderer/design/styles'
+import { useMemoStore } from '@renderer/stores'
 import { flex } from '@renderer/utils'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { css, styled } from 'styled-components'
@@ -25,6 +26,14 @@ const Sidebar = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const pathname = location.pathname
+  const { clearCurrentMemoPath } = useMemoStore()
+
+  const handleNavigation = (route: string) => {
+    if (route === '/memo') {
+      clearCurrentMemoPath()
+    }
+    navigate(route)
+  }
 
   return (
     <StyledSidebar>
@@ -33,9 +42,7 @@ const Sidebar = () => {
           <NavigationItem
             key={`navigation ${name}`}
             $active={pathname === route}
-            onClick={() => {
-              navigate(route)
-            }}
+            onClick={() => handleNavigation(route)}
           >
             <Icon width={30} height={30} active={pathname === route} />
             <Text fontType="L1" color={color.primary}>
