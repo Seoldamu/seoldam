@@ -8,12 +8,7 @@ import { styled } from 'styled-components'
 import { FileMemo } from '..'
 import MemoItem from './MemoItem/MemoItem'
 import { useToast } from '@renderer/hooks'
-
-interface Memo {
-  name: string
-  path: string
-  updateAt: string
-}
+import { Memo } from '@renderer/types/memo/type'
 
 const FolderMemo = () => {
   const { currentSeriesPath } = useSeriesStore()
