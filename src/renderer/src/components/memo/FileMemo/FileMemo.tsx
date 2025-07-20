@@ -6,19 +6,59 @@ import { flex } from '@renderer/utils'
 import { fileSystemService } from '@renderer/services/fileSystemService'
 import { useFileContent, useTiptapEditor, useToast } from '@renderer/hooks'
 import { Button } from '@renderer/components/common'
+import { useEffect, useRef } from 'react'
 import Toolbar from './Toolbar/Toolbar'
 
 const FileMemo = () => {
-  const { currentMemoPath } = useMemoStore()
-  const { fileName, initialContent } = useFileContent(currentMemoPath)
+  const { currentMemoPath, setCurrentMemoPath } = useMemoStore()
+  const { fileName, setFileName, initialContent } = useFileContent(currentMemoPath)
   const { editor, formatState } = useTiptapEditor({ initialContent })
   const toast = useToast()
+  const fileNameRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (fileNameRef.current) {
+      fileNameRef.current.textContent = fileName.replace(/\.md$/, '')
+    }
+  }, [fileName])
+
+  const handleFileNameKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      editor?.chain().focus().run()
+    }
+  }
+
+  const handleFileNameInput = (e: React.FormEvent<HTMLDivElement>) => {
+    const newName = e.currentTarget.textContent || ''
+    if (newName === '') {
+      e.currentTarget.innerHTML = ''
+    }
+    setFileName(newName)
+  }
 
   const handleSave = async () => {
-    if (!editor || !currentMemoPath) return
+    if (!editor || !currentMemoPath || !fileNameRef.current) return
 
+    const newFileName = fileNameRef.current.textContent?.trim()
     const content = editor.getHTML()
-    const result = await fileSystemService.saveFile(currentMemoPath, content)
+    const originalFileName = currentMemoPath.split('\\').pop()?.replace(/\.md$/, '')
+
+    let savePath = currentMemoPath
+
+    if (newFileName && newFileName !== originalFileName) {
+      const renameResult = await fileSystemService.rename(currentMemoPath, `${newFileName}`)
+
+      if (!renameResult.success) {
+        toast('ERROR', '파일명 변경에 실패했습니다')
+        return
+      }
+
+      savePath = renameResult.path
+      setCurrentMemoPath(savePath)
+    }
+
+    const result = await fileSystemService.saveFile(savePath, content)
     if (result.success) {
       toast('SUCCESS', '메모가 저장되었습니다.')
     } else {
@@ -40,7 +80,15 @@ const FileMemo = () => {
       </FileMemoHeader>
       <ScrollArea>
         <WriteBox>
-          <FileName>{fileName.replace(/\.md$/, '')}</FileName>
+          <FileName
+            ref={fileNameRef}
+            contentEditable
+            data-placeholder="파일 이름을 입력하세요"
+            onKeyDown={handleFileNameKeyDown}
+            onInput={handleFileNameInput}
+            spellCheck={false}
+            suppressContentEditableWarning={true}
+          />
           <FileContent>
             <EditorContent editor={editor} />
           </FileContent>
@@ -108,6 +156,10 @@ const FileName = styled.div`
   width: 100%;
   min-height: 32px;
   outline: none;
+  &:empty:before {
+    content: attr(data-placeholder);
+    color: ${color.G80};
+  }
 `
 
 const FileContent = styled.div`
