@@ -1,12 +1,19 @@
 import fs from 'node:fs'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { app, shell, BrowserWindow, protocol, net } from 'electron'
+import dotenv from 'dotenv'
 
 import icon from '../../resources/icon.png?asset'
 
 import { registerIpcHandlers } from './ipc'
+
+if (is.dev) {
+  dotenv.config({ path: resolve(process.cwd(), '.env') })
+} else {
+  dotenv.config({ path: resolve(process.resourcesPath, '.env') })
+}
 
 protocol.registerSchemesAsPrivileged([
   {

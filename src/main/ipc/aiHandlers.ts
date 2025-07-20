@@ -4,9 +4,6 @@ import { join, relative } from 'path'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { ipcMain } from 'electron'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string)
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' })
-
 function readDirectoryRecursive(dirPath: string): any[] {
   const items = readdirSync(dirPath)
   return items.map((name) => {
@@ -37,6 +34,9 @@ function readDirectoryRecursive(dirPath: string): any[] {
 
 const handleAskChatbot = async (_, prompt: string, seriesPath: string | null) => {
   try {
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string)
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' })
+
     let fileContext = ''
     if (seriesPath) {
       const rootPath = join(seriesPath, 'root')
