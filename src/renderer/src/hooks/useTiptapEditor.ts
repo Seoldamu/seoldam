@@ -10,7 +10,7 @@ interface UseTiptapEditorProps {
   initialContent: string
 }
 
-export const useTiptapEditor = ({ initialContent }: UseTiptapEditorProps) => {
+const useTiptapEditor = ({ initialContent }: UseTiptapEditorProps) => {
   const [formatState, setFormatState] = useState<FormatState>({
     bold: false,
     italic: false,
@@ -60,3 +60,5 @@ export const useTiptapEditor = ({ initialContent }: UseTiptapEditorProps) => {
 
   return { editor, formatState }
 }
+
+export default useTiptapEditor

@@ -28,6 +28,7 @@ const handleCreateSeries = (_, seriesTitle: string, seriesImagePath: string) => 
     mkdirSync(seriesPath, { recursive: true })
     mkdirSync(rootPath, { recursive: true })
     mkdirSync(imageDir, { recursive: true })
+    mkdirSync(join(seriesPath, 'memo'), { recursive: true })
 
     const ext = extname(seriesImagePath) || '.png'
     const destImageName = generateUniqueFilename(ext)

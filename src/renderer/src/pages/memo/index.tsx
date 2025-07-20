@@ -1,5 +1,11 @@
+import { FolderMemo } from '@renderer/components/memo'
+
 const Memo = () => {
-  return <div>메모 페이지 입니다.</div>
+  return (
+    <div>
+      <FolderMemo />
+    </div>
+  )
 }
 
 export default Memo

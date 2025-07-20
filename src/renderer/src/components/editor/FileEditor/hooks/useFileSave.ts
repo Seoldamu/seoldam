@@ -4,6 +4,7 @@ import { useSeriesStore, useSeriesTreeStore, useTodayCharCountStore } from '@ren
 import TurndownService from 'turndown'
 import { useEffect, useState } from 'react'
 import { useToast } from '@renderer/hooks'
+import { getBasename } from '@renderer/utils'
 
 const turndownService = new TurndownService({
   headingStyle: 'atx',
@@ -19,17 +20,11 @@ turndownService.addRule('underline', {
 
 interface UseFileSaveProps {
   editor: Editor | null
-  fileName: string
   initialContent: string
   fileNameRef: React.RefObject<HTMLDivElement | null>
 }
 
-export const useFileSave = ({
-  editor,
-  fileName,
-  initialContent,
-  fileNameRef
-}: UseFileSaveProps) => {
+export const useFileSave = ({ editor, initialContent, fileNameRef }: UseFileSaveProps) => {
   const { currentPath, setCurrentPath } = useSeriesStore()
   const { fetchTreeData } = useSeriesTreeStore()
   const { todayCharCount, setTodayCharCount } = useTodayCharCountStore()
@@ -52,16 +47,20 @@ export const useFileSave = ({
     const markdownText = turndownService.turndown(contentHTML)
 
     const oldPath = currentPath
-    const oldFileName = fileName
+
+    const currentFileBaseName = getBasename(oldPath)
+    const currentFileName = currentFileBaseName.replace(/\.md$/, '')
 
     let pathToSave = currentPath
 
-    if (newFileName && newFileName !== oldFileName) {
+    if (newFileName && newFileName !== currentFileName) {
       const renameResult = await fileSystemService.rename(oldPath, newFileName)
+
       if (!renameResult.success) {
         toast('ERROR', '파일명 변경에 실패했습니다')
         return
       }
+
       pathToSave = renameResult.path
       setCurrentPath(pathToSave)
     }

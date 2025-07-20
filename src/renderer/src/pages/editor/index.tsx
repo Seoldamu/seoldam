@@ -8,8 +8,7 @@ const Editor = () => {
   // TODO: 정확한 파일 및 폴더 판단 로직 구현
   const isFolder = useMemo(() => {
     if (!currentPath) return false
-    const hasExtension = /\.[^/.]+$/.test(currentPath)
-    return !hasExtension
+    return !currentPath.endsWith('.md')
   }, [currentPath])
 
   if (!currentPath) {

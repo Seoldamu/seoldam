@@ -46,7 +46,7 @@ const SeriesRoot = ({ seriesPath }: Props) => {
       value: 'create-file',
       onClick: async () => {
         closeContextMenu()
-        const result = await fileSystemService.createFile(seriesRootPath, '새 파일.md')
+        const result = await fileSystemService.createFile(seriesRootPath, '새 파일')
         if (result.success) {
           useSeriesTreeStore.getState().fetchTreeData()
         }
