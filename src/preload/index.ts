@@ -28,6 +28,9 @@ const api = {
       ipcRenderer.invoke('save-file-content', filePath, content),
     getFileInfo: (filePath: string) => ipcRenderer.invoke('get-file-info', filePath),
     getPathForFile: (file: File) => webUtils.getPathForFile(file)
+  },
+  memo: {
+    getMemoList: (seriesPath: string) => ipcRenderer.invoke('get-memo-list', seriesPath)
   }
 }
 

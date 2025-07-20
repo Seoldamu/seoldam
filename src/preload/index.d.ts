@@ -23,6 +23,9 @@ declare global {
         getFileInfo: (filePath: string) => Promise<any>
         getPathForFile: (file: File) => Promise<string>
       }
+      memo: {
+        getMemoList: (seriesPath: string) => Promise<any>
+      }
     }
   }
 }
