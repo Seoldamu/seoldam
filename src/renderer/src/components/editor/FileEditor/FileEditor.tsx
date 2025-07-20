@@ -6,9 +6,8 @@ import { color, font } from '@renderer/design/styles'
 import { flex } from '@renderer/utils'
 import SavePanel from './SavePanel/SavePanel'
 import Toolbar from './Toolbar/Toolbar'
-import { useFileContent } from './hooks/useFileContent'
-import { useTiptapEditor } from './hooks/useTiptapEditor'
 import { useFileSave } from './hooks/useFileSave'
+import { useFileContent, useTiptapEditor } from '@renderer/hooks'
 
 const FileEditor = () => {
   const { currentPath } = useSeriesStore()

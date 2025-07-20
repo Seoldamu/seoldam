@@ -3,7 +3,7 @@ import { marked } from 'marked'
 import { fileSystemService } from '@renderer/services/fileSystemService'
 import { getDisplayFilePath } from '@renderer/utils'
 
-export const useFileContent = (currentPath: string | null) => {
+const useFileContent = (currentPath: string | null) => {
   const [fileName, setFileName] = useState('')
   const [initialContent, setInitialContent] = useState('')
 
@@ -23,3 +23,5 @@ export const useFileContent = (currentPath: string | null) => {
 
   return { fileName, setFileName, initialContent }
 }
+
+export default useFileContent
