@@ -19,6 +19,7 @@ import { color } from '@renderer/design/styles'
 import { FormatState } from '@renderer/types/editor/clinet'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
+import { useMemoPopupStore } from '@renderer/stores'
 
 interface Props {
   editor: Editor | null
@@ -26,6 +27,16 @@ interface Props {
 }
 
 const Toolbar = ({ editor, formatState }: Props) => {
+  const { openMemoPopup } = useMemoPopupStore()
+
+  const handleBookmarkClick = (e: React.MouseEvent) => {
+    const rect = (e.target as Element).getBoundingClientRect()
+    openMemoPopup({
+      x: rect.left - 188,
+      y: rect.bottom + 10
+    })
+  }
+
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
   }
@@ -107,7 +118,12 @@ const Toolbar = ({ editor, formatState }: Props) => {
       <Line />
 
       <Row gap={10}>
-        <IconBookmark width={24} height={24} />
+        <IconBookmark
+          width={24}
+          height={24}
+          onClick={handleBookmarkClick}
+          style={{ cursor: 'pointer' }}
+        />
         <IconTimeList width={24} height={24} />
       </Row>
     </StyledToolbar>
