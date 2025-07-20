@@ -1,4 +1,5 @@
 import { Sidebar, ToastContainer } from '@renderer/components/common'
+import { MemoPopupPortal } from '@renderer/components/memo'
 import { flex } from '@renderer/utils'
 import { Outlet } from 'react-router-dom'
 import { styled } from 'styled-components'
@@ -7,6 +8,7 @@ const AppLayout = () => {
   return (
     <StyledAppLayout>
       <ToastContainer />
+      <MemoPopupPortal />
       <Sidebar />
       <Section>
         <Outlet />
