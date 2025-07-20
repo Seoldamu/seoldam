@@ -15,9 +15,13 @@ interface Props {
 const Toast = ({ message, type, onClose }: Props) => {
   return (
     <StyledToast onClick={onClose}>
-      <Row gap={8} justifyContent="center" alignItems="center">
-        {type === 'SUCCESS' ? <IconCheckCircle /> : <IconCloseCircle />}
-        <Text fontType="B1" color={color.G900}>
+      <Row width="100%" gap={8} justifyContent="center" alignItems="center">
+        {type === 'SUCCESS' ? (
+          <IconCheckCircle width={32} height={32} />
+        ) : (
+          <IconCloseCircle width={32} height={32} />
+        )}
+        <Text fontType="B1" color={color.G900} whiteSpace="normal" style={{ flex: 1 }}>
           {message}
         </Text>
       </Row>
@@ -30,7 +34,7 @@ export default Toast
 const StyledToast = styled.div`
   cursor: pointer;
   ${flex({ alignItems: 'flex-start' })}
-  width: 257px;
+  max-width: 257px;
   padding: 20px 16px;
 
   border-radius: 8px;
