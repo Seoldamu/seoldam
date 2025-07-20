@@ -91,10 +91,10 @@ const handleCreateFile = (_, parentPath: string, name: string) => {
   try {
     const baseName = name || '새 파일'
     let count = 1
-    let newPath = join(parentPath, baseName)
+    let newPath = join(parentPath, `${baseName}.md`)
 
     while (fs.existsSync(newPath)) {
-      newPath = join(parentPath, `${baseName} (${count++})`)
+      newPath = join(parentPath, `${baseName} (${count++}).md`)
     }
 
     writeFileSync(newPath, '새 파일')
@@ -116,7 +116,8 @@ const handleRenamePath = (_, oldPath: string, newName: string) => {
     }
 
     const parentDir = dirname(oldPath)
-    const newPath = join(parentDir, newName)
+    const newNameWithExt = newName.endsWith('.md') ? newName : `${newName}.md`
+    const newPath = join(parentDir, newNameWithExt)
 
     if (oldPath === newPath) {
       return { success: true, path: newPath, message: '동일한 이름입니다' }
