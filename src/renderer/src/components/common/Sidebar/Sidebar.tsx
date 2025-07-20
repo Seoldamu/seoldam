@@ -26,11 +26,11 @@ const Sidebar = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const pathname = location.pathname
-  const { clearCurrentMemoPath } = useMemoStore()
+  const { setCurrentMemoPath } = useMemoStore()
 
   const handleNavigation = (route: string) => {
     if (route === '/memo') {
-      clearCurrentMemoPath()
+      setCurrentMemoPath(null)
     }
     navigate(route)
   }
