@@ -1,15 +1,17 @@
 import { Row } from '@renderer/components/common'
 import { IconLongArrow } from '@renderer/design/icons'
 import { color, font } from '@renderer/design/styles'
-import { useMemoStore } from '@renderer/stores'
+import { useFileContent } from '@renderer/hooks'
 import { flex } from '@renderer/utils'
-import { marked } from 'marked'
 import { styled } from 'styled-components'
 
-const MemoViewer = () => {
-  const { setCurrentMemoPath } = useMemoStore()
+interface Props {
+  currentMemoPath: string
+  setCurrentMemoPath: (path: string | null) => void
+}
 
-  const html = marked.parse(content)
+const MemoViewer = ({ currentMemoPath, setCurrentMemoPath }: Props) => {
+  const { fileName, initialContent: content } = useFileContent(currentMemoPath)
 
   const handleBackButtonClick = () => {
     setCurrentMemoPath(null)
@@ -18,11 +20,11 @@ const MemoViewer = () => {
   return (
     <StyledMemoViewer>
       <Row gap={6}>
-        <IconLongArrow onClick={handleBackButtonClick} />
-        <MemoViewerTitleText>{'파일 제목'}</MemoViewerTitleText>
+        <IconLongArrow onClick={handleBackButtonClick} style={{ cursor: 'pointer' }} />
+        <MemoViewerTitleText>{fileName}</MemoViewerTitleText>
       </Row>
       <ScrollArea>
-        <MemoViewerContentText dangerouslySetInnerHTML={{ __html: html }} />
+        <MemoViewerContentText dangerouslySetInnerHTML={{ __html: content }} />
       </ScrollArea>
     </StyledMemoViewer>
   )
@@ -49,8 +51,6 @@ const MemoViewerContentText = styled.div`
   max-width: 100%;
   background: ${color.G0};
   color: ${color.G800};
-  padding: 10px 14px;
-  border-radius: 12px;
 
   ${font.B1};
   word-break: break-word;
