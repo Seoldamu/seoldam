@@ -25,6 +25,7 @@ declare global {
       }
       memo: {
         getMemoList: (seriesPath: string) => Promise<any>
+        createMemoFile: (seriesPath: string) => Promise<any>
       }
     }
   }

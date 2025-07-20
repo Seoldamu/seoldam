@@ -30,7 +30,8 @@ const api = {
     getPathForFile: (file: File) => webUtils.getPathForFile(file)
   },
   memo: {
-    getMemoList: (seriesPath: string) => ipcRenderer.invoke('get-memo-list', seriesPath)
+    getMemoList: (seriesPath: string) => ipcRenderer.invoke('get-memo-list', seriesPath),
+    createMemoFile: (seriesPath: string) => ipcRenderer.invoke('create-memo-file', seriesPath)
   }
 }
 
