@@ -1,6 +1,6 @@
 export { default as flex } from './style/flex'
 export { default as getRelativeDateString } from './date/getRelativeDateString'
-export { default as joinPath } from './os/path'
 export { default as flattenTree } from './tree'
 export * from './charCount'
 export * from './date/formatDate'
+export * from './os/formatPath'
