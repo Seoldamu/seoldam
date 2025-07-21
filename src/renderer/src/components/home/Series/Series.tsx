@@ -23,14 +23,14 @@ const extractSeriesList = (list: SeriesMeta[]): SeriesListItem[] => {
 const Series = () => {
   const { seriesList, setSeriesList } = useSeriesListStore()
 
-  const refreshSeriesList = () => {
+  const fetchSeriesList = () => {
     seriesService.getList().then((data: SeriesMeta[]) => {
       setSeriesList(extractSeriesList(data))
     })
   }
 
   const { handleOpen, Overlay } = useOverlay(({ isOpen, onClose }) => (
-    <SeriesCreateModal isOpen={isOpen} onClose={onClose} refreshSeriesList={refreshSeriesList} />
+    <SeriesCreateModal isOpen={isOpen} onClose={onClose} fetchSeriesList={fetchSeriesList} />
   ))
 
   useEffect(() => {
@@ -53,6 +53,7 @@ const Series = () => {
             coverImagePath={item.coverImagePath}
             updatedAt={item.updatedAt}
             path={item.path}
+            fetchSeriesList={fetchSeriesList}
           />
         ))}
       </SeriesList>

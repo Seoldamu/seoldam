@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 
 interface SeriesStore {
   currentSeriesPath: string | null
-  setSeriesPath: (path: string) => void
+  setSeriesPath: (path: string | null) => void
   currentPath: string | null
   setCurrentPath: (path: string | null) => void
 }

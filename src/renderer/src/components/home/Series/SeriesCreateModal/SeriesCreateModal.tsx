@@ -11,10 +11,10 @@ import { styled } from 'styled-components'
 interface Props {
   isOpen: boolean
   onClose: () => void
-  refreshSeriesList: () => void
+  fetchSeriesList: () => void
 }
 
-const SeriesCreateModal = ({ isOpen, onClose, refreshSeriesList }: Props) => {
+const SeriesCreateModal = ({ isOpen, onClose, fetchSeriesList }: Props) => {
   const [seriesTitle, setSeriesTitle] = useState('')
   const [seriesImage, setSeriesImage] = useState<File | null>(null)
 
@@ -32,7 +32,7 @@ const SeriesCreateModal = ({ isOpen, onClose, refreshSeriesList }: Props) => {
     const result = await seriesService.create(seriesTitle, seriesImagePath)
     if (result.success) {
       toast('SUCCESS', `성공적으로 시리즈가 생성되었습니다`)
-      refreshSeriesList()
+      fetchSeriesList()
     } else {
       toast('ERROR', `${result.message}`)
     }
