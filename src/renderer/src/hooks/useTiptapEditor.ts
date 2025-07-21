@@ -8,9 +8,10 @@ import { FormatState } from '@renderer/types/editor/clinet'
 
 interface UseTiptapEditorProps {
   initialContent: string
+  editable?: boolean
 }
 
-const useTiptapEditor = ({ initialContent }: UseTiptapEditorProps) => {
+const useTiptapEditor = ({ initialContent, editable = true }: UseTiptapEditorProps) => {
   const [formatState, setFormatState] = useState<FormatState>({
     bold: false,
     italic: false,
@@ -19,6 +20,7 @@ const useTiptapEditor = ({ initialContent }: UseTiptapEditorProps) => {
   })
 
   const editor = useEditor({
+    editable,
     extensions: [
       StarterKit,
       Underline,
@@ -57,6 +59,12 @@ const useTiptapEditor = ({ initialContent }: UseTiptapEditorProps) => {
       editor.commands.setContent(initialContent, { emitUpdate: true })
     }
   }, [editor, initialContent])
+
+  useEffect(() => {
+    if (editor) {
+      editor.setEditable(editable)
+    }
+  }, [editor, editable])
 
   return { editor, formatState }
 }

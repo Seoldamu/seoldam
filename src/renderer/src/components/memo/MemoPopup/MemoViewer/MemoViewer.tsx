@@ -1,7 +1,8 @@
+import { EditorContent } from '@tiptap/react'
 import { Row } from '@renderer/components/common'
 import { IconLongArrow } from '@renderer/design/icons'
 import { color, font } from '@renderer/design/styles'
-import { useFileContent } from '@renderer/hooks'
+import { useFileContent, useTiptapEditor } from '@renderer/hooks'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 
@@ -12,19 +13,29 @@ interface Props {
 
 const MemoViewer = ({ currentMemoPath, setCurrentMemoPath }: Props) => {
   const { fileName, initialContent: content } = useFileContent(currentMemoPath)
+  const { editor } = useTiptapEditor({
+    initialContent: content,
+    editable: false
+  })
 
   const handleBackButtonClick = () => {
     setCurrentMemoPath(null)
   }
 
+  if (!editor) {
+    return null
+  }
+
   return (
     <StyledMemoViewer>
-      <Row gap={6}>
+      <Row gap={6} alignItems="center">
         <IconLongArrow onClick={handleBackButtonClick} style={{ cursor: 'pointer' }} />
         <MemoViewerTitleText>{fileName}</MemoViewerTitleText>
       </Row>
       <ScrollArea>
-        <MemoViewerContentText dangerouslySetInnerHTML={{ __html: content }} />
+        <FileContent>
+          <EditorContent editor={editor} />
+        </FileContent>
       </ScrollArea>
     </StyledMemoViewer>
   )
@@ -34,6 +45,7 @@ export default MemoViewer
 
 const StyledMemoViewer = styled.div`
   ${flex({ flexDirection: 'column' })}
+  height: 100%;
 `
 
 const MemoViewerTitleText = styled.div`
@@ -46,63 +58,46 @@ const MemoViewerTitleText = styled.div`
   letter-spacing: -0.16px;
 `
 
-const MemoViewerContentText = styled.div`
-  display: inline-block;
-  max-width: 100%;
-  background: ${color.G0};
-  color: ${color.G800};
+const FileContent = styled.div`
+  height: 100%;
 
-  ${font.B1};
-  word-break: break-word;
-  white-space: pre-wrap;
+  .ProseMirror {
+    ${font.B1}
+    color: ${color.G500};
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    outline: none;
 
-  h1,
-  h2,
-  h3 {
-    font-weight: bold;
-    margin: 8px 0 4px;
-  }
+    display: block;
 
-  p {
-    margin: 4px 0;
-  }
+    & > * {
+      display: block;
+    }
 
-  ul,
-  ol {
-    margin: 6px 0;
-    padding-left: 20px;
-  }
+    &:focus {
+      outline: none;
+    }
 
-  blockquote {
-    margin: 8px 0;
-    padding-left: 12px;
-    border-left: 3px solid ${color.G200};
-    color: ${color.G600};
-  }
+    p {
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+    }
 
-  code {
-    background: ${color.G100};
-    padding: 2px 4px;
-    border-radius: 4px;
-    font-family: monospace;
-  }
-
-  pre {
-    background: ${color.G100};
-    padding: 10px;
-    border-radius: 6px;
-    overflow-x: auto;
-  }
-
-  a {
-    color: ${color.primary};
-    text-decoration: underline;
+    p.is-editor-empty:first-child::before {
+      content: attr(data-placeholder);
+      float: left;
+      color: ${color.G80};
+      pointer-events: none;
+      height: 0;
+    }
   }
 `
 
 const ScrollArea = styled.div`
   flex-grow: 1 0 0;
   overflow-y: auto;
+  display: flex;
   padding-right: 10px;
 
   &::-webkit-scrollbar {
