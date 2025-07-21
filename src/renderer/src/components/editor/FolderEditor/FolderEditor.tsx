@@ -131,7 +131,7 @@ const FolderEditor = () => {
               content={node.content || ''}
               path={node.path}
               onClick={() => handleNodeClick(node)}
-              onDelete={() => fetchStructure()}
+              fetchStructure={() => fetchStructure()}
             />
           ))}
         </FileList>

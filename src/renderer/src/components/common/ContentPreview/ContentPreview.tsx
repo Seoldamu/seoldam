@@ -12,10 +12,10 @@ interface Props {
   content: string
   path: string
   onClick: () => void
-  onDelete: () => void
+  fetchStructure: () => void
 }
 
-const ContentPreview = ({ title, content, path, onClick, onDelete }: Props) => {
+const ContentPreview = ({ title, content, path, onClick, fetchStructure }: Props) => {
   const { contextMenuVisible, contextMenuPosition, openContextMenu, closeContextMenu } =
     useContextMenu()
 
@@ -34,7 +34,7 @@ const ContentPreview = ({ title, content, path, onClick, onDelete }: Props) => {
         const result = await fileSystemService.delete(path)
         if (result.success) {
           useSeriesTreeStore.getState().fetchTreeData()
-          onDelete()
+          fetchStructure()
         }
       }
     }

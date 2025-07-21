@@ -67,7 +67,7 @@ const FolderMemo = () => {
               path={memo.path}
               updateAt={formatDateToDotString(new Date(memo.updateAt))}
               onClick={() => handleMemoClick(memo.path)}
-              onDelete={() => fetchMemoList()}
+              fetchMemoList={() => fetchMemoList()}
             />
           ))}
         </MemoList>

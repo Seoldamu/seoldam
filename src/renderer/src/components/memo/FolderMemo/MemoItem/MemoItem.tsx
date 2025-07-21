@@ -11,10 +11,10 @@ interface Props {
   path: string
   updateAt: string
   onClick: () => void
-  onDelete: () => void
+  fetchMemoList: () => void
 }
 
-const MemoItem = ({ title, path, updateAt, onClick, onDelete }: Props) => {
+const MemoItem = ({ title, path, updateAt, onClick, fetchMemoList }: Props) => {
   const { contextMenuVisible, contextMenuPosition, openContextMenu, closeContextMenu } =
     useContextMenu()
 
@@ -33,7 +33,7 @@ const MemoItem = ({ title, path, updateAt, onClick, onDelete }: Props) => {
         const result = await fileSystemService.delete(path)
         if (result.success) {
           useSeriesTreeStore.getState().fetchTreeData()
-          onDelete()
+          fetchMemoList()
         }
       }
     }
