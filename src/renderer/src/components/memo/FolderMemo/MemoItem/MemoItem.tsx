@@ -1,5 +1,8 @@
-import { Text } from '@renderer/components/common'
+import { ContextMenu, Text } from '@renderer/components/common'
 import { color } from '@renderer/design/styles'
+import { useContextMenu, useOutsideClick } from '@renderer/hooks'
+import { fileSystemService } from '@renderer/services/fileSystemService'
+import { useSeriesTreeStore } from '@renderer/stores'
 import { flex } from '@renderer/utils'
 import { styled } from 'styled-components'
 
@@ -7,16 +10,70 @@ interface Props {
   title: string
   path: string
   updateAt: string
+  onClick: () => void
+  onDelete: () => void
 }
 
-const MemoItem = ({ title, updateAt }: Props) => {
+const MemoItem = ({ title, path, updateAt, onClick, onDelete }: Props) => {
+  const { contextMenuVisible, contextMenuPosition, openContextMenu, closeContextMenu } =
+    useContextMenu()
+
+  const contextMenuRef = useOutsideClick<HTMLDivElement>(() => {
+    if (contextMenuVisible) {
+      closeContextMenu()
+    }
+  })
+
+  const contextMenuData = [
+    {
+      label: '메모 삭제',
+      value: 'delete',
+      onClick: async () => {
+        closeContextMenu()
+        const result = await fileSystemService.delete(path)
+        if (result.success) {
+          useSeriesTreeStore.getState().fetchTreeData()
+          onDelete()
+        }
+      }
+    }
+  ]
+
+  const handleOpenContextMenu = (e: React.MouseEvent<Element, MouseEvent>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    e.nativeEvent.stopImmediatePropagation()
+    openContextMenu(e)
+  }
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (e.button !== 2) {
+      onClick()
+    }
+  }
+
   return (
-    <StyledMemoItem>
-      <Text fontType="T4" color={color.G900} ellipsis>
-        {title}
-      </Text>
-      <MemoItemDateText>{updateAt}</MemoItemDateText>
-    </StyledMemoItem>
+    <>
+      <StyledMemoItem onClick={handleClick} onContextMenu={handleOpenContextMenu}>
+        <Text fontType="T4" color={color.G900} ellipsis>
+          {title}
+        </Text>
+        <MemoItemDateText>{updateAt}</MemoItemDateText>
+      </StyledMemoItem>
+      {contextMenuVisible && (
+        <div
+          ref={contextMenuRef}
+          style={{
+            position: 'fixed',
+            top: contextMenuPosition.y,
+            left: contextMenuPosition.x,
+            zIndex: 9999
+          }}
+        >
+          <ContextMenu data={contextMenuData} />
+        </div>
+      )}
+    </>
   )
 }
 

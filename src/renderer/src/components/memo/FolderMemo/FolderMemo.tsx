@@ -61,17 +61,14 @@ const FolderMemo = () => {
       <ScrollArea>
         <MemoList>
           {memoList.map((memo) => (
-            <div
+            <MemoItem
               key={memo.path}
+              title={getDisplayFilePath(memo.name)}
+              path={memo.path}
+              updateAt={formatDateToDotString(new Date(memo.updateAt))}
               onClick={() => handleMemoClick(memo.path)}
-              style={{ width: '100%' }}
-            >
-              <MemoItem
-                title={getDisplayFilePath(memo.name)}
-                path={memo.path}
-                updateAt={formatDateToDotString(new Date(memo.updateAt))}
-              />
-            </div>
+              onDelete={() => fetchMemoList()}
+            />
           ))}
         </MemoList>
       </ScrollArea>

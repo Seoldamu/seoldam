@@ -125,9 +125,14 @@ const FolderEditor = () => {
       <ScrollArea>
         <FileList>
           {childNodes.map((node) => (
-            <div key={node.id} onClick={() => handleNodeClick(node)}>
-              <ContentPreview title={getDisplayFilePath(node.name)} content={node.content || ''} />
-            </div>
+            <ContentPreview
+              key={node.id}
+              title={getDisplayFilePath(node.name)}
+              content={node.content || ''}
+              path={node.path}
+              onClick={() => handleNodeClick(node)}
+              onDelete={() => fetchStructure()}
+            />
           ))}
         </FileList>
       </ScrollArea>
