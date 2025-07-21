@@ -16,10 +16,10 @@ import { css, styled } from 'styled-components'
 export const NAVIGATION_DATA = [
   { route: '/', name: '홈', icon: IconHome },
   { route: '/editor', name: '편집', icon: IconEditor },
-  { route: '/plot', name: '줄거리', icon: IconPlot },
+  { route: '/plot', name: '줄거리', icon: IconPlot, disabled: true },
   { route: '/lab', name: '실험실', icon: IconLab },
   { route: '/memo', name: '메모', icon: IconMemo },
-  { route: '/character', name: '캐릭터', icon: IconCharacter }
+  { route: '/character', name: '캐릭터', icon: IconCharacter, disabled: true }
 ]
 
 const Sidebar = () => {
@@ -28,7 +28,8 @@ const Sidebar = () => {
   const pathname = location.pathname
   const { setCurrentMemoPath } = useMemoStore()
 
-  const handleNavigation = (route: string) => {
+  const handleNavigation = (route: string, disabled?: boolean) => {
+    if (disabled) return
     if (route === '/memo') {
       setCurrentMemoPath(null)
     }
@@ -38,18 +39,22 @@ const Sidebar = () => {
   return (
     <StyledSidebar>
       <Column gap={2}>
-        {NAVIGATION_DATA.map(({ route, name, icon: Icon }) => (
-          <NavigationItem
-            key={`navigation ${name}`}
-            $active={pathname === route}
-            onClick={() => handleNavigation(route)}
-          >
-            <Icon width={30} height={30} active={pathname === route} />
-            <Text fontType="L1" color={color.primary}>
-              {name}
-            </Text>
-          </NavigationItem>
-        ))}
+        {NAVIGATION_DATA.map(({ route, name, icon: Icon, disabled }) => {
+          const isActive = pathname === route
+          return (
+            <NavigationItem
+              key={`navigation ${name}`}
+              $active={isActive}
+              $disabled={!!disabled}
+              onClick={() => handleNavigation(route, disabled)}
+            >
+              <Icon width={30} height={30} active={isActive} disabled={disabled} />
+              <Text fontType="L1" color={disabled ? color.G300 : color.primary}>
+                {name}
+              </Text>
+            </NavigationItem>
+          )
+        })}
       </Column>
       <SeriesSidebar />
     </StyledSidebar>
@@ -70,12 +75,12 @@ const StyledSidebar = styled.div`
   flex-shrink: 0;
 `
 
-const NavigationItem = styled.div<{ $active: boolean }>`
+const NavigationItem = styled.div<{ $active: boolean; $disabled: boolean }>`
   width: 100%;
   padding: 10px 24px;
   ${flex({ flexDirection: 'row', alignItems: 'center' })}
   gap: 10px;
-  cursor: pointer;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
 
   ${({ $active }) =>
     $active &&
